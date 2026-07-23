@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#dc2626">
+<title>RE/MAX Doğuş</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #fafaf9; color: #1c1917; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; padding: 0; }
+  .hidden { display: none !important; }
+
+  .broker-btn { position: fixed; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.7); border: 1px solid #e7e5e4; display: flex; align-items: center; justify-content: center; z-index: 200; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(4px); }
+  .broker-btn:hover { background: white; border-color: #dc2626; }
+  .broker-btn svg { width: 16px; height: 16px; color: #a8a29e; transition: color 0.2s; }
+  .broker-btn:hover svg { color: #dc2626; }
+
+  .login-screen { min-height: 100vh; background: linear-gradient(135deg, #f5f5f4 0%, #ffffff 50%, #f5f5f4 100%); padding: 60px 16px 32px; display: flex; align-items: flex-start; justify-content: center; }
+  .login-card { width: 100%; max-width: 420px; }
+  .login-header { text-align: center; margin-bottom: 28px; }
+  .login-logo { width: 64px; height: 64px; background: #dc2626; border-radius: 18px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px -8px rgba(220, 38, 38, 0.4); }
+  .login-logo svg { width: 32px; height: 32px; color: white; }
+.login-title { font-size: 28px; font-weight: 800; color: #0c0a09; margin: 0; letter-spacing: -0.02em; }
+  .login-sub { color: #78716c; margin: 6px 0 0; font-size: 14px; }
+  .login-sub-2 { color: #a8a29e; margin: 2px 0 0; font-size: 12px; }
+  .login-list { background: white; border: 1px solid #e7e5e4; border-radius: 18px; padding: 20px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .login-list-label { padding: 0 4px 10px; font-size: 11px; font-weight: 600; color: #78716c; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .select-wrapper { position: relative; margin-bottom: 12px; }
+  .consultant-select { width: 100%; padding: 16px 44px 16px 16px; font-size: 16px; font-family: inherit; border: 1px solid #e7e5e4; border-radius: 14px; background: white; color: #1c1917; appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer; transition: all 0.15s; }
+  .consultant-select:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+  .select-chevron { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: #78716c; pointer-events: none; }
+  .selected-preview { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #fafaf9; border-radius: 14px; margin-bottom: 12px; animation: fadeIn 0.2s; }
+  .selected-name { font-size: 18px; font-weight: 600; color: #0c0a09; }
+
+  .password-input { width: 100%; padding: 14px 16px; font-size: 18px; font-family: inherit; border: 1px solid #e7e5e4; border-radius: 14px; background: white; color: #1c1917; margin-bottom: 12px; letter-spacing: 0.3em; text-align: center; transition: all 0.15s; }
+  .password-input:focus { outline: none; border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1); }
+  .password-error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; padding: 10px 14px; border-radius: 10px; font-size: 13px; margin-bottom: 12px; text-align: center; animation: shake 0.4s; }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .login-confirm-btn { width: 100%; padding: 14px; font-size: 15px; font-weight: 600; color: white; background: #dc2626; border-radius: 14px; transition: all 0.15s; box-shadow: 0 4px 12px -2px rgba(220, 38, 38, 0.3); }
+  .login-confirm-btn:hover { background: #b91c1c; }
+  .login-confirm-btn:active { transform: scale(0.98); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .avatar { width: 44px; height: 44px; border-radius: 50%; background: #57534e; color: white; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; background-size: cover; background-position: center 20%; }
+  .avatar.admin { background-color: #dc2626; }
+  .avatar.large { width: 56px; height: 56px; font-size: 18px; }
+
+  .dash { padding-bottom: 80px; }
+  .header { background: white; border-bottom: 1px solid #e7e5e4; position: sticky; top: 0; z-index: 10; }
+  .header-inner { max-width: 480px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .header-inner.wide { max-width: 640px; }
+  .header-user { display: flex; align-items: center; gap: 12px; }
+  .header-user .avatar { width: 40px; height: 40px; }
+  .header-name { font-weight: 600; font-size: 14px; color: #1c1917; line-height: 1.2; }
+  .header-week { font-size: 11px; color: #78716c; margin-top: 2px; }
+  .logout-btn { color: #a8a29e; padding: 8px; }
+  .logout-btn:hover { color: #44403c; }
+  .logout-btn svg { width: 20px; height: 20px; }
+
+  .tabs { max-width: 480px; margin: 0 auto; padding: 0 16px; display: flex; gap: 4px; }
+  .tabs.wide { max-width: 640px; }
+  .tab { flex: 1; padding: 10px 0; font-size: 14px; font-weight: 500; color: #78716c; border-bottom: 2px solid transparent; transition: all 0.15s; }
+  .tab.active { color: #dc2626; border-bottom-color: #dc2626; }
+  .content { max-width: 480px; margin: 0 auto; padding: 16px; }
+  .content.wide { max-width: 640px; }
+
+  .score-card { border-radius: 18px; border: 1px solid; padding: 16px; margin-bottom: 16px; }
+  .score-card.green { background: #ecfdf5; border-color: #a7f3d0; }
+  .score-card.amber { background: #fffbeb; border-color: #fde68a; }
+  .score-card.rose { background: #fff1f2; border-color: #fecdd3; }
+  .score-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .score-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; display: flex; align-items: center; gap: 6px; }
+  .score-label.green { color: #047857; }
+  .score-label.amber { color: #b45309; }
+  .score-label.rose { color: #be123c; }
+  .score-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .score-dot.green { background: #10b981; }
+  .score-dot.amber { background: #f59e0b; }
+  .score-dot.rose { background: #f43f5e; }
+  .score-big { font-size: 32px; font-weight: 800; color: #0c0a09; line-height: 1; margin-top: 4px; }
+  .score-big-light { font-size: 16px; color: #a8a29e; font-weight: 400; }
+  .score-mini-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #78716c; }
+  .score-points { font-size: 20px; font-weight: 700; color: #0c0a09; }
+  .score-points-light { font-size: 12px; color: #a8a29e; font-weight: 400; }
+  .closing-badge { font-size: 12px; color: #dc2626; font-weight: 600; display: flex; align-items: center; justify-content: flex-end; gap: 4px; margin-top: 2px; }
+  .closing-badge svg { width: 12px; height: 12px; }
+  .progress-bar { height: 8px; background: white; border-radius: 999px; overflow: hidden; margin-top: 8px; }
+  .progress-bar-fill { height: 100%; transition: width 0.3s; }
+  .pb-green { background: #10b981; }
+  .pb-amber { background: #f59e0b; }
+  .pb-rose { background: #f43f5e; }
+  .score-footer { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #78716c; margin-top: 8px; }
+
+  .funnel-card { background: white; border: 1px solid #e7e5e4; border-radius: 18px; padding: 12px; margin-bottom: 16px; }
+
+  .goal-card { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #fcd34d; border-radius: 18px; padding: 16px; margin-bottom: 16px; }
+  .goal-card.goal-done { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #6ee7b7; }
+  .goal-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .goal-label { font-size: 11px; font-weight: 700; color: #78350f; text-transform: uppercase; letter-spacing: 0.06em; }
+  .goal-card.goal-done .goal-label { color: #065f46; }
+  .goal-big { font-size: 36px; font-weight: 800; color: #0c0a09; line-height: 1; margin-top: 4px; letter-spacing: -0.02em; }
+  .goal-mini-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #78350f; }
+  .goal-card.goal-done .goal-mini-label { color: #065f46; }
+  .goal-done-num { font-size: 22px; font-weight: 700; color: #0c0a09; }
+  .goal-done-light { font-size: 14px; color: #92400e; font-weight: 400; }
+  .goal-card.goal-done .goal-done-light { color: #047857; }
+  .goal-bar { height: 10px; background: rgba(255,255,255,0.6); border-radius: 999px; overflow: hidden; margin-bottom: 10px; }
+  .goal-bar-fill { height: 100%; background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); transition: width 0.4s; border-radius: 999px; }
+  .goal-card.goal-done .goal-bar-fill { background: linear-gradient(90deg, #10b981 0%, #059669 100%); }
+  .goal-missing { font-size: 12px; color: #78350f; line-height: 1.5; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 0 4px; }
+  .card-title-tiny { font-size: 11px; font-weight: 600; color: #78716c; text-transform: uppercase; letter-spacing: 0.08em; }
+  .card-hint { font-size: 11px; color: #a8a29e; }
+  .funnel-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+  .btn-minus, .btn-plus { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; line-height: 1; transition: all 0.1s; }
+  .btn-minus { background: #f5f5f4; color: #44403c; }
+  .btn-minus:hover { background: #e7e5e4; }
+  .btn-minus:active { background: #d6d3d1; transform: scale(0.95); }
+  .btn-minus:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-plus { background: #0c0a09; color: white; }
+  .btn-plus:hover { background: #1c1917; }
+  .btn-plus:active { background: #000; transform: scale(0.95); }
+  .funnel-content { flex: 1; min-width: 0; }
+  .funnel-top { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .funnel-icon { width: 24px; height: 24px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .funnel-icon svg { width: 12px; height: 12px; color: white; }
+  .funnel-name { font-size: 12px; font-weight: 500; color: #0c0a09; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .points-badge { font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: 600; margin-left: 2px; flex-shrink: 0; }
+  .check-icon { width: 16px; height: 16px; color: #10b981; margin-left: auto; flex-shrink: 0; }
+  .progress-mini { font-size: 12px; color: #a8a29e; margin-left: auto; flex-shrink: 0; font-weight: 500; }
+  .funnel-bar { height: 6px; background: #f5f5f4; border-radius: 999px; overflow: hidden; }
+  .funnel-bar-fill { height: 100%; transition: width 0.3s; }
+  .closing-row { padding-top: 8px; margin-top: 8px; border-top: 1px solid #f5f5f4; }
+  .closing-row .funnel-row { padding: 4px 0; }
+  .auto-tag { font-size: 10px; color: #a8a29e; background: #f5f5f4; padding: 2px 6px; border-radius: 4px; margin-left: 4px; }
+  .closing-info { font-size: 11px; color: #78716c; margin-top: 4px; padding-left: 28px; }
+
+  .pocket-card { background: linear-gradient(135deg, #1c1917 0%, #292524 100%); border-radius: 18px; padding: 16px; color: white; margin-bottom: 16px; }
+  .pocket-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .pocket-label { font-size: 11px; color: #d6d3d1; text-transform: uppercase; letter-spacing: 0.08em; }
+  .pocket-meta { font-size: 11px; color: #a8a29e; margin-top: 2px; }
+  .admin-tenure { font-size: 10px; color: #16a34a; font-weight: 600; margin-top: 1px; }
+  .podium-wrap { padding: 4px 2px 20px; }
+  .podium-head { text-align: center; margin: 8px 0 18px; }
+  .podium-title { font-size: 18px; font-weight: 800; color: #0c0a09; letter-spacing: -0.3px; }
+  .podium-week { font-size: 12px; color: #a8a29e; margin-top: 3px; }
+  .podium-empty { text-align: center; color: #a8a29e; padding: 44px 0; font-size: 14px; }
+  .champ-card { position: relative; background: linear-gradient(180deg,#fffbeb 0%,#ffffff 72%); border: 1px solid #fde68a; border-radius: 20px; padding: 16px 16px 18px; text-align: center; box-shadow: 0 10px 28px rgba(217,164,6,0.18); margin-bottom: 14px; }
+  .champ-crown { font-size: 26px; line-height: 1; }
+  .champ-photo { width: 116px; height: 116px; border-radius: 50%; margin: 6px auto 12px; background-size: cover; background-position: center 20%; background-color: #dc2626; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 700; position: relative; }
+  .ring-gold { box-shadow: 0 0 0 4px #f59e0b, 0 0 0 8px #fde68a; }
+  .ring-silver { box-shadow: 0 0 0 3px #9ca3af, 0 0 0 6px #e5e7eb; }
+  .ring-bronze { box-shadow: 0 0 0 3px #b45309, 0 0 0 6px #fed7aa; }
+  .champ-medal { position: absolute; bottom: -6px; right: -6px; font-size: 32px; }
+  .champ-name { font-size: 19px; font-weight: 800; color: #0c0a09; }
+  .champ-pts { font-size: 30px; font-weight: 800; color: #b45309; margin-top: 2px; line-height: 1.1; }
+  .champ-pts span { font-size: 13px; font-weight: 600; color: #a8a29e; }
+  .champ-sub { font-size: 12px; color: #78716c; margin-top: 4px; }
+  .podium-2nd3rd { display: flex; gap: 10px; margin-bottom: 16px; }
+  .runner-card { flex: 1; background: #fff; border: 1px solid #e7e5e4; border-radius: 16px; padding: 14px 8px 12px; text-align: center; }
+  .runner-photo { width: 76px; height: 76px; border-radius: 50%; margin: 0 auto 8px; background-size: cover; background-position: center 20%; background-color: #dc2626; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; position: relative; }
+  .runner-medal { position: absolute; bottom: -3px; right: -3px; font-size: 22px; }
+  .runner-name { font-size: 13px; font-weight: 700; color: #0c0a09; line-height: 1.2; }
+  .runner-pts { font-size: 16px; font-weight: 800; color: #57534e; margin-top: 3px; }
+  .podium-list { display: flex; flex-direction: column; gap: 6px; }
+  .plist-row { display: flex; align-items: center; gap: 10px; background: #fff; border: 1px solid #e7e5e4; border-radius: 12px; padding: 8px 12px; }
+  .plist-row.me { border-color: #fca5a5; background: #fef2f2; }
+  .plist-num { width: 22px; text-align: center; font-weight: 800; color: #a8a29e; font-size: 14px; }
+  .plist-av { width: 36px; height: 36px; border-radius: 50%; background-size: cover; background-position: center 20%; background-color: #dc2626; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+  .plist-name { flex: 1; font-size: 14px; font-weight: 600; color: #1c1917; }
+  .plist-pts { font-weight: 800; color: #0c0a09; font-size: 15px; }
+  .plist-pts span { font-size: 11px; color: #a8a29e; font-weight: 600; }
+  .podium-detail { background: #fafaf9; border: 1px solid #e7e5e4; border-radius: 12px; padding: 10px 12px; margin: -6px 0 12px; }
+  .pd-head { font-size: 12px; color: #1c1917; margin-bottom: 8px; font-weight: 700; text-align: center; }
+  .pd-head span { color: #a8a29e; font-weight: 500; }
+  .podium-tap { cursor: pointer; }
+  .alltime-head { text-align: center; margin: 8px 0 14px; }
+  .alltime-av { width: 38px; height: 38px; border-radius: 50%; background-size: cover; background-position: center 20%; background-color: #dc2626; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; overflow: hidden; }
+  .alltime-sub { font-size: 10px; color: #a8a29e; margin-top: 4px; }
+  .pocket-partner { font-size: 10px; color: #c4b5fd; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+  .pocket-partner svg { width: 12px; height: 12px; }
+  .pocket-amount { font-size: 24px; font-weight: 800; color: #fcd34d; }
+  .pocket-formula { font-size: 10px; color: #a8a29e; margin-top: 2px; }
+  .info-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px; display: flex; gap: 8px; margin-top: 16px; font-size: 12px; color: #1e3a8a; }
+  .info-box svg { width: 16px; height: 16px; color: #2563eb; flex-shrink: 0; margin-top: 2px; }
+  .info-title { font-weight: 600; margin-bottom: 2px; }
+  .info-text { color: #1d4ed8; }
+
+  .rank-card { background: white; border: 1px solid #e7e5e4; border-radius: 18px; overflow: hidden; }
+  .rank-header { padding: 12px 16px; border-bottom: 1px solid #f5f5f4; display: flex; justify-content: space-between; align-items: center; }
+  .rank-title { font-size: 14px; font-weight: 600; color: #0c0a09; }
+  .rank-week { font-size: 11px; color: #78716c; }
+  .rank-note { font-size: 11px; color: #78716c; margin-top: 4px; }
+  .rank-row { padding: 12px; display: flex; align-items: center; gap: 12px; border-top: 1px solid #f5f5f4; }
+  .rank-row:first-child { border-top: none; }
+  .rank-row.me { background: rgba(254, 226, 226, 0.4); }
+  .rank-badge { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .rank-1 { background: #fef3c7; color: #b45309; }
+  .rank-2 { background: #e7e5e4; color: #44403c; }
+  .rank-3 { background: #fed7aa; color: #c2410c; }
+  .rank-other { background: #f5f5f4; color: #78716c; }
+  .rank-none { background: #fafaf9; border: 1px solid #e7e5e4; color: #d6d3d1; }
+  .rank-info { flex: 1; min-width: 0; }
+  .rank-row-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; gap: 8px; }
+  .rank-name { font-weight: 500; font-size: 14px; color: #0c0a09; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .rank-name.me { color: #b91c1c; }
+  .me-tag { font-size: 10px; font-weight: 700; color: #dc2626; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px; }
+  .rank-points { font-size: 16px; font-weight: 700; color: #0c0a09; flex-shrink: 0; }
+  .rank-points-light { font-size: 11px; color: #a8a29e; font-weight: 400; }
+  .rank-bar-bg { height: 6px; background: #f5f5f4; border-radius: 999px; overflow: hidden; }
+  .rank-bar { height: 100%; transition: width 0.4s; }
+  .bar-gold { background: #fbbf24; }
+  .bar-me { background: #ef4444; }
+  .bar-default { background: #a8a29e; }
+  .rank-footer-note { font-size: 11px; color: #a8a29e; margin-top: 12px; padding: 0 4px; line-height: 1.5; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
+  .stat-card { background: white; border: 1px solid #e7e5e4; border-radius: 12px; padding: 12px; }
+  .stat-label { font-size: 11px; color: #78716c; }
+  .stat-value { font-size: 20px; font-weight: 700; color: #0c0a09; line-height: 1.2; }
+  .stat-unit { font-size: 11px; color: #a8a29e; }
+  .info-bar-amber { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px; display: flex; gap: 8px; font-size: 12px; color: #78350f; margin-bottom: 12px; }
+  .info-bar-amber svg { width: 16px; height: 16px; color: #d97706; flex-shrink: 0; margin-top: 2px; }
+  .admin-row { padding: 12px 16px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #f5f5f4; text-align: left; width: 100%; cursor: pointer; }
+  .admin-row:hover { background: #fafaf9; }
+  .admin-row .rank-badge { width: 32px; height: 32px; font-size: 12px; }
+  .admin-row .avatar { width: 40px; height: 40px; font-size: 12px; }
+  .admin-rank-num { width: 22px; flex-shrink: 0; text-align: center; font-size: 13px; font-weight: 700; color: #78716c; }
+  .admin-rank-num.rank-1 { color: #b45309; }
+  .admin-rank-num.rank-2 { color: #44403c; }
+  .admin-rank-num.rank-3 { color: #c2410c; }
+  .admin-rank-num.rank-none { color: #d6d3d1; }
+  .partner-badge { font-size: 9px; background: #ede9fe; color: #6d28d9; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 4px; }
+  .admin-row-stats { font-size: 11px; color: #78716c; margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px 8px; }
+  .admin-row-stats .done { color: #047857; font-weight: 600; }
+  .admin-row-stats .closing { color: #b91c1c; font-weight: 600; }
+  .admin-detail { padding: 12px 16px; background: #fafaf9; border-top: 1px solid #f5f5f4; }
+  .detail-mini-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px; }
+  .detail-mini { text-align: center; background: white; border: 1px solid #e7e5e4; border-radius: 8px; padding: 8px 4px; }
+  .detail-mini-icon { width: 24px; height: 24px; border-radius: 6px; margin: 0 auto 4px; display: flex; align-items: center; justify-content: center; }
+  .detail-mini-icon svg { width: 12px; height: 12px; color: white; }
+  .detail-mini-count { font-size: 14px; font-weight: 700; }
+  .detail-mini-count.done { color: #047857; }
+  .detail-mini-target { font-size: 9px; color: #78716c; }
+  /* ---- Yeni karne ---- */
+  .kb-detail { background:#fff; border:1px solid #e7e5e4; border-radius:14px; padding:14px; margin:-2px 0 14px; box-shadow:0 6px 18px rgba(28,25,23,.07); }
+  .kb-top { display:flex; align-items:center; gap:12px; padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid #f0efed; }
+  .kb-total { display:flex; flex-direction:column; line-height:1; }
+  .kb-total b { font-size:30px; font-weight:800; color:#1c1917; letter-spacing:-.5px; }
+  .kb-total span { font-size:10px; color:#a8a29e; font-weight:700; margin-top:3px; letter-spacing:.6px; }
+  .kb-break { display:flex; align-items:center; gap:7px; margin-left:auto; }
+  .kb-chip { background:#f5f5f4; border-radius:11px; padding:7px 13px; text-align:center; min-width:76px; }
+  .kb-chip span { display:block; font-size:9.5px; color:#78716c; font-weight:700; text-transform:uppercase; letter-spacing:.4px; margin-bottom:2px; }
+  .kb-chip b { font-size:17px; font-weight:800; color:#292524; }
+  .kb-chip.red { background:#fef2f2; }
+  .kb-chip.red b { color:#b91c1c; }
+  .kb-plus { color:#d6d3d1; font-weight:800; font-size:15px; }
+  .kb-sec-title { font-size:10.5px; font-weight:700; color:#a8a29e; text-transform:uppercase; letter-spacing:.5px; margin:0 0 8px; }
+  .kb-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; }
+  .kb-item { display:flex; flex-direction:column; align-items:center; gap:4px; background:#fafaf9; border:1px solid #eeecea; border-radius:11px; padding:9px 4px 8px; }
+  .kb-ic { width:27px; height:27px; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+  .kb-ic svg { width:14px; height:14px; color:#fff; }
+  .kb-cnt { font-size:15px; font-weight:800; color:#1c1917; }
+  .kb-lbl { font-size:9px; color:#78716c; font-weight:600; text-align:center; line-height:1.15; }
+  .kb-p { font-size:9px; font-weight:800; color:#57534e; background:#fff; border:1px solid #e7e5e4; border-radius:6px; padding:1px 6px; }
+  /* şık aktivite satır listesi */
+  .kb-alist { display:flex; flex-direction:column; gap:6px; }
+  .kb-arow { display:flex; align-items:center; gap:11px; border-radius:12px; padding:9px 12px; }
+  .kb-aic { width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .kb-aic svg { width:15px; height:15px; color:#fff; }
+  .kb-anm { flex:1; font-size:13px; font-weight:600; color:#292524; }
+  .kb-act { font-size:12.5px; font-weight:700; opacity:.9; }
+  .kb-apt { font-size:13.5px; font-weight:800; min-width:44px; text-align:right; }
+  .kb-band { display:inline-block; font-size:11px; font-weight:700; padding:3px 11px; border-radius:8px; margin-bottom:12px; }
+  .kb-band.green { background:#ecfdf5; color:#047857; }
+  .kb-band.amber { background:#fffbeb; color:#b45309; }
+  .kb-band.red { background:#fef2f2; color:#be123c; }
+  /* Yetki modalı */
+  .ymodal-overlay { position:fixed; inset:0; background:rgba(15,23,42,.55); z-index:1000; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .ymodal { background:#fff; border-radius:18px; width:100%; max-width:400px; padding:20px; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+  .ymodal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+  .ymodal-title { font-size:18px; font-weight:800; color:#0f172a; }
+  .ymodal-x { border:none; background:#f1f5f9; width:32px; height:32px; border-radius:9px; font-size:20px; color:#64748b; cursor:pointer; line-height:1; }
+  .ymodal-who { font-size:13px; color:#64748b; margin-bottom:14px; }
+  .ymodal-who b { color:#0f172a; }
+  .ymodal-label { display:block; font-size:12px; font-weight:700; color:#475569; margin:10px 0 5px; }
+  .ymodal-input { width:100%; box-sizing:border-box; padding:11px 13px; border:1.5px solid #e2e8f0; border-radius:11px; font-size:15px; outline:none; }
+  .ymodal-input:focus { border-color:#f59e0b; }
+  .ymodal-file { width:100%; box-sizing:border-box; padding:9px; border:1.5px dashed #cbd5e1; border-radius:11px; font-size:13px; background:#f8fafc; }
+  .ymodal-status { font-size:12.5px; margin-top:10px; min-height:16px; }
+  .ymodal-status.err { color:#dc2626; }
+  .ymodal-status.ok { color:#059669; }
+  .ymodal-actions { display:flex; gap:10px; margin-top:16px; }
+  .ymodal-cancel { flex:1; padding:12px; border:1.5px solid #e2e8f0; background:#fff; color:#475569; border-radius:12px; font-size:15px; font-weight:600; cursor:pointer; }
+  .ymodal-save { flex:2; padding:12px; border:none; background:#f59e0b; color:#fff; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; }
+  .ymodal-save:disabled { opacity:.6; cursor:default; }
+  .yk-row { display:flex; align-items:center; gap:11px; background:#fff; border:1px solid #e7e5e4; border-radius:13px; padding:11px 13px; margin-bottom:8px; }
+  .yk-ic { width:34px; height:34px; border-radius:10px; background:#fffbeb; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .yk-ic svg { width:17px; height:17px; color:#f59e0b; }
+  .yk-main { flex:1; min-width:0; }
+  .yk-adi { font-size:14px; font-weight:700; color:#1c1917; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .yk-sub { font-size:11.5px; color:#a8a29e; margin-top:1px; }
+  .yk-link { flex-shrink:0; font-size:12px; font-weight:700; color:#f59e0b; text-decoration:none; background:#fffbeb; border:1px solid #fde68a; border-radius:9px; padding:6px 11px; }
+  .yk-date { font-size:11px; color:#94a3b8; }
+  .kb-agroup { }
+  .kb-anotes { padding:3px 6px 5px 42px; }
+  .kb-anote { font-size:11.5px; color:#78716c; padding:2px 0; line-height:1.3; }
+  .kb-anote:before { content:'↳ '; color:#a8a29e; }
+  .kb-top2 { display:flex; align-items:center; justify-content:space-between; gap:10px; padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid #f0efed; }
+  .kb-chips { display:flex; gap:7px; }
+  .kb-chips .kb-chip { flex:1; min-width:0; }
+  .kb-chip.green { background:#ecfdf5; }
+  .kb-chip.green b { color:#047857; }
+  .kb-streak { display:inline-flex; align-items:center; gap:5px; background:#fff7ed; border:1px solid #fed7aa; border-radius:20px; padding:5px 12px; font-size:12px; font-weight:700; color:#c2410c; white-space:nowrap; }
+  .today-badge { display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; margin-left:6px; vertical-align:middle; }
+  .today-badge.on { background:#fff7ed; color:#c2410c; border:1px solid #fed7aa; }
+  .today-badge.off { background:#f5f5f4; color:#a8a29e; }
+  .today-badge svg { width:10px; height:10px; }
+  .kb-empty { font-size:12px; color:#a8a29e; text-align:center; padding:12px; background:#fafaf9; border-radius:10px; }
+  .kb-close { margin-top:12px; }
+  .kb-crow { display:flex; align-items:center; gap:9px; background:#fef2f2; border:1px solid #fee2e2; border-radius:11px; padding:8px 11px; margin-top:6px; }
+  .kb-cic { width:26px; height:26px; border-radius:8px; background:#dc2626; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .kb-cic svg { width:13px; height:13px; color:#fff; }
+  .kb-cmain { flex:1; min-width:0; }
+  .kb-ctitle { font-size:12.5px; font-weight:700; color:#1c1917; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .kb-csub { font-size:10.5px; color:#a8a29e; margin-top:1px; }
+  .kb-cpts { font-size:14px; font-weight:800; color:#b91c1c; flex-shrink:0; }
+  .closing-summary { background: white; border: 1px solid #e7e5e4; border-radius: 8px; padding: 10px; }
+  .closing-summary-top { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+  .closing-summary-icon { width: 22px; height: 22px; background: #dc2626; border-radius: 5px; display: flex; align-items: center; justify-content: center; }
+  .closing-summary-icon svg { width: 12px; height: 12px; color: white; }
+  .closing-summary-title { font-size: 12px; font-weight: 600; color: #0c0a09; }
+  .closing-summary-count { font-size: 10px; color: #a8a29e; margin-left: auto; }
+  .closing-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; text-align: center; }
+  .closing-3col > div { border-radius: 6px; padding: 8px 4px; }
+  .closing-3col .label { font-size: 10px; }
+  .closing-3col .value { font-size: 13px; font-weight: 700; }
+  .c-brut { background: #fafaf9; color: #44403c; }
+  .c-pay { background: #ecfdf5; color: #047857; }
+  .c-off { background: #eff6ff; color: #1d4ed8; }
+
+  .sheets-bar { background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1px solid #a7f3d0; border-radius: 18px; padding: 14px; display: flex; gap: 12px; align-items: flex-start; margin-bottom: 16px; }
+  .sheets-icon { width: 36px; height: 36px; background: #059669; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .sheets-icon svg { width: 16px; height: 16px; color: white; }
+  .sheets-title { font-size: 14px; font-weight: 600; color: #0c0a09; display: flex; align-items: center; gap: 8px; }
+  .sheets-status { font-size: 10px; background: #6ee7b7; color: #064e3b; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .sheets-sub { font-size: 12px; color: #44403c; margin-top: 2px; }
+  .sheets-sync-btn { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; color: #065f46; background: white; border: 1px solid #a7f3d0; padding: 6px 12px; border-radius: 8px; }
+  .sheets-sync-btn:hover { background: #ecfdf5; }
+  .sheets-sync-btn svg { width: 12px; height: 12px; }
+  .closing-item { padding: 12px 16px; }
+  .closing-item + .closing-item { border-top: 1px solid #f5f5f4; }
+  .closing-item-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+  .closing-item-name { font-size: 14px; font-weight: 500; color: #0c0a09; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .shared-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+  .shared-tag.satilik { background: #f3e8ff; color: #6b21a8; }
+  .shared-tag.kiralik { background: #cffafe; color: #155e75; }
+  .shared-tag.ortak { background: #ede9fe; color: #6d28d9; }
+  .closing-item-meta { font-size: 11px; color: #78716c; margin-top: 2px; }
+  .closing-item-row { display: flex; gap: 8px; margin-top: 6px; font-size: 11px; flex-wrap: wrap; }
+  .pill { padding: 2px 8px; border-radius: 4px; }
+  .pill.brut { background: #f5f5f4; color: #44403c; }
+  .pill.pay { background: #ecfdf5; color: #047857; }
+
+  .loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; z-index: 100; flex-direction: column; gap: 16px; }
+  .spinner { width: 40px; height: 40px; border: 3px solid #f5f5f4; border-top-color: #dc2626; border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: #78716c; font-size: 14px; }
+  .toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: #0c0a09; color: white; padding: 10px 20px; border-radius: 999px; font-size: 14px; z-index: 50; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.2s; }
+  .toast.show { opacity: 1; }
+  .text-stone { color: #78716c; font-style: italic; }
+
+  /* ===== MASAÜSTÜ DÜZENİ — sadece geniş ekranlar (mobil aynı kalır) ===== */
+  @media (min-width: 900px) {
+    .header-inner:not(.wide) { max-width: 1000px; }
+    .tabs:not(.wide) { max-width: 1000px; }
+
+    /* Danışman "Bu Hafta" — 2 kolonlu pano */
+    .content.tab-week {
+      max-width: 1000px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .content.tab-week > .score-card,
+    .content.tab-week > .goal-card,
+    .content.tab-week > .pocket-card,
+    .content.tab-week > .info-box { margin: 0; }
+
+    /* Huni tüm genişliği kaplar, içindeki aktiviteler 2 sütun */
+    .content.tab-week > .funnel-card {
+      grid-column: 1 / -1;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 28px;
+      row-gap: 0;
+      align-content: start;
+    }
+    .content.tab-week > .funnel-card > .card-header,
+    .content.tab-week > .funnel-card > .closing-row { grid-column: 1 / -1; }
+
+    /* Danışman "Sıralama" — geniş ama tek kolon */
+    .content.tab-rank { max-width: 760px; }
+
+    /* ===== BROKER PANELİ — masaüstü ===== */
+    .header-inner.wide, .tabs.wide { max-width: 1100px; }
+
+    /* Canlı — solda geniş ekip listesi, sağda KPI kenar çubuğu */
+    .content.tab-admin-live {
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 16px;
+      align-items: start;
+    }
+    .content.tab-admin-live > .stats-grid {
+      grid-column: 2; grid-row: 1;
+      grid-template-columns: 1fr;
+      margin: 0;
+    }
+    .content.tab-admin-live > .info-bar-amber {
+      grid-column: 2; grid-row: 2;
+      margin: 0;
+    }
+    .content.tab-admin-live > .rank-card {
+      grid-column: 1; grid-row: 1 / span 2;
+    }
+
+    /* Geçen Hafta — geniş tek kolon */
+    .content.tab-admin-prev { max-width: 760px; }
+
+    /* Kapanışlar — geniş tablo */
+    .content.tab-admin-closings { max-width: 1000px; }
+  }
+</style>
+</head>
+<body>
+
+<button id="broker-btn" class="broker-btn hidden" onclick="brokerLogin()" title="Broker">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </svg>
+</button>
+
+<div id="loading" class="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Yükleniyor…</div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<div id="yetki-modal" class="ymodal-overlay" style="display:none">
+  <div class="ymodal">
+    <div class="ymodal-head">
+      <div class="ymodal-title">Alınan Yetki</div>
+      <button class="ymodal-x" onclick="closeYetkiModal()">×</button>
+    </div>
+    <div class="ymodal-who">Danışman: <b id="ym-name">—</b></div>
+    <label class="ymodal-label">Yetki Adı / Adres</label>
+    <input type="text" id="ym-adi" class="ymodal-input" placeholder="Örn: Bulgurlu Mah. 3+1 Daire" maxlength="80" autocomplete="off">
+    <label class="ymodal-label">Yetki Belgesi (PDF)</label>
+    <input type="file" id="ym-file" class="ymodal-file" accept="application/pdf">
+    <div id="ym-status" class="ymodal-status"></div>
+    <div class="ymodal-actions">
+      <button class="ymodal-cancel" onclick="closeYetkiModal()">İptal</button>
+      <button id="ym-save" class="ymodal-save" onclick="saveYetkiFromModal()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<div id="note-modal" class="ymodal-overlay" style="display:none">
+  <div class="ymodal">
+    <div class="ymodal-head">
+      <div class="ymodal-title" id="nm-title">Bilgi</div>
+      <button class="ymodal-x" onclick="closeNoteModal()">×</button>
+    </div>
+    <label class="ymodal-label" id="nm-q">Detay</label>
+    <input type="text" id="nm-text" class="ymodal-input" maxlength="120" autocomplete="off">
+    <div id="nm-status" class="ymodal-status"></div>
+    <div class="ymodal-actions">
+      <button class="ymodal-cancel" onclick="closeNoteModal()">İptal</button>
+      <button id="nm-save" class="ymodal-save" onclick="saveNoteFromModal()">İlerle</button>
+    </div>
+  </div>
+</div>
+<div id="login-screen" class="login-screen hidden">
+  <div class="login-card">
+    <div class="login-header">
+      <h1 class="login-title">RE/MAX Doğuş</h1>
+      <p class="login-sub">90 Günlük Performans Takibi</p>
+      <p class="login-sub-2">Sıfırlama Dönemi</p>
+    </div>
+    <div class="login-list">
+      <div class="login-list-label">Giriş</div>
+      <div id="login-items"></div>
+    </div>
+  </div>
+</div>
+
+<div id="dashboard" class="dash hidden">
+  <div class="header">
+    <div id="header-inner" class="header-inner">
+      <div class="header-user">
+        <div id="header-avatar" class="avatar"></div>
+        <div>
+          <div id="header-name" class="header-name"></div>
+          <div id="header-week" class="header-week"></div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </button>
+    </div>
+    <div id="tabs" class="tabs"></div>
+  </div>
+  <div id="content" class="content"></div>
+</div>
+
+<script>
+
+var API_URL = 'https://script.google.com/macros/s/AKfycbzWWICVnYI8j89KqjyfTVU7Sr2g_Clil3NnJYadYk0yYTFMLSnAaTF1YmSkuak1i23IrQ/exec';
+function apiGet(action, params) {
+  var url = API_URL + '?action=' + action;
+  if (params) Object.keys(params).forEach(function(k) { url += '&' + k + '=' + encodeURIComponent(params[k]); });
+  return fetch(url).then(function(r) { return r.json(); });
+}
+function apiPost(data) {
+  return fetch(API_URL, {method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(data)}).then(function(r) { return r.json(); });
+}
+
+const ACTIVITIES = [
+  { id: "fzbo",     label: "FZBO Araması",   short: "FZBO",     weeklyTarget: 15, points: 1,  color: "#3b82f6", lightBg: "#eff6ff", textColor: "#1d4ed8", iconSvg: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>' },
+  { id: "etki",     label: "Etki Çevresi Araması",   short: "Etki",     weeklyTarget: 10, points: 2,  color: "#0ea5e9", lightBg: "#f0f9ff", textColor: "#0369a1", iconSvg: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>' },
+  { id: "sunum1",   label: "1. Sunum",       short: "1. Sunum", weeklyTarget: 3,  points: 5,  color: "#6366f1", lightBg: "#eef2ff", textColor: "#4338ca", iconSvg: '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>' },
+  { id: "sunum2",   label: "2. Sunum",       short: "2. Sunum", weeklyTarget: 2,  points: 8,  color: "#8b5cf6", lightBg: "#f5f3ff", textColor: "#6d28d9", iconSvg: '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>' },
+  { id: "yetki",    label: "Alınan Yetki",   short: "Yetki",    weeklyTarget: 1,  points: 15, color: "#f59e0b", lightBg: "#fffbeb", textColor: "#b45309", iconSvg: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>' },
+  { id: "gosterim", label: "Gösterim",       short: "Gösterim", weeklyTarget: 2,  points: 6,  color: "#10b981", lightBg: "#ecfdf5", textColor: "#047857", iconSvg: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>' },
+  { id: "kapora",   label: "Kapora Alındı",  short: "Kapora",   weeklyTarget: 1,  points: 15, color: "#f97316", lightBg: "#fff7ed", textColor: "#c2410c", iconSvg: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/>' },
+  { id: "kibris_sunum", label: "Kıbrıs Sunum", short: "Kıbrıs", weeklyTarget: 1, points: 8, color: "#0891b2", lightBg: "#ecfeff", textColor: "#0e7490", iconSvg: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>' },
+  { id: "emlak_nobet", label: "Emlak Konut Nöbet", short: "Nöbet", weeklyTarget: 1, points: 5, color: "#7c3aed", lightBg: "#f5f3ff", textColor: "#6d28d9", iconSvg: '<path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>' },
+  { id: "brosur", label: "Broşür", short: "Broşür", weeklyTarget: 5, points: 2, color: "#db2777", lightBg: "#fdf2f8", textColor: "#be185d", iconSvg: '<rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/>' },
+  { id: "egitim", label: "Eğitim", short: "Eğitim", weeklyTarget: 1, points: 4, color: "#ca8a04", lightBg: "#fefce8", textColor: "#a16207", iconSvg: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>' },
+  { id: "kapanis",  label: "Kapanış",        short: "Kapanış",  weeklyTarget: null, points: 40, color: "#dc2626", lightBg: "#fef2f2", textColor: "#b91c1c", isExternal: true, iconSvg: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>' }
+];
+
+const TRACKED = ACTIVITIES.filter(a => !a.isExternal);
+const FULL_WEEK_POINTS = TRACKED.reduce((s, a) => s + a.weeklyTarget * a.points, 0);
+const ISTIKRAR_BONUS = 2; // her aktif güne +2 puan
+const BONUS_START_DATE = "2026-06-29"; // bu tarihten (Pazartesi) itibaren başlayan haftalarda bonus puana katılır; öncesi bozulmaz
+const MONTHS = ["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+
+let DATA = { consultants: [], partnerships: [], closings: [], activities: [], yetkiler: [] };
+let CURRENT_USER = null;
+let CURRENT_TAB = null;
+let SELECTED_LOGIN = null;
+
+function getInitials(name) { return name.split(" ").map(n => n[0]).join("").slice(0,2).toUpperCase(); }
+function fmtTL(n) { return "₺" + (n || 0).toLocaleString("tr-TR"); }
+function daysSince(startDate) {
+  if (!startDate) return null;
+  const start = new Date(startDate + "T00:00:00");
+  const diff = Math.floor((new Date() - start) / 86400000);
+  return diff < 0 ? 0 : diff;
+}
+function tenureText(startDate) {
+  const d = daysSince(startDate);
+  if (d === null) return "";
+  if (d < 60) return d + " gündür";
+  return d + " gün (~" + Math.floor(d / 30) + " ay)";
+}
+function fmtTLshort(n) {
+  if (!n) return "₺0";
+  if (n >= 1000000) return "₺" + (n/1000000).toFixed(1) + "M";
+  if (n >= 1000) return "₺" + Math.round(n/1000) + "K";
+  return "₺" + n;
+}
+
+function getWeekStart(date) {
+  const d = new Date(date || new Date());
+  const day = d.getDay();
+  const hour = d.getHours();
+  let daysBack;
+  if (day === 0) daysBack = 6;
+  else daysBack = day - 1;
+  d.setDate(d.getDate() - daysBack);
+  d.setHours(0, 0, 0, 0);
+  return d.toISOString();
+}
+function getWeekEnd(weekStart) { const d = new Date(weekStart); d.setDate(d.getDate() + 7); return d.toISOString(); }
+function localDateStr(iso) { const d = new Date(iso); return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"); }
+function getPrevWeekStart(weekStart) { const d = new Date(weekStart); d.setDate(d.getDate() - 7); return d.toISOString(); }
+function formatWeekRange(weekStart) {
+  const d = new Date(weekStart);
+  const end = new Date(d); end.setDate(end.getDate() + 6);
+  const fmt = x => x.getDate() + " " + MONTHS[x.getMonth()];
+  return fmt(d) + " – " + fmt(end);
+}
+function timeUntilFreeze(withSeconds) {
+  const now = new Date();
+  const day = now.getDay();
+  const next = new Date(now);
+  let daysAhead;
+  if (day === 1) daysAhead = 7;        // Pazartesi: bugünün 00:00'ı geçti → sonraki Pzt
+  else if (day === 0) daysAhead = 1;   // Pazar → yarın Pzt 00:00
+  else daysAhead = 8 - day;            // Sal..Cmt → bu haftanın Pzt'sine kalan
+  next.setDate(next.getDate() + daysAhead);
+  next.setHours(0, 0, 0, 0);
+  let diff = next - now;
+  if (diff < 0) diff = 0;
+  const days = Math.floor(diff/(1000*60*60*24));
+  const hours = Math.floor((diff%(1000*60*60*24))/(1000*60*60));
+  const mins = Math.floor((diff%(1000*60*60))/(1000*60));
+  if (!withSeconds) {
+    if (days > 0) return days + " gün " + hours + " saat";
+    return hours + " saat " + mins + " dk";
+  }
+  const secs = Math.floor((diff%(1000*60))/1000);
+  const pad = n => String(n).padStart(2, '0');
+  return (days > 0 ? days + " gün " : "") + pad(hours) + ":" + pad(mins) + ":" + pad(secs);
+}
+
+function getPartners(consultantId) {
+  const p = DATA.partnerships.find(p => p.ids.includes(consultantId));
+  return p ? p.ids.filter(id => id !== consultantId) : [];
+}
+function getConsultantName(id) { return (DATA.consultants.find(c => c.id === id) || {}).name || id; }
+function getScoreBand(score) {
+  if (score >= 80) return { name: "Hedefte", cls: "green" };
+  if (score >= 50) return { name: "Yolda",   cls: "amber" };
+  return                  { name: "Geride",  cls: "rose"  };
+}
+
+function computeWeekScore(consultantId, weekStart, weekEnd) {
+  const wEntries = DATA.activities.filter(e => e.consultantId === consultantId && e.timestamp >= weekStart && e.timestamp < weekEnd);
+  const wsDate = localDateStr(weekStart);
+  const weDate = localDateStr(weekEnd);
+  const wClosings = DATA.closings.filter(c => c.consultantId === consultantId && c.date >= wsDate && c.date < weDate);
+  const counts = {};
+  let points = 0;
+  TRACKED.forEach(a => {
+    counts[a.id] = wEntries.filter(e => e.type === a.id).length;
+    points += counts[a.id] * a.points;
+  });
+  counts.kapanis = wClosings.length;
+  const closingPoints = wClosings.reduce((s, c) => s + 40, 0); // her ortağa tam 40 (para bölünür, puan bölünmez)
+  const notes = {};
+  wEntries.forEach(e => { if (e.note) { (notes[e.type] = notes[e.type] || []).push(e.note); } });
+  const daySet = new Set(wEntries.map(e => localDateStr(e.timestamp)));
+  const activeDays = daySet.size;
+  const bonus = activeDays * ISTIKRAR_BONUS;
+  const bonusCounts = localDateStr(weekStart) >= BONUS_START_DATE;
+  const activeToday = daySet.has(localDateStr(new Date().toISOString()));
+  const totalPoints = points + (bonusCounts ? bonus : 0) + closingPoints;
+  const performanceScore = Math.min(100, Math.round((points / FULL_WEEK_POINTS) * 100));
+  return { counts, points, bonus, bonusCounts, activeDays, activeToday, closingPoints, totalPoints, performanceScore, weekClosings: wClosings, notes };
+}
+
+function avatarStyle(consultant) {
+  if (consultant && consultant.photo) return "background-image: url('" + consultant.photo + "');";
+  return '';
+}
+function avatarContent(consultant) {
+  if (consultant && consultant.photo) return '';
+  return getInitials(consultant.name);
+}
+
+function renderLogin() {
+  document.getElementById('broker-btn').classList.remove('hidden');
+  const list = document.getElementById('login-items');
+  // Yönetici LİSTEDE GÖRÜNMEZ
+  const all = DATA.consultants.filter(c => !c.isAdmin && !c.hiddenFromLogin).sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+
+  list.innerHTML = `
+    <div class="select-wrapper">
+      <select id="consultant-select" class="consultant-select" onchange="onConsultantSelect(this.value)">
+        <option value="">Seçiniz...</option>
+        ${all.map(c => '<option value="' + c.id + '">' + c.name + '</option>').join('')}
+      </select>
+      <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </div>
+    <div id="login-detail"></div>
+  `;
+  document.getElementById('login-screen').classList.remove('hidden');
+}
+
+function onConsultantSelect(consultantId) {
+  const detail = document.getElementById('login-detail');
+  if (!consultantId) {
+    detail.innerHTML = '';
+    SELECTED_LOGIN = null;
+    return;
+  }
+  const c = DATA.consultants.find(x => x.id === consultantId);
+  if (!c) return;
+  SELECTED_LOGIN = consultantId;
+
+  detail.innerHTML = `
+    <div id="error-box"></div>
+    <input type="tel" inputmode="numeric" pattern="[0-9]*" id="password-input" class="password-input" placeholder="••••" maxlength="6" autocomplete="off" />
+    <button class="login-confirm-btn" onclick="tryLogin()">Giriş Yap</button>
+  `;
+  setTimeout(() => {
+    const pi = document.getElementById('password-input');
+    if (pi) {
+      pi.focus();
+      pi.addEventListener('keypress', (e) => { if (e.key === 'Enter') tryLogin(); });
+    }
+  }, 100);
+}
+
+function tryLogin() {
+  if (!SELECTED_LOGIN) return;
+  const passInput = document.getElementById('password-input');
+  const password = passInput.value.trim();
+  if (!password) return;
+  const errBox = document.getElementById('error-box');
+  errBox.innerHTML = '';
+  apiGet('login', {id: SELECTED_LOGIN, pw: password})
+    .then(function(res) {
+      if (res && res.success) {
+        var user = DATA.consultants.find(function(c) { return c.id === res.consultantId; });
+        if (user) {
+          CURRENT_USER = user;
+          try { localStorage.setItem('current_user_id', user.id); } catch (e) {}
+          showDashboard();
+        }
+      } else {
+        errBox.innerHTML = '<div class="password-error">' + (res.error || 'Hatalı şifre') + '</div>';
+        passInput.value = '';
+        passInput.focus();
+      }
+    })
+    .catch(function(err) { errBox.innerHTML = '<div class="password-error">Bağlantı hatası</div>'; });
+}
+
+function brokerLogin() {
+  const password = prompt("Broker şifresi:");
+  if (password === null || !password) return;
+  apiGet('login', {id: 'umut', pw: password})
+    .then(function(res) {
+      if (res && res.success && res.isAdmin) {
+        var user = DATA.consultants.find(function(c) { return c.id === res.consultantId; });
+        if (user) {
+          CURRENT_USER = user;
+          try { localStorage.setItem('current_user_id', user.id); } catch (e) {}
+          showDashboard();
+        }
+      } else { alert("Hatalı şifre."); }
+    })
+    .catch(function(err) { alert("Bağlantı hatası"); });
+}
+
+function logout() {
+  stopPolling();
+  CURRENT_USER = null;
+  CURRENT_TAB = null;
+  SELECTED_LOGIN = null;
+  try { localStorage.removeItem('current_user_id'); } catch (e) {}
+  document.getElementById('dashboard').classList.add('hidden');
+  renderLogin();
+}
+
+function showDashboard() {
+  document.getElementById('broker-btn').classList.add('hidden');
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('dashboard').classList.remove('hidden');
+
+  const headerInner = document.getElementById('header-inner');
+  const tabs = document.getElementById('tabs');
+  const content = document.getElementById('content');
+  headerInner.className = 'header-inner' + (CURRENT_USER.isAdmin ? ' wide' : '');
+  tabs.className = 'tabs' + (CURRENT_USER.isAdmin ? ' wide' : '');
+  content.className = 'content' + (CURRENT_USER.isAdmin ? ' wide' : '');
+  document.getElementById('header-avatar').className = 'avatar' + (CURRENT_USER.isAdmin ? ' admin' : '');
+  document.getElementById('header-avatar').style.cssText = avatarStyle(CURRENT_USER);
+  document.getElementById('header-avatar').textContent = avatarContent(CURRENT_USER);
+  document.getElementById('header-name').textContent = CURRENT_USER.name;
+  const hw = document.getElementById('header-week');
+  if (CURRENT_USER.isAdmin) {
+    hw.innerHTML = formatWeekRange(getWeekStart()) + ' · <span style="color:#dc2626;font-weight:600">⏳ <span class="freeze-countdown">' + timeUntilFreeze(true) + '</span></span>';
+  } else {
+    hw.textContent = formatWeekRange(getWeekStart());
+  }
+
+  if (CURRENT_USER.isAdmin) {
+    CURRENT_TAB = CURRENT_TAB || 'canli';
+    tabs.innerHTML = `
+      <button class="tab ${CURRENT_TAB==='canli'?'active':''}" onclick="setTab('canli')">Canlı</button>
+      <button class="tab ${CURRENT_TAB==='siralama'?'active':''}" onclick="setTab('siralama')">Geçen Hafta</button>
+      <button class="tab ${CURRENT_TAB==='gecenay'?'active':''}" onclick="setTab('gecenay')">Geçen Ay</button>
+      <button class="tab ${CURRENT_TAB==='klasman'?'active':''}" onclick="setTab('klasman')">Klasman</button>
+      <button class="tab ${CURRENT_TAB==='kapanis'?'active':''}" onclick="setTab('kapanis')">Kapanışlar</button>
+      <button class="tab ${CURRENT_TAB==='yetkiler'?'active':''}" onclick="setTab('yetkiler')">Yetkiler</button>
+    `;
+  } else {
+    CURRENT_TAB = CURRENT_TAB || 'bu_hafta';
+    tabs.innerHTML = `
+      <button class="tab ${CURRENT_TAB==='bu_hafta'?'active':''}" onclick="setTab('bu_hafta')">Bu Hafta</button>
+      <button class="tab ${CURRENT_TAB==='siralama'?'active':''}" onclick="setTab('siralama')">Sıralama</button>
+    `;
+  }
+  renderContent();
+  startPolling();
+}
+
+function setTab(tab) { CURRENT_TAB = tab; showDashboard(); }
+
+function renderContent() {
+  const content = document.getElementById('content');
+  content.classList.remove('tab-week', 'tab-rank', 'tab-admin-live', 'tab-admin-prev', 'tab-admin-closings');
+  if (!CURRENT_USER.isAdmin) {
+    if (CURRENT_TAB === 'bu_hafta') content.classList.add('tab-week');
+    else if (CURRENT_TAB === 'siralama') content.classList.add('tab-rank');
+  } else {
+    if (CURRENT_TAB === 'canli') content.classList.add('tab-admin-live');
+    else if (CURRENT_TAB === 'siralama') content.classList.add('tab-admin-prev');
+    else if (CURRENT_TAB === 'gecenay') content.classList.add('tab-rank');
+    else if (CURRENT_TAB === 'klasman') content.classList.add('tab-rank');
+    else if (CURRENT_TAB === 'kapanis') content.classList.add('tab-admin-closings');
+    else if (CURRENT_TAB === 'yetkiler') content.classList.add('tab-admin-closings');
+  }
+  if (CURRENT_USER.isAdmin) {
+    if (CURRENT_TAB === 'canli') content.innerHTML = renderAdminLive();
+    else if (CURRENT_TAB === 'siralama') content.innerHTML = renderConsultantRanking();
+    else if (CURRENT_TAB === 'gecenay') content.innerHTML = renderMonthPodium();
+    else if (CURRENT_TAB === 'klasman') content.innerHTML = renderAllTimeRanking();
+    else if (CURRENT_TAB === 'kapanis') content.innerHTML = renderClosingsTab();
+    else if (CURRENT_TAB === 'yetkiler') content.innerHTML = renderYetkiler();
+  } else {
+    if (CURRENT_TAB === 'bu_hafta') content.innerHTML = renderConsultantWeek();
+    else if (CURRENT_TAB === 'siralama') content.innerHTML = renderConsultantRanking();
+  }
+}
+
+function renderConsultantWeek() {
+  const weekStart = getWeekStart();
+  const weekEnd = getWeekEnd(weekStart);
+  const my = computeWeekScore(CURRENT_USER.id, weekStart, weekEnd);
+  const myAllClosings = DATA.closings.filter(c => c.consultantId === CURRENT_USER.id);
+  const myTotalPay = myAllClosings.reduce((s, c) => s + c.amount, 0);
+  const band = getScoreBand(my.performanceScore);
+  const partners = getPartners(CURRENT_USER.id);
+
+  let html = `
+    <div class="score-card ${band.cls}">
+      <div class="score-top">
+        <div>
+          <div class="score-label ${band.cls}"><span class="score-dot ${band.cls}"></span>${band.name}</div>
+          <div class="score-big">${my.performanceScore}<span class="score-big-light">/100</span></div>
+        </div>
+        <div style="text-align:right">
+          <div class="score-mini-label">Puan</div>
+          <div class="score-points">${my.points}<span class="score-points-light">/${FULL_WEEK_POINTS}</span></div>
+          ${my.closingPoints > 0 ? '<div class="closing-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/></svg>+' + my.closingPoints + ' kapanış</div>' : ''}
+        </div>
+      </div>
+      <div class="progress-bar"><div class="progress-bar-fill pb-${band.cls}" style="width:${my.performanceScore}%"></div></div>
+      <div class="score-footer"><span>🔄 Pazartesi 00:00'da dondurulacak</span><span class="freeze-countdown" style="font-weight:500">${timeUntilFreeze(true)}</span></div>
+    </div>
+    ${(() => {
+      // Hedef tamamlama hesabı
+      const targetTotal = TRACKED.reduce((s, a) => s + a.weeklyTarget, 0);
+      const doneTotal = TRACKED.reduce((s, a) => s + Math.min(my.counts[a.id], a.weeklyTarget), 0);
+      const remainingTotal = targetTotal - doneTotal;
+      const pctDone = Math.round((doneTotal / targetTotal) * 100);
+      const pctRemaining = 100 - pctDone;
+      // Eksik aktiviteleri kısa liste yap
+      const missing = TRACKED.map(a => {
+        const left = Math.max(0, a.weeklyTarget - my.counts[a.id]);
+        return left > 0 ? left + ' ' + a.short : null;
+      }).filter(Boolean).join(', ');
+      const allDone = remainingTotal === 0;
+      return `
+        <div class="goal-card ${allDone ? 'goal-done' : ''}">
+          <div class="goal-top">
+            <div>
+              <div class="goal-label">${allDone ? '🎉 Haftalık Hedefler Tamamlandı' : '🎯 Haftalık Hedefe Kalan'}</div>
+              <div class="goal-big">${allDone ? '%100' : '%' + pctRemaining}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="goal-mini-label">Tamamlanan</div>
+              <div class="goal-done-num">${doneTotal}<span class="goal-done-light">/${targetTotal}</span></div>
+            </div>
+          </div>
+          <div class="goal-bar"><div class="goal-bar-fill" style="width:${pctDone}%"></div></div>
+          ${!allDone ? '<div class="goal-missing">Eksik: ' + missing + '</div>' : '<div class="goal-missing" style="color:#047857;font-weight:600">Tüm haftalık hedeflerine ulaştın! 👏</div>'}
+        </div>
+      `;
+    })()}
+    <div class="funnel-card">
+      <div class="card-header">
+        <div class="card-title-tiny">Bu Haftaki Huni</div>
+        <div class="card-hint">+ ile ekle, − ile geri al</div>
+      </div>
+  `;
+  TRACKED.forEach(a => {
+    const count = my.counts[a.id];
+    const pct = Math.min(100, (count / a.weeklyTarget) * 100);
+    const done = count >= a.weeklyTarget;
+    html += `
+      <div class="funnel-row">
+        <button class="btn-minus" onclick="undoActivity('${a.id}')" ${count === 0 ? 'disabled' : ''}>−</button>
+        <div class="funnel-content">
+          <div class="funnel-top">
+            <div class="funnel-icon" style="background:${a.color}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">${a.iconSvg}</svg></div>
+            <div class="funnel-name">${a.label}</div>
+            <div class="points-badge" style="background:${a.lightBg};color:${a.textColor}">${a.points}p</div>
+            ${done ? '<div style="margin-left:auto;display:flex;align-items:center;gap:5px;flex-shrink:0"><span class="progress-mini" style="margin-left:0;color:#047857;font-weight:700">' + count + '/' + a.weeklyTarget + '</span><svg class="check-icon" style="margin-left:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>' : '<div class="progress-mini">' + count + '/' + a.weeklyTarget + '</div>'}
+          </div>
+          <div class="funnel-bar"><div class="funnel-bar-fill" style="width:${pct}%;background:${done ? '#10b981' : a.color}"></div></div>
+        </div>
+        <button class="btn-plus" onclick="addActivity('${a.id}')">+</button>
+      </div>
+    `;
+  });
+  html += `
+    <div class="closing-row">
+      <div class="funnel-row">
+        <div style="width:40px;flex-shrink:0"></div>
+        <div class="funnel-content">
+          <div class="funnel-top">
+            <div class="funnel-icon" style="background:#dc2626"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>
+            <div class="funnel-name">Kapanış</div>
+            <div class="points-badge" style="background:#fef2f2;color:#b91c1c">40p</div>
+            <div class="auto-tag">otomatik</div>
+            <div class="progress-mini">${my.counts.kapanis || 0}</div>
+          </div>
+          <div class="closing-info">${my.weekClosings.length > 0 ? 'Bu hafta: ' + fmtTL(my.weekClosings.reduce((s,c)=>s+c.amount,0)) + ' (net kazanç)' : 'Bu hafta kapanış yok'}</div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="pocket-card">
+      <div class="pocket-top">
+        <div>
+          <div class="pocket-label">Toplam Net Kazancım</div>
+          <div class="pocket-meta">${myAllClosings.length} kapanış · ${CURRENT_USER.startDate ? tenureText(CURRENT_USER.startDate) + " Doğuş'ta" : "Doğuş'ta"}</div>
+          ${partners.length > 0 ? '<div class="pocket-partner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Ortak: ' + partners.map(p => getConsultantName(p).split(' ')[0]).join(', ') + '</div>' : ''}
+        </div>
+        <div style="text-align:right">
+          <div class="pocket-amount">${fmtTLshort(myTotalPay)}</div>
+          <div class="pocket-formula">net ele geçen${partners.length > 0 ? ' (ortak ÷ ' + (partners.length + 1) + ')' : ''}</div>
+        </div>
+      </div>
+    </div>
+    <div class="info-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L13.09 8.26L20 9.27L15 14.14L16.18 21.02L12 17.77L7.82 21.02L9 14.14L4 9.27L10.91 8.26L12 2Z"/></svg>
+      <div>
+        <div class="info-title">İlk hafta — herkes eşit zeminde</div>
+        <div class="info-text">Sıralama Pazartesi 00:00'a kadar isme göre alfabetik. Hafta bitince puana göre sıralanacak.</div>
+      </div>
+    </div>
+  `;
+  return html;
+}
+
+function karneInner(c) {
+  const done = TRACKED.filter(a => (c.counts[a.id] || 0) > 0);
+  let acts;
+  if (done.length) {
+    acts = '<div class="kb-alist">' + done.map(a => {
+      const cnt = c.counts[a.id];
+      const row = '<div class="kb-arow" style="background:' + a.lightBg + '">' +
+        '<div class="kb-aic" style="background:' + a.color + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' + a.iconSvg + '</svg></div>' +
+        '<div class="kb-anm">' + a.label + '</div>' +
+        '<div class="kb-act" style="color:' + a.textColor + '">×' + cnt + '</div>' +
+        '<div class="kb-apt" style="color:' + a.textColor + '">' + (cnt * a.points) + 'p</div>' +
+        '</div>';
+      const ns = (c.notes && c.notes[a.id]) ? c.notes[a.id] : [];
+      const notesHtml = ns.length ? '<div class="kb-anotes">' + ns.map(n => '<div class="kb-anote">' + escapeHtml(n) + '</div>').join('') + '</div>' : '';
+      return '<div class="kb-agroup">' + row + notesHtml + '</div>';
+    }).join('') + '</div>';
+  } else {
+    acts = '<div class="kb-empty">Bu dönem aktivite girişi yok</div>';
+  }
+  let closings = '';
+  const kl = c.weekClosings || [];
+  if (kl.length) {
+    closings = '<div class="kb-close"><div class="kb-sec-title">Kapanışlar · ' + kl.length + '</div>' + kl.map(k => {
+      const pts = 40;
+      const adr = String(k.adres || '').split(',')[0].trim().slice(0, 30);
+      const d = k.date.slice(8, 10) + '.' + k.date.slice(5, 7);
+      return '<div class="kb-crow"><div class="kb-cic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/><path d="M4 22h16"/></svg></div><div class="kb-cmain"><div class="kb-ctitle">' + k.tur + (adr ? ' · ' + adr : '') + '</div><div class="kb-csub">' + d + (k.isShared ? ' · ortak (' + k.shareCount + ' kişi)' : '') + '</div></div><div class="kb-cpts">+' + pts + 'p</div></div>';
+    }).join('') + '</div>';
+  }
+  const flame = '<svg viewBox="0 0 24 24" width="13" height="13"><path fill="#f97316" d="M12 2c.7 2.4 2.3 3.3 3.5 4.8C16.7 8.2 17 9.6 17 11a5 5 0 1 1-10 0c0-1.6.6-2.8 1.5-3.8.2 1 .8 1.6 1.5 1.6.9 0 1.2-.9 1-2.2C11.7 5.2 11.5 3.6 12 2z"/></svg>';
+  const streak = c.activeDays ? '<div class="kb-streak">' + flame + (c.activeDays) + ' aktif gün</div>' : '';
+  const istikrarChip = c.bonusCounts ? '<div class="kb-chip green"><span>İstikrar</span><b>+' + (c.bonus || 0) + 'p</b></div>' : '';
+  return '<div class="kb-top2"><div class="kb-total"><b>' + c.totalPoints + '</b><span>TOPLAM PUAN</span></div>' + streak + '</div>' +
+    '<div class="kb-chips"><div class="kb-chip"><span>Aktivite</span><b>' + c.points + 'p</b></div>' +
+    istikrarChip +
+    '<div class="kb-chip red"><span>Kapanış</span><b>' + c.closingPoints + 'p</b></div></div>' +
+    '<div class="kb-sec-title" style="margin-top:14px">Aktivite Dökümü</div>' + acts + closings;
+}
+
+function karneDetail(c, unvan) {
+  return '<div id="detail-' + c.id + '" class="kb-detail" style="display:none">' + karneInner(c) + '</div>';
+}
+
+function renderConsultantRanking() {
+  const thisWeekStart = getWeekStart();
+  const weekStart = getPrevWeekStart(thisWeekStart);
+  const weekEnd = thisWeekStart;
+  const ranks = DATA.consultants.filter(c => !c.isAdmin && !c.hiddenFromRanking).map(c => {
+    const r = computeWeekScore(c.id, weekStart, weekEnd);
+    return Object.assign({}, c, r);
+  });
+  const hasData = ranks.some(r => r.totalPoints > 0);
+  if (hasData) ranks.sort((a, b) => b.totalPoints - a.totalPoints || a.name.localeCompare(b.name, 'tr'));
+  else ranks.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+  const rangeLabel = formatWeekRange(weekStart);
+
+  let html = `<div class="podium-wrap"><div class="podium-head"><div class="podium-title">🏆 Geçen Haftanın Şampiyonları</div><div class="podium-week">${rangeLabel}</div></div>`;
+
+  if (!hasData) {
+    html += `<div class="podium-empty">Geçen hafta için kayıt bulunmuyor.</div></div>`;
+    return html;
+  }
+
+  const top = ranks.slice(0, 3);
+  const rest = ranks.slice(3);
+  const medals = ['🥇', '🥈', '🥉'];
+  const rings = ['ring-gold', 'ring-silver', 'ring-bronze'];
+
+  const detailBlock = (c) => karneDetail(c);
+
+  const c1 = top[0];
+  html += `<div class="champ-card podium-tap" onclick="toggleDetail('${c1.id}')"><div class="champ-crown">👑</div><div class="champ-photo ring-gold" style="${avatarStyle(c1)}">${avatarContent(c1)}<div class="champ-medal">🥇</div></div><div class="champ-name">${c1.name}${c1.id === CURRENT_USER.id ? ' <span class="me-tag">SEN</span>' : ''}</div><div class="champ-pts">${c1.totalPoints}<span> puan</span></div><div class="champ-sub">${c1.counts.kapanis > 0 ? c1.counts.kapanis + ' kapanış · ' : ''}Haftanın Birincisi · detay için dokun</div></div>`;
+  html += detailBlock(c1);
+
+  if (top.length > 1) {
+    html += `<div class="podium-2nd3rd">`;
+    for (let i = 1; i < top.length; i++) {
+      const c = top[i];
+      html += `<div class="runner-card podium-tap" onclick="toggleDetail('${c.id}')"><div class="runner-photo ${rings[i]}" style="${avatarStyle(c)}">${avatarContent(c)}<div class="runner-medal">${medals[i]}</div></div><div class="runner-name">${c.name}${c.id === CURRENT_USER.id ? ' <span class="me-tag">SEN</span>' : ''}</div><div class="runner-pts">${c.totalPoints} p</div></div>`;
+    }
+    html += `</div>`;
+    for (let i = 1; i < top.length; i++) html += detailBlock(top[i]);
+  }
+
+  if (rest.length) {
+    html += `<div class="podium-list">`;
+    rest.forEach((c, idx) => {
+      const isMe = c.id === CURRENT_USER.id;
+      html += `<div class="plist-row podium-tap ${isMe ? 'me' : ''}" onclick="toggleDetail('${c.id}')"><div class="plist-num">${idx + 4}</div><div class="plist-av" style="${avatarStyle(c)}">${avatarContent(c)}</div><div class="plist-name">${c.name}${isMe ? '<span class="me-tag">SEN</span>' : ''}</div><div class="plist-pts">${c.totalPoints}<span> p</span></div></div>`;
+      html += detailBlock(c);
+    });
+    html += `</div>`;
+  }
+
+  html += `<div class="rank-footer-note">Geçen haftanın kesinleşmiş sonuçları · isme dokun, dökümü gör</div></div>`;
+  return html;
+}
+
+function renderAllTimeRanking() {
+  const start = '2026-01-01T00:00:00';
+  const end = new Date(); end.setHours(23, 59, 59, 999);
+  const ranks = DATA.consultants.filter(c => !c.isAdmin && !c.hiddenFromRanking).map(c => {
+    const r = computeWeekScore(c.id, start, end.toISOString());
+    const cl = DATA.closings.filter(x => x.consultantId === c.id && x.date >= '2026-01-01').length;
+    return Object.assign({}, c, r, { cl2026: cl });
+  });
+  const hasData = ranks.some(r => r.totalPoints > 0);
+  ranks.sort((a, b) => b.totalPoints - a.totalPoints || a.name.localeCompare(b.name, 'tr'));
+  const maxPoints = Math.max(1, ...ranks.map(r => r.totalPoints || 0));
+  const now = new Date();
+  const rangeLabel = '1 Oca 2026 – ' + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+
+  let html = `<div class="alltime-head"><div class="podium-title">📊 2026 Puan Klasmanı</div><div class="podium-week">${rangeLabel} · toplam üretim puanı</div></div><div class="rank-card">`;
+  ranks.forEach((c, idx) => {
+    const pts = c.totalPoints || 0;
+    const barPct = (pts / maxPoints) * 100;
+    let badgeCls = 'rank-other';
+    if (hasData && idx === 0) badgeCls = 'rank-1';
+    else if (hasData && idx === 1) badgeCls = 'rank-2';
+    else if (hasData && idx === 2) badgeCls = 'rank-3';
+    const badge = (hasData && idx === 0) ? '🥇' : (hasData && idx === 1) ? '🥈' : (hasData && idx === 2) ? '🥉' : (idx + 1);
+    const barCls = (hasData && idx === 0) ? 'bar-gold' : 'bar-default';
+    const mini = TRACKED.map(a => {
+      const cnt = c.counts[a.id] || 0;
+      return '<div class="detail-mini"><div class="detail-mini-icon" style="background:' + a.color + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">' + a.iconSvg + '</svg></div><div class="detail-mini-count">' + cnt + '</div><div class="detail-mini-target">' + a.short + '</div></div>';
+    }).join('');
+    const totalAct = TRACKED.reduce((s, a) => s + (c.counts[a.id] || 0), 0);
+    html += `<div class="rank-row podium-tap" onclick="toggleDetail('${c.id}')"><div class="rank-badge ${badgeCls}">${badge}</div><div class="alltime-av" style="${avatarStyle(c)}">${avatarContent(c)}</div><div class="rank-info"><div class="rank-row-top"><div class="rank-name">${c.name}</div><div class="rank-points">${pts}<span style="font-size:11px;color:#a8a29e;font-weight:600"> p</span></div></div><div class="rank-bar-bg">${pts > 0 ? '<div class="rank-bar ' + barCls + '" style="width:' + barPct + '%"></div>' : ''}</div><div class="alltime-sub">${c.cl2026} kapanış · ${c.points} aktivite + ${c.closingPoints} kapanış puanı</div></div></div>`;
+    html += `<div id="detail-${c.id}" class="podium-detail" style="display:none"><div class="pd-head">${c.name} · 2026 toplamı: ${totalAct} aktivite + ${c.cl2026} kapanış <span>(${pts}p)</span></div><div class="detail-mini-grid">${mini}</div></div>`;
+  });
+  html += `</div><div class="rank-footer-note">${hasData ? "İsme dokun · 2026 toplam aktivite dökümü açılır" : '2026 için henüz puan kaydı yok.'}</div>`;
+  return html;
+}
+
+function renderMonthPodium() {
+  const now = new Date();
+  const mStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const mEnd = new Date(now.getFullYear(), now.getMonth(), 1);
+  const MONTHS_FULL = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+  const monthName = MONTHS_FULL[mStart.getMonth()] + ' ' + mStart.getFullYear();
+  const ranks = DATA.consultants.filter(c => !c.isAdmin && !c.hiddenFromRanking).map(c => {
+    const r = computeWeekScore(c.id, mStart.toISOString(), mEnd.toISOString());
+    return Object.assign({}, c, r);
+  });
+  const hasData = ranks.some(r => r.totalPoints > 0);
+  if (hasData) ranks.sort((a, b) => b.totalPoints - a.totalPoints || a.name.localeCompare(b.name, 'tr'));
+  else ranks.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+
+  let html = `<div class="podium-wrap"><div class="podium-head"><div class="podium-title">🏆 ${monthName} Şampiyonları</div><div class="podium-week">Kapanan ay değerlendirmesi · toplam puan</div></div>`;
+  if (!hasData) {
+    html += `<div class="podium-empty">${monthName} için kayıt bulunmuyor.</div></div>`;
+    return html;
+  }
+
+  const top = ranks.slice(0, 3);
+  const rest = ranks.slice(3);
+  const medals = ['🥇', '🥈', '🥉'];
+  const rings = ['ring-gold', 'ring-silver', 'ring-bronze'];
+
+  const detailBlock = (c) => karneDetail(c);
+
+  const c1 = top[0];
+  html += `<div class="champ-card podium-tap" onclick="toggleDetail('${c1.id}')"><div class="champ-crown">👑</div><div class="champ-photo ring-gold" style="${avatarStyle(c1)}">${avatarContent(c1)}<div class="champ-medal">🥇</div></div><div class="champ-name">${c1.name}</div><div class="champ-pts">${c1.totalPoints}<span> puan</span></div><div class="champ-sub">${c1.counts.kapanis > 0 ? c1.counts.kapanis + ' kapanış · ' : ''}Ayın Birincisi · detay için dokun</div></div>`;
+  html += detailBlock(c1);
+
+  if (top.length > 1) {
+    html += `<div class="podium-2nd3rd">`;
+    for (let i = 1; i < top.length; i++) {
+      const c = top[i];
+      html += `<div class="runner-card podium-tap" onclick="toggleDetail('${c.id}')"><div class="runner-photo ${rings[i]}" style="${avatarStyle(c)}">${avatarContent(c)}<div class="runner-medal">${medals[i]}</div></div><div class="runner-name">${c.name}</div><div class="runner-pts">${c.totalPoints} p</div></div>`;
+    }
+    html += `</div>`;
+    for (let i = 1; i < top.length; i++) html += detailBlock(top[i]);
+  }
+
+  if (rest.length) {
+    html += `<div class="podium-list">`;
+    rest.forEach((c, idx) => {
+      html += `<div class="plist-row podium-tap" onclick="toggleDetail('${c.id}')"><div class="plist-num">${idx + 4}</div><div class="plist-av" style="${avatarStyle(c)}">${avatarContent(c)}</div><div class="plist-name">${c.name}</div><div class="plist-pts">${c.totalPoints}<span> p</span></div></div>`;
+      html += detailBlock(c);
+    });
+    html += `</div>`;
+  }
+
+  html += `<div class="rank-footer-note">${monthName} kesinleşmiş sonuçları · isme dokun, dökümü gör</div></div>`;
+  return html;
+}
+
+function renderAdminLive() {
+  const weekStart = getWeekStart();
+  const weekEnd = getWeekEnd(weekStart);
+  const stats = DATA.consultants.filter(c => !c.isAdmin && !c.hiddenFromRanking).map(c => {
+    const r = computeWeekScore(c.id, weekStart, weekEnd);
+    const all = DATA.closings.filter(cl => cl.consultantId === c.id);
+    const allBrut = all.reduce((s, x) => s + (x.toplamHB || 0), 0);
+    const allPay = all.reduce((s, x) => s + x.amount, 0);
+    return Object.assign({}, c, r, { allClosings: all, allBrut: allBrut, allPay: allPay });
+  });
+  const allZero = stats.every(s => s.totalPoints === 0);
+  if (allZero) stats.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+  else stats.sort((a, b) => b.totalPoints - a.totalPoints || a.name.localeCompare(b.name, 'tr'));
+  const totalPoints = stats.reduce((s, c) => s + c.totalPoints, 0);
+  const totalClosings = Math.round(stats.reduce((s, c) => s + c.weekClosings.reduce((a, x) => a + 1 / (x.shareCount || 1), 0), 0));
+  const activeCount = stats.filter(c => c.totalPoints > 0).length;
+  let html = `<div class="stats-grid"><div class="stat-card"><div class="stat-label">Ekip puanı</div><div class="stat-value">${totalPoints}</div><div class="stat-unit">bu hafta</div></div><div class="stat-card"><div class="stat-label">Aktif</div><div class="stat-value">${activeCount}/${stats.length}</div><div class="stat-unit">danışman</div></div><div class="stat-card"><div class="stat-label">Kapanış</div><div class="stat-value">${totalClosings}</div><div class="stat-unit">bu hafta</div></div></div><div class="info-bar-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg><div><div style="font-weight:600">Canlı tablo · ${formatWeekRange(weekStart)}</div><div>Pazartesi 00:00'da dondurulacak (<span class="freeze-countdown">${timeUntilFreeze(true)}</span>).</div></div></div><div class="rank-card"><div class="rank-header"><div class="rank-title">Ekip Performansı (Canlı)</div>${allZero ? '<div style="font-size:10px;background:#f5f5f4;padding:2px 8px;border-radius:4px;color:#78716c;font-weight:500">alfabetik</div>' : ''}</div>`;
+  stats.forEach((c, idx) => {
+    const partners = getPartners(c.id);
+    const band = getScoreBand(c.performanceScore);
+    let badgeCls = 'rank-other';
+    if (allZero) badgeCls = 'rank-none';
+    else if (idx === 0) badgeCls = 'rank-1';
+    else if (idx === 1) badgeCls = 'rank-2';
+    else if (idx === 2) badgeCls = 'rank-3';
+    const statsLine = TRACKED.map(a => {
+      const cnt = c.counts[a.id];
+      if (cnt === 0) return null;
+      const done = cnt >= a.weeklyTarget;
+      return '<span class="' + (done ? 'done' : '') + '">' + a.short + ':' + cnt + '</span>';
+    }).filter(Boolean).join('');
+    const closingsLine = c.weekClosings.length > 0 ? '<span class="closing">Kapanış:' + c.weekClosings.length + '</span>' : '';
+    const emptyLine = c.totalPoints === 0 && c.allClosings.length === 0 ? '<span class="text-stone">aktivite yok</span>' : (c.totalPoints === 0 && c.allClosings.length > 0 ? '<span class="text-stone">' + c.allClosings.length + ' geçmiş kapanış</span>' : '');
+    html += `<button class="admin-row" onclick="toggleDetail('${c.id}')"><div class="admin-rank-num ${badgeCls}">${allZero ? '·' : (idx + 1)}</div><div class="avatar" style="${avatarStyle(c)}">${avatarContent(c)}</div><div class="rank-info"><div class="rank-name">${c.name}<span class="score-dot ${band.cls}" style="display:inline-block;margin-left:6px"></span>${c.activeToday ? '<span class="today-badge on"><svg viewBox="0 0 24 24"><path fill="#f97316" d="M12 2c.7 2.4 2.3 3.3 3.5 4.8C16.7 8.2 17 9.6 17 11a5 5 0 1 1-10 0c0-1.6.6-2.8 1.5-3.8.2 1 .8 1.6 1.5 1.6.9 0 1.2-.9 1-2.2C11.7 5.2 11.5 3.6 12 2z"/></svg>bugün</span>' : '<span class="today-badge off">bugün yok</span>'}${partners.length > 0 ? '<span class="partner-badge">& ' + partners.map(p => getConsultantName(p).split(' ')[0]).join(', ') + '</span>' : ''}</div>${c.startDate ? '<div class="admin-tenure">' + daysSince(c.startDate) + ' gündür · net ' + fmtTLshort(c.allPay) + '</div>' : ''}<div class="admin-row-stats">${statsLine}${closingsLine}${emptyLine}</div></div><div style="text-align:right"><div class="rank-points">${c.totalPoints}</div><div class="rank-points-light">puan</div></div></button><div id="detail-${c.id}" class="kb-detail" style="display:none"><div class="kb-band ${band.cls}">${band.name} · ${c.performanceScore}/100</div>${karneInner(c)}<div class="closing-summary" style="margin-top:12px"><div class="closing-summary-top"><div class="closing-summary-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/></svg></div><div class="closing-summary-title">Doğuş Özeti</div><div class="closing-summary-count">${c.allClosings.length} işlem</div></div><div class="closing-3col"><div class="c-brut"><div class="label">Brüt HB</div><div class="value">${fmtTLshort(c.allBrut)}</div></div><div class="c-pay"><div class="label">Danışmana</div><div class="value">${fmtTLshort(c.allPay)}</div></div><div class="c-off"><div class="label">Ofise</div><div class="value">${fmtTLshort(c.allBrut - c.allPay)}</div></div></div></div></div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function toggleDetail(consultantId) {
+  const el = document.getElementById('detail-' + consultantId);
+  if (!el) return;
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function renderAdminPrev() {
+  const weekStart = getWeekStart();
+  const prevStart = getPrevWeekStart(weekStart);
+  const prevEnd = getWeekEnd(prevStart);
+  const stats = DATA.consultants.filter(c => !c.isAdmin && !c.hiddenFromRanking).map(c => {
+    const r = computeWeekScore(c.id, prevStart, prevEnd);
+    return Object.assign({}, c, r);
+  });
+  const hasData = stats.some(s => s.totalPoints > 0);
+  if (hasData) stats.sort((a, b) => b.totalPoints - a.totalPoints || a.name.localeCompare(b.name, 'tr'));
+  else stats.sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+  let html = '<div style="margin-bottom:12px;font-size:11px;color:#78716c">Donmuş hafta sonu sıralaması · ' + formatWeekRange(prevStart) + '</div>';
+  if (!hasData) return html + '<div class="rank-card"><div style="padding:32px;text-align:center;font-size:14px;color:#78716c">Henüz tamamlanmış bir hafta yok.</div></div>';
+  html += '<div class="rank-card">';
+  stats.forEach((c, idx) => {
+    let badgeCls = 'rank-other';
+    if (idx === 0) badgeCls = 'rank-1';
+    else if (idx === 1) badgeCls = 'rank-2';
+    else if (idx === 2) badgeCls = 'rank-3';
+    html += '<div class="rank-row"><div class="rank-badge ' + badgeCls + '">' + (idx + 1) + '</div><div class="rank-info"><div class="rank-row-top"><div class="rank-name">' + c.name + '</div><div class="rank-points">' + c.totalPoints + '<span class="rank-points-light"> p</span></div></div></div></div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function escapeHtml(x){ return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+var YETKI_LOADED = false;
+function loadYetkiler() {
+  apiGet('yetkiler')
+    .then(function(res){ YETKI_LOADED = true; if (res && res.yetkiler) DATA.yetkiler = res.yetkiler; if (CURRENT_TAB === 'yetkiler') renderContent(); })
+    .catch(function(){ YETKI_LOADED = true; if (CURRENT_TAB === 'yetkiler') renderContent(); });
+}
+function renderYetkiler() {
+  if (!YETKI_LOADED) { loadYetkiler(); return '<div style="padding:44px 20px;text-align:center;color:#a8a29e;font-size:14px">Yükleniyor…</div>'; }
+  var list = (DATA.yetkiler || []).slice().sort(function(a,b){ return String(b.timestamp).localeCompare(String(a.timestamp)); });
+  if (!list.length) return '<div style="padding:44px 20px;text-align:center;color:#a8a29e;font-size:14px">Henüz alınan yetki kaydı yok.</div>';
+  var lockSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+  var rows = list.map(function(y){
+    var link = y.fileUrl ? '<a class="yk-link" href="' + y.fileUrl + '" target="_blank" rel="noopener">PDF ›</a>' : '';
+    return '<div class="yk-row"><div class="yk-ic">' + lockSvg + '</div>' +
+      '<div class="yk-main"><div class="yk-adi">' + escapeHtml(y.yetkiAdi || 'Yetki') + '</div>' +
+      '<div class="yk-sub">' + escapeHtml(y.name || '') + ' · <span class="yk-date">' + escapeHtml(y.date || '') + '</span></div></div>' + link + '</div>';
+  }).join('');
+  return '<div style="padding:4px 2px 14px"><div class="kb-sec-title" style="margin:6px 2px 10px">ALINAN YETKİLER · ' + list.length + '</div>' + rows + '</div>';
+}
+
+function renderClosingsTab() {
+  const unique = [];
+  const seen = new Set();
+  DATA.closings.forEach(c => {
+    if (!seen.has(c.originalId)) {
+      seen.add(c.originalId);
+      const shares = DATA.closings.filter(x => x.originalId === c.originalId);
+      unique.push(Object.assign({}, c, { _shares: shares, _totalShared: shares.reduce((s, x) => s + x.amount, 0) }));
+    }
+  });
+  unique.sort((a, b) => b.date.localeCompare(a.date));
+  const totalBrut = unique.reduce((s, c) => s + (c.toplamHB || 0), 0);
+  const totalPay = unique.reduce((s, c) => s + c._totalShared, 0);
+  let html = `<div class="sheets-bar"><div class="sheets-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div><div style="flex:1"><div class="sheets-title">Google Sheets Bağlantısı <span class="sheets-status">Bağlı</span></div><div class="sheets-sub">Kapanış formu sheet'inden okunuyor</div><button class="sheets-sync-btn" onclick="syncClosings()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>Şimdi Senkronize Et</button></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Brüt HB</div><div class="stat-value">${fmtTLshort(totalBrut)}</div><div class="stat-unit">toplam</div></div><div class="stat-card" style="background:#ecfdf5;border-color:#a7f3d0"><div class="stat-label" style="color:#047857">Danışmanlara</div><div class="stat-value" style="color:#047857">${fmtTLshort(totalPay)}</div><div class="stat-unit" style="color:#059669">net</div></div><div class="stat-card" style="background:#eff6ff;border-color:#bfdbfe"><div class="stat-label" style="color:#1d4ed8">Ofise</div><div class="stat-value" style="color:#1d4ed8">${fmtTLshort(totalBrut - totalPay)}</div><div class="stat-unit" style="color:#2563eb">kalan</div></div></div><div class="rank-card"><div class="rank-header"><div class="rank-title">Tüm Kapanışlar</div><div class="rank-week">${unique.length} işlem</div></div>`;
+  unique.forEach(cl => {
+    const isShared = cl.isShared;
+    const partnerNames = isShared ? cl._shares.map(s => getConsultantName(s.consultantId).split(' ')[0]).filter(Boolean).join(' & ') : null;
+    html += `<div class="closing-item"><div class="closing-item-top"><div style="flex:1;min-width:0"><div class="closing-item-name">${isShared ? partnerNames + '<span class="shared-tag ortak">Ortak</span>' : getConsultantName(cl.consultantId)}<span class="shared-tag ${cl.tur === 'Satılık' ? 'satilik' : 'kiralik'}">${cl.tur}</span></div><div class="closing-item-meta">${new Date(cl.date).toLocaleDateString('tr-TR')} · ${cl.adres}</div></div></div><div class="closing-item-row"><span class="pill brut">Brüt: <strong>${fmtTL(cl.toplamHB)}</strong></span><span class="pill pay">Danışman: <strong>${fmtTL(cl._totalShared)}</strong>${isShared ? ' (' + cl._shares.length + ' kişi × ' + fmtTL(cl.amount) + ')' : ''}</span></div></div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+var NOTE_TYPE = null;
+var NOTE_META = {
+  egitim: { title: 'Eğitim', q: 'Hangi eğitimi aldınız?', ph: 'Eğitim adı' },
+  gosterim: { title: 'Gösterim', q: 'Nereyi gösterdiniz?', ph: 'Adres / portföy' }
+};
+function openNoteModal(type) {
+  NOTE_TYPE = type;
+  var m = NOTE_META[type] || { title: 'Bilgi', q: 'Detay', ph: '' };
+  document.getElementById('nm-title').textContent = m.title;
+  document.getElementById('nm-q').textContent = m.q;
+  var inp = document.getElementById('nm-text'); inp.value = ''; inp.placeholder = m.ph;
+  var st = document.getElementById('nm-status'); st.textContent = ''; st.className = 'ymodal-status';
+  var btn = document.getElementById('nm-save'); btn.disabled = false; btn.textContent = 'İlerle';
+  document.getElementById('note-modal').style.display = 'flex';
+  setTimeout(function(){ inp.focus(); }, 100);
+}
+function closeNoteModal() { document.getElementById('note-modal').style.display = 'none'; NOTE_TYPE = null; }
+function saveNoteFromModal() {
+  var note = document.getElementById('nm-text').value.trim();
+  var st = document.getElementById('nm-status');
+  if (!note) { st.className = 'ymodal-status err'; st.textContent = 'Lütfen bir cevap yazın.'; return; }
+  var type = NOTE_TYPE;
+  var entry = { id: 'tmp_' + Date.now() + '_' + Math.random(), consultantId: CURRENT_USER.id, type: type, timestamp: new Date().toISOString(), note: note };
+  DATA.activities.push(entry);
+  closeNoteModal();
+  renderContent();
+  showToast('Kaydedildi \u2713');
+  apiPost({action:'addActivityWithNote', consultantId:CURRENT_USER.id, type:type, note:note})
+    .then(function(res){ if (res && res.success) { entry.id = res.id; entry.timestamp = res.timestamp; } })
+    .catch(function(){ DATA.activities = DATA.activities.filter(function(e){ return e.id !== entry.id; }); renderContent(); showToast('\u26a0\ufe0f Kayıt yapılamadı'); });
+}
+
+function openYetkiModal() {
+  document.getElementById('ym-name').textContent = CURRENT_USER ? CURRENT_USER.name : '—';
+  document.getElementById('ym-adi').value = '';
+  document.getElementById('ym-file').value = '';
+  var st = document.getElementById('ym-status'); st.textContent = ''; st.className = 'ymodal-status';
+  var btn = document.getElementById('ym-save'); btn.disabled = false; btn.textContent = 'Kaydet';
+  document.getElementById('yetki-modal').style.display = 'flex';
+  setTimeout(function(){ document.getElementById('ym-adi').focus(); }, 100);
+}
+function closeYetkiModal() { document.getElementById('yetki-modal').style.display = 'none'; }
+function saveYetkiFromModal() {
+  var adi = document.getElementById('ym-adi').value.trim();
+  var fileEl = document.getElementById('ym-file');
+  var st = document.getElementById('ym-status');
+  var file = fileEl.files && fileEl.files[0];
+  if (!adi) { st.className = 'ymodal-status err'; st.textContent = 'Yetki adı / adres girin.'; return; }
+  if (!file) { st.className = 'ymodal-status err'; st.textContent = 'PDF belgesi seçin.'; return; }
+  if (file.type !== 'application/pdf') { st.className = 'ymodal-status err'; st.textContent = 'Sadece PDF yükleyebilirsiniz.'; return; }
+  if (file.size > 15 * 1024 * 1024) { st.className = 'ymodal-status err'; st.textContent = 'Dosya 15 MB\'dan küçük olmalı.'; return; }
+  var btn = document.getElementById('ym-save'); btn.disabled = true; btn.textContent = 'Yükleniyor\u2026';
+  st.className = 'ymodal-status'; st.textContent = 'Belge yükleniyor, lütfen bekleyin\u2026';
+  var reader = new FileReader();
+  reader.onload = function() {
+    var base64 = String(reader.result).split(',')[1];
+    apiPost({action:'saveYetki', consultantId:CURRENT_USER.id, yetkiAdi:adi, fileName:file.name, base64Data:base64})
+      .then(function(res) {
+        if (res && res.success) {
+          DATA.activities.push({ id: res.id, consultantId: CURRENT_USER.id, type: 'yetki', timestamp: res.timestamp });
+          if (res.yetki) { DATA.yetkiler = DATA.yetkiler || []; DATA.yetkiler.unshift(res.yetki); }
+          closeYetkiModal(); renderContent(); showToast('Yetki kaydedildi \u2713 (+15 puan)');
+        } else {
+          st.className = 'ymodal-status err'; st.textContent = '\u26a0\ufe0f ' + ((res && res.error) || 'Kayıt yapılamadı');
+          btn.disabled = false; btn.textContent = 'Kaydet';
+        }
+      })
+      .catch(function(err) {
+        st.className = 'ymodal-status err'; st.textContent = '\u26a0\ufe0f Bağlantı hatası';
+        btn.disabled = false; btn.textContent = 'Kaydet';
+      });
+  };
+  reader.onerror = function() { st.className = 'ymodal-status err'; st.textContent = 'Dosya okunamadı.'; btn.disabled = false; btn.textContent = 'Kaydet'; };
+  reader.readAsDataURL(file);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function addActivity(type) {
+  if (type === 'yetki') { openYetkiModal(); return; }
+  if (type === 'egitim' || type === 'gosterim') { openNoteModal(type); return; }
+  const entry = { id: 'tmp_' + Date.now() + '_' + Math.random(), consultantId: CURRENT_USER.id, type: type, timestamp: new Date().toISOString() };
+  DATA.activities.push(entry);
+  renderContent();
+  showToast('Kaydedildi ✓');
+  apiPost({action:'addActivity', consultantId:CURRENT_USER.id, type:type})
+    .then(function(res) { if (res && res.success) { entry.id = res.id; entry.timestamp = res.timestamp; } })
+    .catch(function(err) { DATA.activities = DATA.activities.filter(function(e) { return e.id !== entry.id; }); renderContent(); showToast('⚠️ Kayıt yapılamadı'); });
+}
+
+function undoActivity(type) {
+  const weekStart = getWeekStart();
+  for (let i = DATA.activities.length - 1; i >= 0; i--) {
+    const e = DATA.activities[i];
+    if (e.consultantId === CURRENT_USER.id && e.type === type && e.timestamp >= weekStart) {
+      DATA.activities.splice(i, 1);
+      renderContent();
+      showToast('Geri alındı');
+      apiPost({action:'removeLastActivity', consultantId:CURRENT_USER.id, type:type, weekStart:weekStart});
+      return;
+    }
+  }
+}
+
+function syncClosings() {
+  showToast('Senkronize ediliyor…');
+  apiGet('init')
+    .then(function(res) { DATA.closings = res.closings; DATA.activities = res.activities; renderContent(); showToast('Güncellendi ✓'); })
+    .catch(function(err) { showToast('⚠️ Hata'); });
+}
+
+// === CANLI OTOMATİK GÜNCELLEME ===
+let POLL_TIMER = null;
+let CLOCK_TIMER = null;
+let LAST_SIG = '';
+function dataSignature() { return DATA.activities.length + '|' + DATA.closings.length; }
+function tickCountdown() {
+  const nodes = document.querySelectorAll('.freeze-countdown');
+  if (!nodes.length) return;
+  const txt = timeUntilFreeze(true);
+  nodes.forEach(n => { n.textContent = txt; });
+}
+function startPolling() {
+  stopPolling();
+  LAST_SIG = dataSignature();
+  POLL_TIMER = setInterval(refreshLiveData, 25000);
+  tickCountdown();
+  CLOCK_TIMER = setInterval(tickCountdown, 1000);
+}
+function stopPolling() {
+  if (POLL_TIMER) { clearInterval(POLL_TIMER); POLL_TIMER = null; }
+  if (CLOCK_TIMER) { clearInterval(CLOCK_TIMER); CLOCK_TIMER = null; }
+}
+function refreshLiveData() {
+  if (!CURRENT_USER || document.hidden) return;
+  apiGet('live')
+    .then(function(res) {
+      if (!res) return;
+      var pending = DATA.activities.filter(function(a) { return String(a.id).indexOf('tmp_') === 0; });
+      DATA.activities = res.activities.concat(pending);
+      DATA.closings = res.closings;
+      var sig = dataSignature();
+      if (sig !== LAST_SIG) { LAST_SIG = sig; renderContent(); }
+    })
+    .catch(function() {});
+}
+
+window.onload = function() {
+  try {
+    var initData = <?!= initData ?>;
+    DATA = initData;
+    document.getElementById('loading').classList.add('hidden');
+    var savedId = null;
+    try { savedId = localStorage.getItem('current_user_id'); } catch(e) {}
+    if (savedId) {
+      var user = DATA.consultants.find(function(c) { return c.id === savedId; });
+      if (user) { CURRENT_USER = user; showDashboard(); return; }
+    }
+    renderLogin();
+  } catch(e) {
+    document.getElementById('loading').innerHTML = '<div style="color:#dc2626;padding:20px;text-align:center">Hata: ' + e.message + ' <button onclick="window.location.reload()" style="color:#dc2626;text-decoration:underline;border:none;background:none;cursor:pointer;font-size:14px">Tekrar dene</button></div>';
+  }
+};
+</script>
+</body>
+</html>
