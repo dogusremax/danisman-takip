@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Test</title>
+<style>
+body { font-family: -apple-system, sans-serif; padding: 20px; background: #f5f5f4; }
+.box { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #e5e5e4; }
+.ok { border-color: #22c55e; background: #f0fdf4; }
+.err { border-color: #ef4444; background: #fef2f2; }
+.wait { border-color: #f59e0b; background: #fffbeb; }
+h2 { margin: 0 0 8px; font-size: 16px; }
+pre { font-size: 11px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+button { background: #dc2626; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer; width: 100%; margin-top: 12px; }
+</style>
+</head>
+<body>
+<h1 style="font-size:20px">🔧 Danışman Takip API Test</h1>
+
+<div id="t1" class="box wait"><h2>1. API URL</h2><pre id="r1">Kontrol ediliyor...</pre></div>
+<div id="t2" class="box wait"><h2>2. Fetch Denemesi</h2><pre id="r2">Bekliyor...</pre></div>
+<div id="t3" class="box wait"><h2>3. Veri Kontrolü</h2><pre id="r3">Bekliyor...</pre></div>
+
+<button onclick="runTest()">Tekrar Test Et</button>
+
+<script>
+var API = "https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec";
+
+function runTest() {
+  var t1 = document.getElementById('t1');
+  var r1 = document.getElementById('r1');
+  var t2 = document.getElementById('t2');
+  var r2 = document.getElementById('r2');
+  var t3 = document.getElementById('t3');
+  var r3 = document.getElementById('r3');
+
+  // Reset
+  t1.className = 'box wait'; r1.textContent = 'Kontrol ediliyor...';
+  t2.className = 'box wait'; r2.textContent = 'Bekliyor...';
+  t3.className = 'box wait'; r3.textContent = 'Bekliyor...';
+
+  // Test 1: URL
+  var url = API + '?action=init';
+  r1.textContent = url;
+  t1.className = 'box ok';
+
+  // Test 2: Fetch
+  var startTime = Date.now();
+  r2.textContent = 'Bağlanıyor... (max 15sn)';
+
+  var timeout = setTimeout(function() {
+    t2.className = 'box err';
+    r2.textContent = 'TIMEOUT: 15 saniye içinde cevap gelmedi.\nSunucu çalışmıyor veya CORS engeli var.';
+  }, 15000);
+
+  fetch(url)
+    .then(function(response) {
+      clearTimeout(timeout);
+      var elapsed = Date.now() - startTime;
+      r2.textContent = 'Status: ' + response.status + ' ' + response.statusText + '\nSüre: ' + elapsed + 'ms\nURL: ' + response.url;
+
+      if (response.ok) {
+        t2.className = 'box ok';
+        return response.text();
+      } else {
+        t2.className = 'box err';
+        r2.textContent += '\n\nHTTP Hatası: ' + response.status;
+        return response.text();
+      }
+    })
+    .then(function(text) {
+      clearTimeout(timeout);
+      r3.textContent = 'Ham cevap (' + text.length + ' karakter):\n\n' + text.substring(0, 500);
+
+      try {
+        var data = JSON.parse(text);
+        if (data.consultants && data.consultants.length > 0) {
+          t3.className = 'box ok';
+          r3.textContent = '✅ BAŞARILI!\n\nDanışman sayısı: ' + data.consultants.length + '\nKapanış sayısı: ' + (data.closings || []).length + '\nAktivite sayısı: ' + (data.activities || []).length + '\nSunucu zamanı: ' + data.serverTime;
+        } else if (data.error) {
+          t3.className = 'box err';
+          r3.textContent = 'API Hatası: ' + data.error + '\n\nTam cevap:\n' + text.substring(0, 300);
+        } else {
+          t3.className = 'box err';
+          r3.textContent = 'Beklenmeyen cevap:\n' + text.substring(0, 500);
+        }
+      } catch(e) {
+        t3.className = 'box err';
+        r3.textContent = 'JSON parse hatası: ' + e.message + '\n\nCevap HTML olabilir (API modu aktif değil):\n' + text.substring(0, 300);
+      }
+    })
+    .catch(function(err) {
+      clearTimeout(timeout);
+      t2.className = 'box err';
+      r2.textContent = 'FETCH HATASI:\n' + err.message + '\n\nBu genelde CORS engeli veya ağ hatası demektir.';
+      t3.className = 'box err';
+      r3.textContent = 'Veri alınamadı.';
+    });
+}
+
+runTest();
+</script>
+</body>
+</html>
