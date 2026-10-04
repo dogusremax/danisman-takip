@@ -78,6 +78,26 @@
   .ctrl svg { width: 3.6cqw; height: 3.6cqw; }
   .ctrl:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
+  .snd {
+    position: absolute; top: 4.6cqh; right: 14.4cqw; z-index: 30;
+    width: 8cqw; height: 8cqw; border-radius: 50%; border: 0; cursor: pointer;
+    background: rgba(255,255,255,.12); color: #fff; display: grid; place-items: center; backdrop-filter: blur(6px);
+  }
+  .snd svg { width: 4cqw; height: 4cqw; }
+  .snd:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .start {
+    position: absolute; inset: 0; z-index: 50; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3cqh;
+    background: radial-gradient(circle at 50% 45%, rgba(220,38,38,.35), rgba(12,10,9,.92) 60%); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    transition: opacity .5s, visibility .5s; text-align: center;
+  }
+  .start.gone { opacity: 0; visibility: hidden; }
+  .start-btn { width: 30cqw; height: 30cqw; border-radius: 50%; border: 0; cursor: pointer; background: var(--red); color: #fff; display: grid; place-items: center; box-shadow: 0 0 0 3cqw rgba(220,38,38,.25), 0 4cqw 16cqw -2cqw rgba(220,38,38,.9); animation: breathe 1.8s ease-in-out infinite; }
+  .start-btn svg { width: 12cqw; height: 12cqw; margin-left: 2cqw; }
+  @keyframes breathe { 50% { transform: scale(1.06); box-shadow: 0 0 0 5cqw rgba(220,38,38,.12), 0 4cqw 18cqw -2cqw rgba(220,38,38,1); } }
+  .start-t { font-size: 6.4cqw; font-weight: 900; letter-spacing: -.02em; }
+  .start-s { font-size: 3.4cqw; color: #d6d3d1; margin-top: -2cqh; }
+  .start-mute { background: none; border: 0; color: #a8a29e; font: inherit; font-size: 3.4cqw; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+
   .tapzone { position: absolute; top: 12cqh; bottom: 0; z-index: 10; }
   .tapzone.l { left: 0; width: 30%; }
   .tapzone.r { right: 0; width: 70%; }
@@ -389,11 +409,12 @@
     <div>RE/MAX Doğuş<small>Danışman Takip</small></div>
   </div>
   <button class="ctrl" id="ctrl" aria-label="Duraklat"></button>
+  <button class="snd" id="snd" aria-label="Sesi kapat"></button>
   <div class="tapzone l" id="tzl"></div>
   <div class="tapzone r" id="tzr"></div>
 
   <!-- 1. Kanca -->
-  <section class="scene" data-dur="6200" data-glow="0">
+  <section class="scene" data-s="hook" data-dur="6200" data-glow="0">
     <div class="q-stack">
       <div class="q a" style="--d:.2s">Bu hafta kaç arama yaptın?</div>
       <div class="q dim a" style="--d:1s">Kaç sunum?</div>
@@ -407,7 +428,7 @@
   </section>
 
   <!-- 2. Tanıtım -->
-  <section class="scene" data-dur="5000" data-glow="1">
+  <section class="scene" data-s="intro" data-dur="5000" data-glow="1">
     <div class="logo-big a pop" style="--d:.1s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-7"/><path d="M16 7h4v4"/></svg></div>
     <div class="kicker a" style="--d:.6s">Tanış</div>
     <div class="h1 a" style="--d:.8s">Danışman<br>Takip</div>
@@ -420,7 +441,7 @@
   </section>
 
   <!-- 3. Giriş -->
-  <section class="scene" data-dur="5600" data-glow="2" data-fx="login">
+  <section class="scene" data-s="login" data-dur="5600" data-glow="2" data-fx="login">
     <div class="step-no a">ADIM 1</div>
     <div class="h2 a" style="--d:.15s">Adını seç,<br>şifreni gir.</div>
     <div class="phone a pop" style="--d:.4s">
@@ -443,7 +464,7 @@
   </section>
 
   <!-- 4. Kayıt -->
-  <section class="scene" data-dur="8200" data-glow="0" data-fx="funnel">
+  <section class="scene" data-s="funnel" data-dur="8200" data-glow="0" data-fx="funnel">
     <div class="step-no a">ADIM 2</div>
     <div class="h2 a" style="--d:.15s">Yaptığın her işi<br><span class="red">tek dokunuşla</span> kaydet.</div>
     <div class="phone a pop" style="--d:.4s">
@@ -460,14 +481,14 @@
   </section>
 
   <!-- 5. Puanlar -->
-  <section class="scene" data-dur="8000" data-glow="1" data-fx="points">
+  <section class="scene" data-s="points" data-dur="8000" data-glow="1" data-fx="points">
     <div class="kicker a">Puan Sistemi</div>
     <div class="h2 a" style="--d:.1s">Her adımın<br>bir <span class="red">değeri</span> var.</div>
     <div class="pgrid" id="pgrid"></div>
   </section>
 
   <!-- 6. Skor -->
-  <section class="scene" data-dur="6400" data-glow="2" data-fx="score">
+  <section class="scene" data-s="score" data-dur="6400" data-glow="2" data-fx="score">
     <div class="step-no a">ADIM 3</div>
     <div class="h2 a" style="--d:.1s">Performansını<br><span class="red">anlık</span> gör.</div>
     <div class="ring-wrap a pop" style="--d:.3s">
@@ -486,7 +507,7 @@
   </section>
 
   <!-- 7. İstikrar -->
-  <section class="scene" data-dur="6000" data-glow="0" data-fx="streak">
+  <section class="scene" data-s="streak" data-dur="6000" data-glow="0" data-fx="streak">
     <div class="kicker a">İstikrar Bonusu</div>
     <div class="h2 a" style="--d:.1s">Her gün sahada ol.<br><span style="color:#fb923c">Her gün +2 puan.</span></div>
     <div class="days" id="days"></div>
@@ -494,7 +515,7 @@
   </section>
 
   <!-- 7b. Hedef bonusu -->
-  <section class="scene" data-dur="7400" data-glow="2" data-fx="bonus">
+  <section class="scene" data-s="bonus" data-dur="7400" data-glow="2" data-fx="bonus">
     <div class="kicker a">Hedef Bonusu</div>
     <div class="h2 a" style="--d:.1s">Tutturduğun her hedef<br><span class="red">+3 puan.</span></div>
     <div class="targets" id="targets"></div>
@@ -504,7 +525,7 @@
   </section>
 
   <!-- 7c. İçerik kombosu -->
-  <section class="scene" data-dur="5800" data-glow="0" data-fx="combo">
+  <section class="scene" data-s="combo" data-dur="5800" data-glow="0" data-fx="combo">
     <div class="kicker a">İçerik Kombosu</div>
     <div class="h2 a" style="--d:.1s">Pzt + Çar + Cuma<br>içerik paylaş,<br><span style="color:#f472b6">kombo</span> senin.</div>
     <div class="combo" id="combo"></div>
@@ -512,7 +533,7 @@
   </section>
 
   <!-- 7d. Haftalık tavan -->
-  <section class="scene" data-dur="7000" data-glow="1" data-fx="max">
+  <section class="scene" data-s="max" data-dur="7000" data-glow="1" data-fx="max">
     <div class="kicker a">Haftalık Maksimum</div>
     <div class="h2 a" style="--d:.1s">Bir haftada<br>toplayabileceğin</div>
     <div class="maxnum a pop" style="--d:.3s" id="maxnum">0<span>p</span></div>
@@ -527,7 +548,7 @@
   </section>
 
   <!-- 8. Kapanış -->
-  <section class="scene" data-dur="6400" data-glow="1" data-fx="closing">
+  <section class="scene" data-s="closing" data-dur="6400" data-glow="1" data-fx="closing">
     <div class="confetti" id="confetti"></div>
     <div class="kicker a">Kapanış</div>
     <div class="h2 a" style="--d:.1s">Kapanış Formu'nu doldur,<br>puanın <span class="red">otomatik</span> gelsin.</div>
@@ -542,7 +563,7 @@
   </section>
 
   <!-- 8b. Otomatik puanlar -->
-  <section class="scene" data-dur="8000" data-glow="0" data-fx="auto">
+  <section class="scene" data-s="auto" data-dur="8000" data-glow="0" data-fx="auto">
     <div class="kicker a">Otomatik Puanlar</div>
     <div class="h2 a" style="--d:.1s">Sen işini yap,<br>puan <span class="red">kendiliğinden</span> gelsin.</div>
     <div class="acard a" style="--d:.4s">
@@ -559,7 +580,7 @@
   </section>
 
   <!-- 9. Sıralama -->
-  <section class="scene" data-dur="6800" data-glow="2">
+  <section class="scene" data-s="podium" data-dur="6800" data-glow="2">
     <div class="kicker a">Haftanın Şampiyonları</div>
     <div class="h2 a" style="--d:.1s">Her Pazartesi<br><span class="red">kürsü</span> yenilenir.</div>
     <div class="podium">
@@ -586,7 +607,7 @@
   </section>
 
   <!-- 10. Geri sayım -->
-  <section class="scene" data-dur="5600" data-glow="0" data-fx="clock">
+  <section class="scene" data-s="clock" data-dur="5600" data-glow="0" data-fx="clock">
     <div class="kicker a">Her Hafta</div>
     <div class="h2 a" style="--d:.1s">Pazartesi 00:00'da<br>skorlar <span class="red">dondurulur.</span></div>
     <div class="clock a fade" style="--d:.4s" id="clock"><small>KALAN SÜRE</small><span id="clockv">2 gün 07:42:15</span></div>
@@ -594,7 +615,7 @@
   </section>
 
   <!-- 11. Final -->
-  <section class="scene" data-dur="9000" data-glow="1" data-final="1">
+  <section class="scene" data-s="final" data-dur="9000" data-glow="1" data-final="1">
     <div class="final-line a" style="--d:.1s">Büyük kapanışlar,</div>
     <div class="final-line a" style="--d:.7s">küçük <span class="plusword">+</span>'larla</div>
     <div class="final-line a" style="--d:1.2s">başlar.</div>
@@ -606,6 +627,13 @@
   </section>
 
   <div class="hint" id="hint">Dokun: ileri · Sol kenar: geri</div>
+
+  <div class="start" id="start">
+    <button class="start-btn" id="startSound" aria-label="Sesli izle"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg></button>
+    <div class="start-t">Sesli izle 🔊</div>
+    <div class="start-s">Danışman Takip · 1,5 dakikalık tanıtım</div>
+    <button class="start-mute" id="startMute">Sessiz izle</button>
+  </div>
 </div>
 
 <script>
@@ -887,8 +915,164 @@
     }
   };
 
+
+  /* ---------- Ses (Web Audio ile sentez, dosya yok) ---------- */
+  var AC = null, master = null, sfxBus = null, musBus = null, noiseBuf = null, muted = false;
+  function audioInit() {
+    var Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return;
+    if (!AC) {
+      AC = new Ctx();
+      var comp = AC.createDynamicsCompressor();
+      comp.connect(AC.destination);
+      master = AC.createGain(); master.gain.value = muted ? 0 : 1; master.connect(comp);
+      sfxBus = AC.createGain(); sfxBus.gain.value = .55; sfxBus.connect(master);
+      musBus = AC.createGain(); musBus.gain.value = .2; musBus.connect(master);
+      noiseBuf = AC.createBuffer(1, AC.sampleRate, AC.sampleRate);
+      var d = noiseBuf.getChannelData(0);
+      for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+    }
+    if (AC.state === "suspended") AC.resume();
+  }
+  function live() { return AC && !muted && AC.state === "running"; }
+  function tone(f, o) {
+    o = o || {};
+    var t = AC.currentTime + (o.at || 0), dur = o.dur || .15, vol = o.vol || .3;
+    var osc = AC.createOscillator(), g = AC.createGain();
+    osc.type = o.type || "sine";
+    osc.frequency.setValueAtTime(f, t);
+    if (o.to) osc.frequency.exponentialRampToValueAtTime(o.to, t + dur);
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + (o.a || .005));
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    var out = g;
+    if (o.lp) { var f2 = AC.createBiquadFilter(); f2.type = "lowpass"; f2.frequency.value = o.lp; g.connect(f2); out = f2; }
+    osc.connect(g); out.connect(o.bus || sfxBus);
+    osc.start(t); osc.stop(t + dur + .05);
+  }
+  function noise(o) {
+    var t = AC.currentTime + (o.at || 0), dur = o.dur || .2;
+    var src = AC.createBufferSource(), f = AC.createBiquadFilter(), g = AC.createGain();
+    src.buffer = noiseBuf; src.loop = true;
+    f.type = o.type || "bandpass"; f.Q.value = o.q || 1;
+    f.frequency.setValueAtTime(o.f || 1000, t);
+    if (o.to) f.frequency.exponentialRampToValueAtTime(o.to, t + dur);
+    g.gain.setValueAtTime(.0001, t);
+    g.gain.exponentialRampToValueAtTime(o.vol || .2, t + (o.a || .01));
+    g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+    src.connect(f); f.connect(g); g.connect(o.bus || sfxBus);
+    src.start(t); src.stop(t + dur + .05);
+  }
+  var NOTE = function (n) { return 440 * Math.pow(2, (n - 69) / 12); };
+  var S = {
+    pop: function (p) { p = p || 1; tone(420 * p, { to: 880 * p, dur: .11, vol: .28 }); },
+    click: function () { tone(1900, { type: "square", dur: .025, vol: .06 }); noise({ type: "highpass", f: 4000, dur: .03, vol: .12 }); },
+    tap: function () { tone(260, { to: 110, dur: .09, vol: .45 }); },
+    coin: function (p) { p = p || 1; tone(988 * p, { type: "triangle", dur: .09, vol: .2 }); tone(1319 * p, { type: "triangle", dur: .28, vol: .2, at: .07 }); },
+    tick: function (p) { tone(2200 * (p || 1), { dur: .02, vol: .07 }); },
+    blip: function (f) { tone(f, { type: "triangle", dur: .07, vol: .13 }); },
+    whoosh: function () { noise({ f: 300, to: 3200, dur: .45, vol: .22, a: .2, q: .8 }); },
+    swish: function () { noise({ f: 3500, to: 500, dur: .3, vol: .25, a: .03, q: 1.2 }); },
+    boom: function () { tone(150, { to: 38, dur: .8, vol: .9 }); noise({ type: "lowpass", f: 900, to: 100, dur: .45, vol: .35 }); },
+    thump: function () { tone(110, { to: 50, dur: .25, vol: .6 }); },
+    chime: function () { tone(1568, { dur: .9, vol: .12 }); tone(2093, { dur: 1.1, vol: .08, at: .04 }); },
+    success: function () { [72, 76, 79, 84].forEach(function (n, i) { tone(NOTE(n), { type: "triangle", dur: .3, vol: .18, at: i * .075 }); }); },
+    sparkle: function () { for (var i = 0; i < 6; i++) tone(2200 + Math.random() * 2400, { dur: .12, vol: .05, at: i * .05 }); },
+    ignite: function (k) { noise({ f: 900, to: 2600, dur: .22, vol: .12 }); tone(NOTE(64 + [0, 2, 4, 5, 7, 9, 11][k - 1]), { type: "triangle", dur: .25, vol: .16 }); },
+    pluck: function (k) { tone(NOTE(76 + [0, 2, 4, 7, 9][k - 1]), { type: "triangle", dur: .2, vol: .14 }); },
+    riser: function (d) { tone(180, { type: "sawtooth", to: 1400, dur: d, vol: .07, a: d * .9, lp: 2500 }); noise({ f: 400, to: 6000, dur: d, vol: .12, a: d * .9 }); },
+    rumble: function () { noise({ type: "lowpass", f: 220, dur: 1, vol: .3, a: .3 }); },
+    jackpot: function () {
+      S.boom();
+      [72, 76, 79, 84, 88, 91, 96].forEach(function (n, i) { tone(NOTE(n), { type: "square", dur: .14, vol: .07, at: i * .06, lp: 4000 }); });
+      for (var i = 0; i < 10; i++) S.coinAt(.35 + i * .08, 1 + Math.random() * .5);
+    },
+    coinAt: function (at, p) { tone(988 * p, { type: "triangle", dur: .08, vol: .12, at: at }); tone(1319 * p, { type: "triangle", dur: .2, vol: .12, at: at + .06 }); },
+    fanfare: function () {
+      [[60, 64, 67], [65, 69, 72], [67, 71, 74, 79]].forEach(function (ch, i) {
+        ch.forEach(function (n) { tone(NOTE(n), { type: "sawtooth", dur: i === 2 ? 1.1 : .22, vol: .07, at: i * .2, lp: 2600 }); });
+      });
+    }
+  };
+  function sfx(name, arg) { if (live()) S[name](arg); }
+
+  /* Arka plan müziği: Am – F – C – G, 112 BPM */
+  var MUS = { on: false, step: 0, next: 0, timer: null };
+  var BPM = 112, STEP = 60 / BPM / 4;
+  var PROG = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]];
+  function musicStep(st, t) {
+    var bar = Math.floor(st / 16) % 4, s16 = st % 16, ch = PROG[bar];
+    var o = function (f, x) { x.bus = musBus; x.at = t - AC.currentTime; tone(f, x); };
+    if (s16 % 4 === 0) o(140, { to: 45, dur: .32, vol: .9 });                                          // kick
+    if (s16 % 4 === 2) noise({ type: "highpass", f: 7000, dur: .05, vol: .18, bus: musBus, at: t - AC.currentTime }); // hat
+    if (s16 === 4 || s16 === 12) noise({ f: 1800, dur: .14, vol: .25, q: .7, bus: musBus, at: t - AC.currentTime }); // clap
+    if ([0, 3, 6, 8, 10, 11, 14].indexOf(s16) >= 0) o(NOTE(ch[0] - 24), { type: "sawtooth", dur: .16, vol: .32, lp: 700 }); // bas
+    if (s16 === 0) ch.forEach(function (n) { o(NOTE(n), { type: "triangle", dur: STEP * 15, vol: .06, a: .25 }); }); // pad
+    if (s16 % 2 === 0) o(NOTE(ch[(s16 / 2) % 3] + 12), { type: "square", dur: .09, vol: .025, lp: 3000 }); // arp
+  }
+  function musicPump() {
+    if (!AC || !MUS.on || !playing) return;
+    if (MUS.next < AC.currentTime) MUS.next = AC.currentTime + .05;
+    while (MUS.next < AC.currentTime + .2) { musicStep(MUS.step++, MUS.next); MUS.next += STEP; }
+  }
+  function musicStart() {
+    if (!AC || MUS.on) return;
+    MUS.on = true; MUS.step = 0; MUS.next = 0;
+    musBus.gain.cancelScheduledValues(AC.currentTime); musBus.gain.setValueAtTime(.2, AC.currentTime);
+    if (!MUS.timer) MUS.timer = setInterval(musicPump, 40);
+  }
+  function musicStop(fade) {
+    if (!AC || !MUS.on) return;
+    MUS.on = false;
+    if (fade) { musBus.gain.setValueAtTime(.2, AC.currentTime); musBus.gain.linearRampToValueAtTime(.0001, AC.currentTime + 1.5); }
+  }
+
+  /* Sahne içi ses zamanlamaları [ms, efekt, parametre] */
+  function inv(v, max, t0, d) { return t0 + d * (1 - Math.cbrt(1 - v / max)); } // ease tersini al
+  var CUES = {
+    hook: [[200, "pop", .8], [1000, "pop", .9], [1600, "pop", 1], [2200, "pop", 1.1], [3100, "whoosh"], [3600, "pop", .7], [4250, "swish"], [4800, "boom"], [4800, "music"]],
+    intro: [[100, "pop", .6], [300, "chime"], [800, "whoosh"], [2000, "pop", 1], [2200, "pop", 1.15], [2400, "pop", 1.3]],
+    login: [[400, "whoosh"], [1300, "click"], [2280, "click"], [2560, "click"], [2840, "click"], [3120, "click"], [3400, "tap"], [3700, "success"]],
+    funnel: [[400, "whoosh"], [5200, "pop", .7]],
+    points: [[100, "whoosh"], [2100, "coin", 1], [2300, "coin", 1.12], [2500, "coin", 1.26]],
+    score: [[300, "pop", .8]],
+    streak: [[100, "whoosh"], [3900, "success"]],
+    bonus: [[100, "whoosh"], [3500, "riser", .8], [4300, "jackpot"]],
+    combo: [[100, "whoosh"], [3300, "success"], [3350, "sparkle"]],
+    max: [[100, "whoosh"], [2600, "boom"], [3000, "whoosh"]],
+    closing: [[400, "pop", .6], [900, "fanfare"], [1000, "coin", 1.2], [1100, "sparkle"], [4300, "coin", 1.4]],
+    auto: [[400, "whoosh"], [2000, "coin", 1.2], [2800, "coin", 1], [3500, "coin", 1.1], [4600, "chime"]],
+    podium: [[300, "rumble"], [1100, "pop", .8], [1400, "pop", .9], [1900, "pop", 1.1], [2400, "sparkle"], [2400, "fanfare"]],
+    clock: [[400, "whoosh"], [3200, "boom"], [3500, "success"]],
+    final: [[100, "thump"], [700, "thump"], [1200, "thump"], [2000, "chime"], [2800, "pop", 1.2]]
+  };
+  TAPS.forEach(function (tp) { CUES.funnel.push([tp[0], "tap"]); CUES.funnel.push([tp[0] + 20, "coin", 1 + ACTS[FUNNEL_ROWS[tp[1]]].p / 40]); });
+  for (var k = 0; k < 13; k++) CUES.points.push([400 + k * 100, "pop", 1 + k * .05]);
+  for (var v = 6; v <= 86; v += 6) CUES.score.push([inv(v, 86.0001, 700, 3000), "blip", 300 + v * 9]);
+  CUES.score.push([inv(50, 86.0001, 700, 3000), "coin", 1], [inv(80, 86.0001, 700, 3000), "success"]);
+  for (k = 1; k <= 7; k++) CUES.streak.push([900 + (k - 1) * 420, "ignite", k]);
+  for (k = 1; k <= 13; k++) CUES.bonus.push([900 + (k - 1) * 230, "coin", 1 + k * .05]);
+  for (k = 1; k <= 3; k++) CUES.combo.push([1100 + (k - 1) * 650, "pop", 1 + k * .25], [1120 + (k - 1) * 650, "coin", 1 + k * .1]);
+  for (var t = 450, n = 0; t < 2600; t += 80, n++) CUES.max.push([t, "tick", .7 + n * .03]);
+  for (k = 0; k < 4; k++) CUES.max.push([900 + k * 250, "pop", 1 + k * .15]);
+  for (t = 1750, n = 0; t < 4300; t += 90, n++) CUES.closing.push([t, "tick", .8 + n * .015]);
+  for (k = 1; k <= 5; k++) CUES.auto.push([1000 + (k - 1) * 160, "pluck", k]);
+  for (t = 650; t < 3200; t += 110) CUES.clock.push([t, "tick", 1]);
+
+  function fireCues(name, from, to) {
+    var list = CUES[name];
+    if (!list) return;
+    for (var i = 0; i < list.length; i++) {
+      var c = list[i];
+      if (c[0] > from && c[0] <= to) {
+        if (c[1] === "music") musicStart();
+        else sfx(c[1], c[2]);
+      }
+    }
+  }
+
   /* ---------- Oynatıcı ---------- */
-  var idx = -1, sceneT = 0, playing = true, lastNow = 0, fx = null;
+  var idx = -1, sceneT = 0, playing = false, started = false, lastNow = 0, fx = null;
 
   function go(i) {
     if (i < 0) i = 0;
@@ -905,6 +1089,8 @@
     glow.style.transform = ["translate(0,0)", "translate(-10cqw, 70cqh) scale(1.2)", "translate(10cqw, 30cqh) scale(.9)"][g];
     for (var b = 0; b < bars.length; b++) bars[b].style.width = b < i ? "100%" : "0%";
     if (fx && fx.tick) fx.tick(0);
+    if (started && i > 0) musicStart();
+    if (i === 0) musicStop(false);
   }
 
   function frame(now) {
@@ -912,11 +1098,13 @@
     lastNow = now;
     if (playing && idx >= 0) {
       var s = scenes[idx], dur = +s.dataset.dur;
+      var prevT = sceneT;
       sceneT += dt;
+      fireCues(s.dataset.s, prevT, sceneT);
       if (fx && fx.tick) fx.tick(sceneT);
       bars[idx].style.width = Math.min(100, sceneT / dur * 100) + "%";
       if (sceneT >= dur) {
-        if (s.dataset.final) { setPlaying(false); bars[idx].style.width = "100%"; }
+        if (s.dataset.final) { setPlaying(false); bars[idx].style.width = "100%"; musicStop(true); }
         else go(idx + 1);
       }
     }
@@ -928,7 +1116,33 @@
     stage.classList.toggle("paused", !p);
     ctrl.innerHTML = p ? PAUSE : PLAY;
     ctrl.setAttribute("aria-label", p ? "Duraklat" : "Oynat");
+    if (AC) { if (p) AC.resume(); else if (AC.state === "running") AC.suspend(); }
   }
+
+  var sndBtn = document.getElementById("snd");
+  var SND_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>';
+  var SND_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z" fill="currentColor"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>';
+  function setMuted(m) {
+    muted = m;
+    if (!m && started) audioInit();
+    if (master) master.gain.setTargetAtTime(m ? 0 : 1, AC.currentTime, .05);
+    sndBtn.innerHTML = m ? SND_OFF : SND_ON;
+    sndBtn.setAttribute("aria-label", m ? "Sesi aç" : "Sesi kapat");
+    if (!m && started && idx > 0 && playing) musicStart();
+  }
+  sndBtn.addEventListener("click", function () { setMuted(!muted); });
+
+  var startEl = document.getElementById("start");
+  function begin(withSound) {
+    if (started) return;
+    started = true;
+    setMuted(!withSound);
+    startEl.classList.add("gone");
+    go(0); setPlaying(true);
+    setTimeout(hideHint, 6000);
+  }
+  document.getElementById("startSound").addEventListener("click", function () { begin(true); });
+  document.getElementById("startMute").addEventListener("click", function () { begin(false); });
 
   function next() { if (idx < scenes.length - 1) { go(idx + 1); setPlaying(true); } }
   function prev() { go(idx - 1); setPlaying(true); }
@@ -941,17 +1155,18 @@
     else setPlaying(!playing);
   });
   document.getElementById("tzr").addEventListener("click", function () { hideHint(); next(); });
+  document.addEventListener("keydown", function (e) { if (!started && (e.key === " " || e.key === "Enter")) { e.preventDefault(); begin(true); } }, true);
   document.getElementById("tzl").addEventListener("click", function () { hideHint(); prev(); });
   document.getElementById("replay").addEventListener("click", restart);
   document.addEventListener("keydown", function (e) {
+    if (!started) return;
     if (e.key === "ArrowRight") next();
     else if (e.key === "ArrowLeft") prev();
     else if (e.key === " ") { e.preventDefault(); ctrl.click(); }
   });
   document.addEventListener("visibilitychange", function () { if (document.hidden) setPlaying(false); });
-  setTimeout(hideHint, 6000);
-
-  setPlaying(true);
+  setMuted(false);
+  setPlaying(false);
   go(0);
   requestAnimationFrame(frame);
 })();
