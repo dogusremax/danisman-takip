@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071630">
+<title>Ekim Ofis Toplantısı</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+<style>
+/* =====================================================================
+   RE/MAX Doğuş · Aylık Ofis Toplantısı
+   Kullanım: → / boşluk / tıklama = ileri · ← = geri · F = tam ekran
+             N = konuşmacı notları · E = metin düzenleme · P = PDF
+   ===================================================================== */
+:root {
+  --navy: #071630; --navy-2: #0c2148; --navy-3: #133067;
+  --red: #e11b22; --blue: #1a5bd6; --gold: #e8c26e; --white: #ffffff;
+  --mute: #9fb0cf; --line: rgba(255,255,255,.12); --card: rgba(255,255,255,.06);
+  --green: #22c55e;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body { background: #030b1a; color: var(--white); font-family: Montserrat, -apple-system, "Segoe UI", sans-serif; overflow: hidden; -webkit-font-smoothing: antialiased; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ---------- Stage (16:9, ölçeklenir) ---------- */
+#viewport { position: fixed; inset: 0; display: grid; place-items: center; }
+#deck { position: relative; width: 1600px; height: 900px; transform-origin: center center; flex-shrink: 0; }
+.slide { position: absolute; inset: 0; overflow: hidden; border-radius: 4px;
+  background: radial-gradient(1200px 700px at 85% -10%, rgba(26,91,214,.35), transparent 60%),
+              radial-gradient(900px 600px at -10% 110%, rgba(225,27,34,.22), transparent 60%),
+              linear-gradient(160deg, var(--navy-2), var(--navy) 60%);
+  opacity: 0; visibility: hidden; transform: scale(1.03); transition: opacity .7s ease, transform .9s cubic-bezier(.2,.7,.2,1), visibility 0s .7s; }
+.slide.active { opacity: 1; visibility: visible; transform: none; transition: opacity .7s ease, transform .9s cubic-bezier(.2,.7,.2,1); z-index: 2; }
+.slide.light { background: radial-gradient(1000px 600px at 100% 0, rgba(26,91,214,.10), transparent 60%), linear-gradient(160deg, #ffffff, #f2f5fb); color: #0b1a33; }
+
+/* Arka plan hareketli dekor */
+.orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .35; animation: float 14s ease-in-out infinite; pointer-events: none; }
+@keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(40px,-30px); } }
+.grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%); pointer-events: none; }
+
+/* ---------- Logo (her sayfada) ---------- */
+.logo { position: absolute; top: 44px; right: 60px; display: flex; align-items: center; gap: 14px; z-index: 5; }
+.logo svg { width: 46px; height: 54px; filter: drop-shadow(0 6px 14px rgba(0,0,0,.35)); }
+.logo img { height: 56px; }
+.logo .lw { line-height: 1; }
+.logo .lw b { display: block; font-weight: 900; font-size: 25px; letter-spacing: .02em; }
+.logo .lw b .r { color: var(--red); } .logo .lw b .b { color: #5b8cff; }
+.logo .lw > span { display: block; font-size: 12px; letter-spacing: .5em; font-weight: 700; margin-top: 5px; color: var(--mute); }
+.light .logo .lw b { color: #0b1a33; } .light .logo .lw b .b { color: var(--blue); } .light .logo .lw > span { color: #5d6f8f; }
+
+/* ---------- Ortak tipografi ---------- */
+.pad { position: absolute; inset: 0; padding: 70px 90px 90px; display: flex; flex-direction: column; }
+.kicker { font-size: 15px; font-weight: 800; letter-spacing: .32em; text-transform: uppercase; color: var(--red); display: flex; align-items: center; gap: 14px; }
+.kicker::before { content: ""; width: 46px; height: 3px; background: currentColor; border-radius: 2px; }
+.kicker .n { color: var(--mute); letter-spacing: .1em; }
+.title { font-size: 66px; font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: 18px 0 0; max-width: 1150px; }
+.title em { font-family: "Playfair Display", serif; font-style: italic; font-weight: 600; color: var(--gold); }
+.light .title em { color: var(--red); }
+.sub { font-size: 22px; color: var(--mute); margin: 16px 0 0; line-height: 1.5; max-width: 1100px; }
+.light .sub { color: #51607d; }
+.foot { position: absolute; left: 90px; right: 90px; bottom: 34px; display: flex; justify-content: space-between; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: rgba(159,176,207,.7); font-weight: 600; z-index: 5; }
+.light .foot { color: #8a97b1; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 28px 30px; backdrop-filter: blur(6px); }
+.light .card { background: #fff; border-color: #e3e8f2; box-shadow: 0 12px 30px -18px rgba(11,26,51,.25); }
+.big { font-size: 84px; font-weight: 900; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.lbl { font-size: 14px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); margin-top: 12px; }
+.light .lbl { color: #6a7896; }
+.row { display: flex; gap: 26px; }
+.grow { flex: 1; }
+.red { color: var(--red); } .gold { color: var(--gold); } .blue { color: #5b8cff; } .green { color: var(--green); }
+.ico { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: rgba(225,27,34,.15); color: #ff5a60; margin-bottom: 16px; flex-shrink: 0; }
+.ico svg { width: 27px; height: 27px; }
+.light .ico { background: #fde8e9; color: var(--red); }
+.card h4 { margin: 0 0 8px; font-size: 22px; font-weight: 800; }
+.card p { margin: 0; font-size: 17px; line-height: 1.5; color: var(--mute); }
+.light .card p { color: #5a6884; }
+
+/* ---------- Giriş animasyonları ---------- */
+.a { opacity: 0; transform: translateY(34px); }
+.slide.active .a { animation: up .85s cubic-bezier(.2,.75,.2,1) forwards; animation-delay: calc(var(--d, 0) * 1s); }
+.a.l { transform: translateX(-50px); } .slide.active .a.l { animation-name: left; }
+.a.z { transform: scale(.85); } .slide.active .a.z { animation-name: zoom; }
+@keyframes up { to { opacity: 1; transform: none; } }
+@keyframes left { to { opacity: 1; transform: none; } }
+@keyframes zoom { to { opacity: 1; transform: none; } }
+.bar-fill { width: 0; transition: width 1.4s cubic-bezier(.2,.75,.2,1); }
+.slide.active .bar-fill { width: var(--w); transition-delay: calc(var(--d, 0) * 1s); }
+.col-fill { height: 0; transition: height 1.3s cubic-bezier(.2,.75,.2,1); }
+.slide.active .col-fill { height: var(--h); transition-delay: calc(var(--d, 0) * 1s); }
+
+/* ---------- Kapak ---------- */
+.cover-ring { position: absolute; right: -220px; top: 50%; width: 900px; height: 900px; margin-top: -450px; border-radius: 50%; border: 2px solid rgba(255,255,255,.08); animation: spin 60s linear infinite; }
+.cover-ring::after { content: ""; position: absolute; inset: 90px; border-radius: 50%; border: 2px dashed rgba(232,194,110,.18); }
+@keyframes spin { to { transform: rotate(360deg); } }
+.balloon-big { position: absolute; right: 150px; top: 200px; width: 380px; animation: bob 6s ease-in-out infinite; filter: drop-shadow(0 30px 50px rgba(0,0,0,.45)); }
+@keyframes bob { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-26px) rotate(2deg); } }
+
+/* ---------- Tablolar & listeler ---------- */
+.tbl { width: 100%; border-collapse: collapse; font-size: 18px; }
+.tbl th { text-align: left; font-size: 12.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); padding: 10px 14px; border-bottom: 2px solid rgba(255,255,255,.2); }
+.tbl td { padding: 13px 14px; border-bottom: 1px solid var(--line); }
+#pointsTable td { padding: 9px 14px; }
+.tbl td.num, .tbl th.num { text-align: right; font-variant-numeric: tabular-nums; }
+.tag { display: inline-block; font-size: 12px; font-weight: 800; letter-spacing: .08em; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; }
+.tag.s { background: rgba(225,27,34,.18); color: #ff6a6f; } .tag.k { background: rgba(91,140,255,.18); color: #8fb0ff; } .tag.o { background: rgba(232,194,110,.18); color: var(--gold); }
+.check { list-style: none; margin: 0; padding: 0; }
+.check li { position: relative; padding: 0 0 18px 46px; font-size: 22px; line-height: 1.4; font-weight: 500; }
+.check li::before { content: ""; position: absolute; left: 0; top: 2px; width: 30px; height: 30px; border-radius: 50%; background: var(--red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/16px no-repeat; }
+.check li b { font-weight: 800; }
+
+/* ---------- Avatar & podyum ---------- */
+.av { border-radius: 50%; background: linear-gradient(135deg, var(--navy-3), #24447f) center 20%/cover; display: grid; place-items: center; font-weight: 800; color: #fff; flex-shrink: 0; }
+.podium { display: flex; align-items: flex-end; justify-content: center; gap: 34px; flex: 1; padding-top: 10px; }
+.pod { width: 330px; display: flex; flex-direction: column; align-items: center; }
+.pod .av { width: 150px; height: 150px; font-size: 46px; border: 6px solid var(--gold); box-shadow: 0 0 0 10px rgba(232,194,110,.12), 0 20px 50px rgba(0,0,0,.45); }
+.pod.p2 .av { border-color: #cfd6e3; box-shadow: 0 0 0 10px rgba(207,214,227,.12), 0 20px 50px rgba(0,0,0,.45); width: 128px; height: 128px; }
+.pod.p3 .av { border-color: #d08b4f; box-shadow: 0 0 0 10px rgba(208,139,79,.14), 0 20px 50px rgba(0,0,0,.45); width: 128px; height: 128px; }
+.pod .nm { font-size: 25px; font-weight: 800; margin-top: 18px; text-align: center; }
+.pod .ct { font-size: 17px; color: var(--mute); margin-top: 4px; }
+.pod .blk { width: 100%; margin-top: 18px; border-radius: 18px 18px 0 0; background: linear-gradient(180deg, rgba(232,194,110,.95), rgba(232,194,110,.55)); color: var(--navy); display: flex; justify-content: center; padding-top: 18px; font-size: 64px; font-weight: 900; overflow: hidden; }
+.pod.p2 .blk { background: linear-gradient(180deg, rgba(207,214,227,.95), rgba(207,214,227,.5)); }
+.pod.p3 .blk { background: linear-gradient(180deg, rgba(208,139,79,.95), rgba(208,139,79,.5)); }
+.confetti { position: absolute; top: -20px; width: 12px; height: 18px; opacity: 0; pointer-events: none; }
+.slide.active .confetti { animation: fall linear forwards; }
+@keyframes fall { 0% { opacity: 1; transform: translateY(0) rotate(0); } 100% { opacity: .9; transform: translateY(980px) rotate(720deg); } }
+
+/* ---------- Timeline ---------- */
+.tl { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-top: 60px; }
+.tl::before { content: ""; position: absolute; left: 0; right: 0; top: 22px; height: 4px; background: linear-gradient(90deg, var(--red), var(--gold)); border-radius: 2px; transform-origin: left; transform: scaleX(0); transition: transform 1.6s ease .3s; }
+.slide.active .tl::before { transform: scaleX(1); }
+.tl .dot { width: 48px; height: 48px; border-radius: 50%; background: var(--navy); border: 4px solid var(--gold); display: grid; place-items: center; font-weight: 900; position: relative; }
+
+/* ---------- Durum / yükleme ---------- */
+.empty { color: var(--mute); font-size: 20px; padding: 30px 0; }
+#status { position: fixed; left: 16px; bottom: 14px; z-index: 50; font-size: 12px; color: rgba(255,255,255,.55); background: rgba(0,0,0,.35); padding: 6px 10px; border-radius: 8px; transition: opacity .4s; }
+#status.err { color: #ffb4b4; }
+#status button { background: none; border: 0; color: var(--gold); text-decoration: underline; font-size: 12px; padding: 0 0 0 6px; }
+
+/* ---------- Navigasyon ---------- */
+#progress { position: fixed; left: 0; top: 0; height: 4px; background: linear-gradient(90deg, var(--red), var(--gold)); z-index: 60; transition: width .5s ease; }
+#nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: 10px; z-index: 50; display: flex; gap: 6px; align-items: center; opacity: .25; transition: opacity .3s; }
+#nav:hover { opacity: 1; }
+#nav button { background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.18); border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 700; }
+#nav span { font-size: 13px; color: rgba(255,255,255,.7); padding: 0 6px; font-variant-numeric: tabular-nums; }
+#notes { position: fixed; left: 50%; bottom: 60px; transform: translateX(-50%); width: min(900px, 92vw); max-height: 34vh; overflow: auto; z-index: 55; background: rgba(5,12,28,.94); border: 1px solid rgba(255,255,255,.15); border-radius: 14px; padding: 16px 20px; font-size: 15px; line-height: 1.6; color: #dfe6f3; display: none; }
+#notes.show { display: block; }
+#notes b { color: var(--gold); }
+body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset: 4px; cursor: text; }
+#hint { position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 60; background: rgba(0,0,0,.55); color: #fff; font-size: 13px; padding: 8px 14px; border-radius: 10px; opacity: 0; transition: opacity .4s; pointer-events: none; }
+#hint.show { opacity: 1; }
+
+/* ---------- Yazdırma / PDF ---------- */
+@page { size: 1600px 900px; margin: 0; }
+@media print {
+  html, body { overflow: visible; height: auto; background: #071630; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  #viewport { position: static; display: block; }
+  #deck { transform: none !important; width: 1600px; height: auto; }
+  .slide { position: relative; opacity: 1 !important; visibility: visible !important; transform: none !important; width: 1600px; height: 900px; break-after: page; border-radius: 0; }
+  .a { opacity: 1 !important; transform: none !important; animation: none !important; }
+  .bar-fill { width: var(--w) !important; transition: none !important; }
+  .col-fill { height: var(--h) !important; transition: none !important; }
+  .tl::before { transform: scaleX(1) !important; }
+  .confetti, #nav, #status, #progress, #notes, #hint { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="viewport"><div id="deck">
+
+<!-- 1 · KAPAK ===================================================== -->
+<section class="slide" data-notes="<b>Açılış:</b> Herkese hoş geldiniz. Eylül'ü değerlendirip Ekim ve sonrası için yol haritamızı konuşacağız. Bugün hem güzel haberlerimiz hem de büyük hedeflerimiz var.">
+  <div class="grid-bg"></div>
+  <div class="orb" style="width:520px;height:520px;background:#1a5bd6;left:-140px;top:-160px"></div>
+  <div class="orb" style="width:420px;height:420px;background:#e11b22;right:300px;bottom:-200px;animation-delay:-5s"></div>
+  <div class="cover-ring"></div>
+  <div class="balloon-big" data-balloon></div>
+  <div class="logo" data-logo></div>
+  <div class="pad" style="justify-content:center">
+    <div class="kicker a" style="--d:.2" data-k="cv_k">Aylık Ofis Toplantısı</div>
+    <h1 class="title a" style="--d:.4;font-size:96px;max-width:1000px" data-k="cv_t">Birlikte <em>Zirveye.</em></h1>
+    <p class="sub a" style="--d:.65;font-size:26px" data-k="cv_s">Eylül değerlendirmesi · Yeni dönem kararları · 2027 hedeflerimiz</p>
+    <div class="a" style="--d:.9;margin-top:46px;display:flex;gap:16px;align-items:center">
+      <span class="tag o" style="font-size:15px;padding:10px 16px" data-k="cv_date">5 Ekim 2026 · Pazartesi</span>
+      <span class="tag s" style="font-size:15px;padding:10px 16px">RE/MAX Doğuş</span>
+    </div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş</span><span class="pg"></span></div>
+</section>
+
+<!-- 2 · GÜNDEM ==================================================== -->
+<section class="slide" data-notes="Gündemi kısaca özetle. Toplantı sonunda soru-cevap için zaman ayıracağımızı söyle.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Gündem</div>
+    <h2 class="title a" style="--d:.15">Bugün neleri <em>konuşacağız?</em></h2>
+    <div id="agenda" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 70px;margin-top:44px"></div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Aylık Toplantı</span><span class="pg"></span></div>
+</section>
+
+<!-- 3 · EYLÜL KAPANIŞLARI ========================================= -->
+<section class="slide" data-title="Eylül Kapanışları" data-notes="<b>Eylül kapanışları:</b> Rakamlar takip uygulamasından canlı geliyor. Her kapanışı yapan arkadaşımızı alkışlayalım. Ortak işlemleri özellikle vurgula: paylaşım kültürümüzün sonucu.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a"><span data-month-label>Eylül</span> Performansı</div>
+    <h2 class="title a" style="--d:.15"><span data-month-label>Eylül</span>'de <em>kapanan işlemler</em></h2>
+    <div class="row" style="margin-top:34px">
+      <div class="card a z grow" style="--d:.3"><div class="big" id="k_total">0</div><div class="lbl">Toplam kapanış</div></div>
+      <div class="card a z grow" style="--d:.42"><div class="big red" id="k_sat">0</div><div class="lbl">Satılık</div></div>
+      <div class="card a z grow" style="--d:.54"><div class="big blue" id="k_kir">0</div><div class="lbl">Kiralık</div></div>
+      <div class="card a z grow" style="--d:.66"><div class="big gold" id="k_hb" style="font-size:64px;padding-top:12px">₺0</div><div class="lbl">Brüt hizmet bedeli</div></div>
+    </div>
+    <div class="card a" style="--d:.8;margin-top:24px;flex:1;padding:14px 26px;overflow:hidden"><div id="closingList"></div></div>
+  </div>
+  <div class="foot"><span>Kaynak: Danışman Takip Uygulaması</span><span class="pg"></span></div>
+</section>
+
+<!-- 4 · EN ÇOK YETKİ ============================================== -->
+<section class="slide" data-title="Yetki Şampiyonları" data-notes="<b>Yetki şampiyonları:</b> Ayın en çok yetki alan 3 danışmanını sahneye davet et, alkışla. Yetki = gelecek ayın kapanışı. Diğer arkadaşlara: yetki alma oranını artırmak için 1. Sunum Dosyası'nı kullanın.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div id="confetti"></div>
+  <div class="pad">
+    <div class="kicker a">Yetki Şampiyonları</div>
+    <h2 class="title a" style="--d:.15"><span data-month-label>Eylül</span>'ün <em>en çok yetki alan</em> 3 danışmanı</h2>
+    <div class="podium" id="podium"></div>
+  </div>
+  <div class="foot"><span>Kaynak: Danışman Takip Uygulaması · Alınan Yetki kayıtları</span><span class="pg"></span></div>
+</section>
+
+<!-- 5 · AYIN PUAN LİDERLERİ ======================================= -->
+<section class="slide" data-title="Ayın Puan Tablosu" data-notes="Ayın puan tablosu: aktivite + istikrar bonusu + kapanış puanlarının toplamı. Zirvedekileri tebrik et; listede geride olanlarla birebir görüşme sözü ver.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Danışman Takip</div>
+    <h2 class="title a" style="--d:.15"><span data-month-label>Eylül</span> <em>puan tablosu</em></h2>
+    <div id="pointsBars" style="margin-top:38px;display:flex;flex-direction:column;gap:13px"></div>
+  </div>
+  <div class="foot"><span>Aktivite puanı + istikrar bonusu + kapanış puanı</span><span class="pg"></span></div>
+</section>
+
+<!-- 6 · SAHİBİNDEN ================================================ -->
+<section class="slide light" data-title="sahibinden.com Üyeliği" data-notes="<b>sahibinden.com:</b> Paket bedeli 9 kişiye bölünüyor (Umut Tokkuş dahil). Her kişinin payının yarısını ofis, yarısını danışman öder. Ödemeler bu ay başlıyor; ödeme tarihini ve yöntemini netleştir.">
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Yeni Dönem · Portal Üyeliği</div>
+    <h2 class="title a" style="--d:.15">sahibinden.com <em>üyelik aidatı</em> başlıyor</h2>
+    <div class="row" style="margin-top:44px;align-items:stretch">
+      <div class="card a z" style="--d:.3;width:360px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+        <div class="lbl" style="margin:0 0 10px">Paket bedeli</div>
+        <div class="big" style="font-size:76px"><span data-count="65000" data-fmt="tl">₺0</span></div>
+      </div>
+      <div class="a" style="--d:.45;display:grid;place-items:center;font-size:56px;color:#b8c2d6;font-weight:300">÷</div>
+      <div class="card a z" style="--d:.55;width:260px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+        <div class="lbl" style="margin:0 0 10px">Kişi</div>
+        <div class="big" style="font-size:76px"><span data-count="9">0</span></div>
+        <div style="font-size:14px;color:#6a7896;margin-top:10px">Umut Tokkuş dahil</div>
+      </div>
+      <div class="a" style="--d:.7;display:grid;place-items:center;font-size:56px;color:#b8c2d6;font-weight:300">=</div>
+      <div class="card a z grow" style="--d:.8;background:#0b1a33;color:#fff;border:0;display:flex;flex-direction:column;justify-content:center">
+        <div class="lbl" style="margin:0 0 10px;color:#9fb0cf">Kişi başı pay</div>
+        <div class="big" style="font-size:76px"><span data-count="7222.22" data-fmt="tl">₺0</span></div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:26px">
+      <div class="card a grow" style="--d:1;border-left:6px solid var(--red)">
+        <div class="lbl" style="margin:0">Danışman öder · %50</div>
+        <div class="big red" style="font-size:58px;margin-top:10px"><span data-count="3611.11" data-fmt="tl">₺0</span></div>
+      </div>
+      <div class="card a grow" style="--d:1.12;border-left:6px solid var(--blue)">
+        <div class="lbl" style="margin:0">Ofis öder · %50</div>
+        <div class="big" style="font-size:58px;margin-top:10px;color:var(--blue)"><span data-count="3611.11" data-fmt="tl">₺0</span></div>
+      </div>
+      <div class="card a grow" style="--d:1.24">
+        <div class="lbl" style="margin:0">Ofisin toplam katkısı</div>
+        <div class="big" style="font-size:58px;margin-top:10px"><span data-count="32500" data-fmt="tl">₺0</span></div>
+      </div>
+    </div>
+    <ul class="check a" style="--d:1.4;margin-top:34px" data-k="sh_list">
+      <li><b>Ödemeler bu ay başlıyor.</b> Ödeme günü ve yöntemi ofis yönetimi tarafından duyurulacaktır.</li>
+      <li><b>Daha çok görünürlük:</b> Portföylerimiz Türkiye'nin en çok ziyaret edilen ilan platformunda kurumsal mağaza ile yayında.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Portal yatırımı</span><span class="pg"></span></div>
+</section>
+
+<!-- 7 · OFİS AİDATI ÖDÜLÜ ========================================= -->
+<section class="slide" data-title="Bağlılık Ödülü" data-notes="<b>Büyük haber:</b> Ofis aidatı 12 ay daha alınmayacak. Bu bir ödül: gösterdiğiniz bağlılık, anlayış ve gelişim için. Bir an durup etkisini hissettir.">
+  <div class="grid-bg"></div>
+  <div class="orb" style="width:600px;height:600px;background:#e8c26e;left:50%;top:50%;margin:-300px 0 0 -300px;opacity:.16"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad" style="align-items:center;justify-content:center;text-align:center">
+    <div class="kicker a" style="justify-content:center">Bağlılık Ödülü</div>
+    <div class="a z" style="--d:.3;font-size:300px;font-weight:900;line-height:.9;letter-spacing:-.05em;margin-top:20px;background:linear-gradient(180deg,#fff,#e8c26e);-webkit-background-clip:text;background-clip:text;color:transparent"><span data-count="12">0</span></div>
+    <div class="a" style="--d:.55;font-size:40px;font-weight:800;margin-top:6px" data-k="aid_t">ay daha ofis aidatı <span class="gold">alınmayacak</span></div>
+    <p class="sub a" style="--d:.8;max-width:900px;text-align:center;margin:22px auto 0" data-k="aid_s">Gösterdiğiniz bağlılığı, anlayışı ve gelişimi ödüllendiriyoruz. Teşekkürler ekip! 🙏</p>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş</span><span class="pg"></span></div>
+</section>
+
+<!-- 8 · ÜST SİSTEM ================================================ -->
+<section class="slide" data-title="Üst Sisteme Geçiş" data-notes="<b>Üst sistem:</b> İsteyen danışman %58 prim oranı ve aylık ofis aidatı ile üst sisteme geçebilir. Kimin için mantıklı olduğunu (aylık ortalama ciro) birebir hesaplayabileceğimizi söyle.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Kariyer Seçeneği</div>
+    <h2 class="title a" style="--d:.15">Bir <em>üst sisteme</em> geçmek isteyenler için</h2>
+    <div class="row" style="margin-top:50px">
+      <div class="card a z grow" style="--d:.35;padding:40px">
+        <div class="lbl" style="margin:0">Prim oranı</div>
+        <div class="big" style="font-size:150px;margin-top:10px;color:var(--gold)">%<span data-count="58">0</span></div>
+        <div style="height:16px;border-radius:9px;background:rgba(255,255,255,.1);margin-top:26px;overflow:hidden"><div class="bar-fill" style="--w:58%;--d:.6;height:100%;background:linear-gradient(90deg,var(--red),var(--gold));border-radius:9px"></div></div>
+      </div>
+      <div class="card a z grow" style="--d:.5;padding:40px">
+        <div class="lbl" style="margin:0">Aylık ofis aidatı</div>
+        <div class="big" style="font-size:110px;margin-top:22px" data-k="ust_aidat">15.000 ₺</div>
+        <div style="font-size:26px;font-weight:700;color:var(--mute);margin-top:10px">+ KDV</div>
+      </div>
+    </div>
+    <ul class="check a" style="--d:.8;margin-top:36px" data-k="ust_list">
+      <li><b>Gönüllü geçiş:</b> Mevcut sistemde kalmak isteyenler için hiçbir değişiklik yok.</li>
+      <li><b>Birebir hesap:</b> Aylık işlem hacminize göre hangi sistemin kazançlı olduğunu birlikte hesaplayalım.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Kariyer modeli</span><span class="pg"></span></div>
+</section>
+
+<!-- 9 · KİRALIK → SATIŞ =========================================== -->
+<section class="slide" data-title="Satış Kapanışlarını Artırma" data-notes="<b>Ofisin durumu:</b> Grafik 2026'da aylara göre satılık/kiralık kapanışları gösteriyor. Kiralık hacmimiz güçlü; şimdi aynı enerjiyi satışa taşımalıyız. Sağdaki 6 aksiyonu tek tek konuş, sorumlu belirle.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Ofisimizin Durumu</div>
+    <h2 class="title a" style="--d:.15;font-size:56px">Artan kiralık hacmin yanına <em>satış kapanışları</em></h2>
+    <div class="row" style="margin-top:34px;flex:1;min-height:0">
+      <div class="card a" style="--d:.3;width:620px;display:flex;flex-direction:column">
+        <div style="display:flex;justify-content:space-between;align-items:center"><div class="lbl" style="margin:0">2026 · Aylık kapanışlar</div><div style="font-size:14px;display:flex;gap:16px"><span><b class="red">■</b> Satılık</span><span><b class="blue">■</b> Kiralık</span></div></div>
+        <div id="monthChart" style="flex:1;display:flex;align-items:flex-end;gap:14px;margin-top:20px;min-height:0"></div>
+        <div id="ratioLine" style="font-size:15px;color:var(--mute);margin-top:14px"></div>
+      </div>
+      <div class="grow a" style="--d:.45" data-k="sales_list">
+        <ul class="check">
+          <li><b>Her danışmana ayda 2 satılık yetki</b> hedefi; FSBO aramalarında satılık ilanlara öncelik.</li>
+          <li><b>Kiracıyı alıcıya dönüştür:</b> kiraladığımız her müşteriye kredi ve ev sahibi olma sunumu.</li>
+          <li><b>Ev sahibine sor:</b> kiralık işlem yaptığımız mülk sahiplerinin satış planlarını kaydet.</li>
+          <li><b>1. Sunum Dosyası</b> ile her satılık görüşmeye profesyonel giriş.</li>
+          <li><b>Emlak Konut &amp; Fikirtepe</b> projelerinde nöbet ve proje satışı.</li>
+          <li><b>Ortak satış:</b> her satılık portföy ofis içinde haftalık tanıtılır.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>Kaynak: Danışman Takip Uygulaması · 2026 kapanışları</span><span class="pg"></span></div>
+</section>
+
+<!-- 10 · SOSYAL MEDYA ============================================= -->
+<section class="slide light" data-title="Sosyal Medya" data-notes="<b>Sosyal medya:</b> Haftalık içerik takvimini tanıt. Her danışmanın haftada en az 1 video çekmesini iste. Ofis hesabında ortak paylaşım, danışman hesaplarında kişisel marka.">
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Dijital Görünürlük</div>
+    <h2 class="title a" style="--d:.15">Sosyal medyayı <em>daha iyi</em> nasıl kullanırız?</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:38px;flex:1">
+      <div class="card a" style="--d:.3"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div><h4 data-k="sm1t">Haftada 1 video</h4><p data-k="sm1d">Her danışman haftada en az 1 Reels: ev turu, bölge rehberi veya piyasa yorumu. Dikey, 30–60 sn.</p></div>
+      <div class="card a" style="--d:.4"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div><h4 data-k="sm2t">İçerik takvimi</h4><p data-k="sm2d">Pzt: piyasa bilgisi · Çar: portföy tanıtımı · Cum: satıldı/kiralandı ve ekip kutlaması.</p></div>
+      <div class="card a" style="--d:.5"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><h4 data-k="sm3t">Birbirimizi büyütelim</h4><p data-k="sm3d">Her paylaşımı tüm ekip ilk 1 saatte beğenir, yorumlar, story'de paylaşır. Algoritma etkileşimi sever.</p></div>
+      <div class="card a" style="--d:.6"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg></div><h4 data-k="sm4t">Kişisel marka</h4><p data-k="sm4d">Profil fotoğrafı, biyografi ve öne çıkanlar standart: RE/MAX Doğuş · uzmanlık bölgesi · iletişim.</p></div>
+      <div class="card a" style="--d:.7"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><h4 data-k="sm5t">Sosyal kanıt</h4><p data-k="sm5d">Her kapanıştan sonra müşteriden Google yorumu ve kısa video referans isteyelim.</p></div>
+      <div class="card a" style="--d:.8"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><h4 data-k="sm6t">Hedefli reklam</h4><p data-k="sm6d">Satılık portföylerde bölge ve bütçe hedefli küçük bütçeli reklamlar; sonuçları ayda bir ölçelim.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Sosyal medya planı</span><span class="pg"></span></div>
+</section>
+
+<!-- 11 · PUANLAMA GÜNCELLEMELERİ ================================== -->
+<section class="slide" data-title="Puanlama Güncellemeleri" data-notes="<b>Puanlama:</b> Takip uygulamasındaki son değişiklikleri anlat: istikrar bonusu, kapanış puanının ortaklara tam yazılması, yeni aktivite kalemleri ve yetkide PDF zorunluluğu. Tablo uygulamadaki güncel puanlardır.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Danışman Takip Uygulaması</div>
+    <h2 class="title a" style="--d:.15">Puanlamada <em>son güncellemeler</em></h2>
+    <div class="row" style="margin-top:32px;flex:1;min-height:0">
+      <div style="width:560px;display:flex;flex-direction:column;gap:16px">
+        <div class="card a l" style="--d:.3;padding:20px 24px"><h4 style="font-size:20px"><span class="gold">+2 puan</span> · İstikrar bonusu</h4><p style="font-size:16px">Aktivite girilen her gün için. 29 Haziran 2026 haftasından itibaren geçerli.</p></div>
+        <div class="card a l" style="--d:.4;padding:20px 24px"><h4 style="font-size:20px"><span class="gold">40 puan</span> · Kapanış</h4><p style="font-size:16px">Ortak işlemde para bölünür, puan bölünmez: her ortağa tam 40 puan.</p></div>
+        <div class="card a l" style="--d:.5;padding:20px 24px"><h4 style="font-size:20px"><span class="gold">Yeni kalemler</span></h4><p style="font-size:16px">Kıbrıs Sunum, Emlak Konut Nöbet, Broşür ve Eğitim artık puanlanıyor.</p></div>
+        <div class="card a l" style="--d:.6;padding:20px 24px"><h4 style="font-size:20px"><span class="gold">PDF zorunlu</span> · Yetki</h4><p style="font-size:16px">Yetki, belgesi (PDF) yüklenerek kaydedilir. Gösterim ve eğitimde kısa not istenir.</p></div>
+      </div>
+      <div class="card a grow" style="--d:.45;padding:16px 26px"><table class="tbl" id="pointsTable" style="font-size:16.5px"></table></div>
+    </div>
+  </div>
+  <div class="foot"><span>Haftalık tam hedef puanı: <b id="fullWeek" style="color:#fff"></b></span><span class="pg"></span></div>
+</section>
+
+<!-- 12 · BEKLENTİLER ============================================== -->
+<section class="slide" data-title="Ofisin Beklentileri" data-notes="<b>Beklentiler:</b> Bunlar ceza değil, birlikte kazanmanın kuralları. Her maddeyi kısa bir örnekle anlat. Özellikle müşteri kaydı ve nöbet saatleri üzerinde dur.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Birlikte Kazanmanın Kuralları</div>
+    <h2 class="title a" style="--d:.15">Ofisimizin <em>sizden beklentileri</em></h2>
+    <div id="expect" style="display:grid;grid-template-columns:1fr 1fr;gap:18px 26px;margin-top:40px"></div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Ofis kültürü</span><span class="pg"></span></div>
+</section>
+
+<!-- 13 · FRANCHISE ================================================ -->
+<section class="slide" data-title="RE/MAX Franchise Yenileme" data-notes="<b>Franchise:</b> RE/MAX Türkiye ile yeni franchise anlaşması dönemi. Beklenen bedel 3,5–4 milyon TL aralığında. Kararımız net: 5 yıl daha devam. Uzatma görüşmeleri önümüzdeki hafta başlıyor. Ekibe güven ver: bu yatırım hepimizin geleceği için.">
+  <div class="grid-bg"></div>
+  <div class="orb" style="width:500px;height:500px;background:#1a5bd6;right:-120px;top:-120px"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">RE/MAX Türkiye</div>
+    <h2 class="title a" style="--d:.15">Yeni franchise dönemi: <em>5 yıl daha</em> birlikteyiz</h2>
+    <div class="row" style="margin-top:48px">
+      <div class="card a z grow" style="--d:.35;padding:38px">
+        <div class="lbl" style="margin:0">Beklenen franchise bedeli</div>
+        <div class="big" style="font-size:78px;margin-top:16px"><span data-count="3.5" data-fmt="m1">0</span> – <span data-count="4" data-fmt="m1">0</span> <span style="font-size:44px">milyon ₺</span></div>
+      </div>
+      <div class="card a z" style="--d:.5;padding:38px;width:400px;text-align:center">
+        <div class="lbl" style="margin:0">Hedef süre</div>
+        <div class="big gold" style="font-size:120px;margin-top:6px"><span data-count="5">0</span></div>
+        <div style="font-size:24px;font-weight:700;color:var(--mute)">yıl daha</div>
+      </div>
+    </div>
+    <div class="tl" style="grid-template-columns:repeat(3,1fr)">
+      <div class="a" style="--d:.8"><div class="dot">1</div><div style="font-size:22px;font-weight:800;margin-top:18px" data-k="fr1t">Bu hafta</div><div style="font-size:17px;color:var(--mute);margin-top:6px" data-k="fr1d">Ekip ile hedeflerin paylaşılması</div></div>
+      <div class="a" style="--d:1"><div class="dot">2</div><div style="font-size:22px;font-weight:800;margin-top:18px" data-k="fr2t">Önümüzdeki hafta</div><div style="font-size:17px;color:var(--mute);margin-top:6px" data-k="fr2d">RE/MAX Türkiye ile uzatma görüşmelerinin başlaması</div></div>
+      <div class="a" style="--d:1.2"><div class="dot">3</div><div style="font-size:22px;font-weight:800;margin-top:18px" data-k="fr3t">Sonrasında</div><div style="font-size:17px;color:var(--mute);margin-top:6px" data-k="fr3d">5 yıllık yeni dönem anlaşması</div></div>
+    </div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · Gelecek planı</span><span class="pg"></span></div>
+</section>
+
+<!-- 14 · HEDEFLER ================================================= -->
+<section class="slide" data-title="Hedeflerimiz" data-notes="<b>Hedefler:</b> İki büyük hedef: Türkiye'de ilk 20 ofis ve 2027 sonunda prestij caddesine taşınmak. Bunun yolu yukarıdaki beklentilerden ve satış kapanışlarından geçiyor.">
+  <div class="grid-bg"></div>
+  <div class="orb" style="width:520px;height:520px;background:#e11b22;left:-150px;bottom:-200px;opacity:.25"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad">
+    <div class="kicker a">Vizyon</div>
+    <h2 class="title a" style="--d:.15">İki büyük <em>hedefimiz</em></h2>
+    <div class="row" style="margin-top:46px;flex:1">
+      <div class="card a z grow" style="--d:.35;padding:44px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(160deg,rgba(225,27,34,.28),rgba(225,27,34,.06));border-color:rgba(225,27,34,.4)">
+        <div class="lbl" style="margin:0;color:#ffb3b5">Hedef 01</div>
+        <div><div style="font-size:30px;font-weight:700">RE/MAX Türkiye'de</div><div class="big" style="font-size:180px;line-height:.95">İLK <span data-count="20">0</span></div><div style="font-size:30px;font-weight:700">ofis arasına girmek</div></div>
+      </div>
+      <div class="card a z grow" style="--d:.55;padding:44px;display:flex;flex-direction:column;justify-content:space-between;background:linear-gradient(160deg,rgba(232,194,110,.25),rgba(232,194,110,.05));border-color:rgba(232,194,110,.4)">
+        <div class="lbl" style="margin:0;color:var(--gold)">Hedef 02</div>
+        <div><div class="big gold" style="font-size:150px;line-height:.95"><span data-count="2027" data-fmt="raw">0</span></div><div style="font-size:30px;font-weight:700;margin-top:10px">yılı sonunda</div><div style="font-size:44px;font-weight:800;margin-top:6px" data-k="hed2">prestij caddesine taşınmak</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş · 2027 vizyonu</span><span class="pg"></span></div>
+</section>
+
+<!-- 15 · EKİP ===================================================== -->
+<section class="slide" data-title="Ekibimiz" data-notes="<b>Ekip:</b> Şu an 10 kişilik bir ekibiz. Küçük ama güçlü. Amacımız: birlikte kazanmak, birlikte büyümek, birlikte keyif almak.">
+  <div class="grid-bg"></div>
+  <div class="logo" data-logo></div>
+  <div class="pad" style="align-items:center;text-align:center">
+    <div class="kicker a" style="justify-content:center">Biz Bir Takımız</div>
+    <h2 class="title a" style="--d:.15;text-align:center"><span data-count="10" id="teamCount">0</span> kişilik <em>güçlü bir ekip</em></h2>
+    <div id="team" style="display:flex;flex-wrap:wrap;justify-content:center;gap:26px 34px;margin-top:44px;max-width:1300px"></div>
+    <div class="row a" style="--d:1.4;margin-top:auto;gap:18px;justify-content:center">
+      <span class="tag s" style="font-size:20px;padding:14px 24px">Birlikte kazanmak</span>
+      <span class="tag k" style="font-size:20px;padding:14px 24px">Birlikte büyümek</span>
+      <span class="tag o" style="font-size:20px;padding:14px 24px">Birlikte keyif almak</span>
+    </div>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş</span><span class="pg"></span></div>
+</section>
+
+<!-- 16 · KAPANIŞ ================================================== -->
+<section class="slide" data-notes="<b>Kapanış:</b> Zor zamanlar bitmek üzere. Enerjiyi yüksek tut, soru-cevaba geç. Toplantıyı alkışla bitir.">
+  <div class="grid-bg"></div>
+  <div class="orb" style="width:700px;height:700px;background:#1a5bd6;left:50%;top:50%;margin:-350px 0 0 -350px;opacity:.22"></div>
+  <div class="logo" data-logo></div>
+  <div class="balloon-big" data-balloon style="right:auto;left:50%;margin-left:-110px;top:90px;width:220px"></div>
+  <div class="pad" style="align-items:center;justify-content:flex-end;text-align:center;padding-bottom:130px">
+    <p class="sub a" style="--d:.3;font-size:30px;margin:0;color:#c8d3ea" data-k="end_s">Zor zamanlar bitmek üzere.</p>
+    <h2 class="title a z" style="--d:.6;font-size:104px;text-align:center;max-width:none" data-k="end_t">Haydi hep beraber,<br><em>el ele zirveye!</em></h2>
+  </div>
+  <div class="foot"><span>RE/MAX Doğuş</span><span class="pg"></span></div>
+</section>
+
+</div></div>
+
+<div id="nav"><button onclick="go(-1)">‹</button><span id="pn">1 / 16</span><button onclick="go(1)">›</button><button onclick="toggleNotes()" title="Notlar (N)">Notlar</button><button onclick="toggleFs()" title="Tam ekran (F)">⛶</button></div>
+<div id="notes"></div>
+<div id="status">Veriler yükleniyor…</div>
+<div id="hint"></div>
+
+<script>
+/* =====================================================================
+   AYARLAR
+   ===================================================================== */
+var API_URL = 'https://script.google.com/macros/s/AKfycbylNnt48KJxD-HBqoopEfYZjv4A06hKo3RjUclILLh9g8bDIno73dDti_PUFECC4F0utg/exec';
+var MONTH = (new URLSearchParams(location.search).get('ay')) || '2026-09';   // ?ay=2026-10 ile başka ay
+var LOGO_URL = '';   // Gerçek logo dosyası varsa yolunu yazın (örn. 'logo.png'); boşsa çizim logo kullanılır.
+var TEAM_SIZE = 10;
+
+var EXPECT = [
+  ['Nöbetlere zamanında gelmek', 'Nöbet, ofisin vitrinidir. Saatinde masada olmak, gelen her müşteriye saygıdır.', 'clock'],
+  ['Gelen müşteriyi kayıt etmek', 'Ofise gelen veya arayan her müşteri, müşteri takip uygulamasına aynı gün girilir.', 'db'],
+  ['Emlak Konut nöbetlerini artırmak', 'Proje satışları ve yeni müşteri havuzu için nöbet sayımızı yükseltiyoruz.', 'building'],
+  ['Video çekimlerini çoğaltmak', 'Her portföy için video; her danışmana haftada en az 1 içerik.', 'video'],
+  ['Ofis kurallarına uymak', 'Düzen, saygı ve sorumluluk: kurallar hepimizi korur.', 'shield'],
+  ['Kurumsal görünüm', 'Kıyafet, yaka kartı, imza, dosya ve sunumlarda RE/MAX standardı.', 'star'],
+  ['Paylaşım ve yardımlaşma', 'Portföy, müşteri ve bilgiyi paylaşmak; ortak satış kültürünün zirvesi.', 'hands'],
+  ['Takip uygulamasını her gün kullanmak', 'Aktiviteleri gün içinde girin; istikrar bonusu her aktif günü ödüllendirir.', 'chart']
+];
+
+var ACTIVITIES = [ // index.html ile aynı puanlar
+  { id: "fzbo", label: "FZBO Araması", t: 15, p: 1 }, { id: "etki", label: "Etki Çevresi Araması", t: 10, p: 2 },
+  { id: "sunum1", label: "1. Sunum", t: 3, p: 5 }, { id: "sunum2", label: "2. Sunum", t: 2, p: 8 },
+  { id: "yetki", label: "Alınan Yetki", t: 1, p: 15 }, { id: "gosterim", label: "Gösterim", t: 2, p: 6 },
+  { id: "kapora", label: "Kapora Alındı", t: 1, p: 15 }, { id: "kibris_sunum", label: "Kıbrıs Sunum", t: 1, p: 8, nw: 1 },
+  { id: "emlak_nobet", label: "Emlak Konut Nöbet", t: 1, p: 5, nw: 1 }, { id: "brosur", label: "Broşür", t: 5, p: 2, nw: 1 },
+  { id: "egitim", label: "Eğitim", t: 1, p: 4, nw: 1 }
+];
+var PTS = {}; ACTIVITIES.forEach(function(a) { PTS[a.id] = a.p; });
+var BONUS_START = '2026-06-29';
+var MONTHS_TR = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+var MSHORT = ['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+
+/* ---------- yardımcılar ---------- */
+function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function ini(n) { return String(n || '?').trim().split(/\s+/).map(function(x) { return x[0]; }).join('').slice(0, 2).toUpperCase(); }
+function first(n) { return String(n || '').split(' ')[0]; }
+function localDay(iso) { var d = new Date(iso); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+function fmtTL(n) { return '₺' + Math.round(n).toLocaleString('tr-TR'); }
+function fmtShort(n) { if (n >= 1e6) return '₺' + (n / 1e6).toLocaleString('tr-TR', { maximumFractionDigits: 1 }) + 'M'; if (n >= 1e3) return '₺' + Math.round(n / 1e3) + 'K'; return '₺' + Math.round(n); }
+function av(c, size, extra) { var st = (extra || '') + 'width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size / 3) + 'px;'; if (c && c.photo) st += "background-image:url('" + String(c.photo).replace(/'/g, '%27') + "');"; return '<div class="av" style="' + st + '">' + (c && c.photo ? '' : esc(ini(c && c.name))) + '</div>'; }
+var ICONS = {
+  clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  db: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
+  building: '<path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>',
+  video: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  hands: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  chart: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>'
+};
+
+/* ---------- Logo ---------- */
+var BID = 0;
+function balloon() { BID++; return BALLOON.replace(/bc0/g, 'bc' + BID); }
+var BALLOON = '<svg viewBox="0 0 100 118" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="bc0"><path d="M50 2C23 2 4 22 4 46c0 20 14 34 30 46l4 6h24l4-6c16-12 30-26 30-46C96 22 77 2 50 2z"/></clipPath></defs>' +
+  '<g clip-path="url(#bc0)"><rect x="0" y="0" width="100" height="100" fill="#e11b22"/><rect x="0" y="34" width="100" height="22" fill="#ffffff"/><rect x="0" y="56" width="100" height="44" fill="#1a5bd6"/></g>' +
+  '<path d="M50 2C23 2 4 22 4 46c0 20 14 34 30 46l4 6h24l4-6c16-12 30-26 30-46C96 22 77 2 50 2z" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/>' +
+  '<path d="M40 100h20l-3 10H43z" fill="#c9cfdb"/><rect x="41" y="110" width="18" height="7" rx="2" fill="#8d97ab"/></svg>';
+function logoHTML() {
+  if (LOGO_URL) return '<img src="' + esc(LOGO_URL) + '" alt="RE/MAX Doğuş">';
+  return balloon() + '<div class="lw"><b><span class="r">RE</span>/<span class="b">MAX</span></b><span>DOĞUŞ</span></div>';
+}
+document.querySelectorAll('[data-logo]').forEach(function(el) { el.innerHTML = logoHTML(); });
+document.querySelectorAll('[data-balloon]').forEach(function(el) { el.innerHTML = balloon(); });
+
+/* ---------- Kayıtlı metin düzenlemeleri ---------- */
+var EDIT_KEY = 'toplanti_edits_' + MONTH, EDITS = {};
+try { EDITS = JSON.parse(localStorage.getItem(EDIT_KEY) || '{}'); } catch (e) {}
+document.querySelectorAll('[data-k]').forEach(function(el) { var k = el.getAttribute('data-k'); if (EDITS[k] != null) el.innerHTML = EDITS[k]; });
+document.addEventListener('input', function(e) {
+  var el = e.target.closest && e.target.closest('[data-k]'); if (!el) return;
+  EDITS[el.getAttribute('data-k')] = el.innerHTML;
+  try { localStorage.setItem(EDIT_KEY, JSON.stringify(EDITS)); } catch (err) {}
+});
+
+/* ---------- Statik içerik ---------- */
+var monthName = MONTHS_TR[+MONTH.slice(5, 7) - 1];
+document.querySelectorAll('[data-month-label]').forEach(function(el) { el.textContent = monthName; });
+document.getElementById('expect').innerHTML = EXPECT.map(function(x, i) {
+  return '<div class="card a" style="--d:' + (0.3 + i * 0.09).toFixed(2) + ';display:flex;gap:20px;align-items:flex-start;padding:20px 24px"><div class="ico" style="margin:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ICONS[x[2]] + '</svg></div><div><h4 style="font-size:21px;margin-bottom:4px" data-k="ex_t' + i + '">' + (EDITS['ex_t' + i] || x[0]) + '</h4><p style="font-size:16px" data-k="ex_d' + i + '">' + (EDITS['ex_d' + i] || x[1]) + '</p></div></div>';
+}).join('');
+(function() {
+  var full = 0;
+  var rows = ACTIVITIES.map(function(a) { full += a.t * a.p; return '<tr><td>' + esc(a.label) + (a.nw ? ' <span class="tag o" style="font-size:10px;padding:3px 7px;margin-left:6px">Yeni</span>' : '') + '</td><td class="num">' + a.t + '</td><td class="num" style="color:var(--gold);font-weight:800">' + a.p + '</td><td class="num">' + (a.t * a.p) + '</td></tr>'; });
+  rows.push('<tr><td>Kapanış</td><td class="num">—</td><td class="num" style="color:var(--gold);font-weight:800">40</td><td class="num">—</td></tr>');
+  document.getElementById('pointsTable').innerHTML = '<thead><tr><th>Aktivite</th><th class="num">Haftalık hedef</th><th class="num">Puan</th><th class="num">Hedef puanı</th></tr></thead><tbody>' + rows.join('') + '</tbody>';
+  document.getElementById('fullWeek').textContent = full + ' puan';
+})();
+
+/* =====================================================================
+   CANLI VERİ
+   ===================================================================== */
+var DATA = null;
+function setStatus(msg, err) { var s = document.getElementById('status'); s.innerHTML = msg; s.className = err ? 'err' : ''; if (!err) setTimeout(function() { s.style.opacity = 0; }, 3500); else s.style.opacity = 1; }
+function loadData() {
+  setStatus('Veriler uygulamadan yükleniyor…');
+  var init = fetch(API_URL + '?action=init').then(function(r) { return r.json(); });
+  var yet = fetch(API_URL + '?action=yetkiler').then(function(r) { return r.json(); }).catch(function() { return {}; });
+  Promise.all([init, yet]).then(function(res) {
+    DATA = res[0] || {};
+    DATA.yetkiler = (res[1] && res[1].yetkiler) || [];
+    if (!DATA.consultants) throw new Error(DATA.error || 'Beklenmeyen cevap');
+    renderData();
+    setStatus('✓ Veriler güncel · ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
+  }).catch(function(e) {
+    setStatus('⚠ Uygulama verisi alınamadı (' + esc(e.message) + ')<button onclick="loadData()">Tekrar dene</button>', true);
+    renderData();
+  });
+}
+
+function renderData() {
+  var D = DATA || { consultants: [], closings: [], activities: [], yetkiler: [] };
+  var C = {}; (D.consultants || []).forEach(function(c) { C[c.id] = c; });
+  var name = function(id) { return (C[id] || {}).name || id; };
+
+  /* --- Kapanışlar (ortak işlemler tek sayılır) --- */
+  var uniq = {}, list = [];
+  (D.closings || []).forEach(function(c) {
+    var key = c.originalId || c.id || (c.date + c.adres);
+    if (!uniq[key]) { uniq[key] = Object.assign({}, c, { _ids: [] }); list.push(uniq[key]); }
+    if (uniq[key]._ids.indexOf(c.consultantId) < 0) uniq[key]._ids.push(c.consultantId);
+  });
+  var mon = list.filter(function(c) { return String(c.date || '').slice(0, 7) === MONTH; }).sort(function(a, b) { return String(a.date).localeCompare(String(b.date)); });
+  var sat = mon.filter(function(c) { return c.tur === 'Satılık'; }).length;
+  var kir = mon.filter(function(c) { return c.tur === 'Kiralık'; }).length;
+  var hb = mon.reduce(function(s, c) { return s + (+c.toplamHB || 0); }, 0);
+  setCount('k_total', mon.length); setCount('k_sat', sat); setCount('k_kir', kir); setCount('k_hb', hb, 'tl');
+  var cl = document.getElementById('closingList');
+  if (!mon.length) cl.innerHTML = '<div class="empty">' + (DATA ? monthName + ' ayında kayıtlı kapanış bulunamadı.' : 'Veri bekleniyor…') + '</div>';
+  else {
+    var max = 7, shown = mon.slice(0, max);
+    cl.innerHTML = '<table class="tbl"><thead><tr><th>Tarih</th><th>Danışman</th><th>Tür</th><th>Adres</th><th class="num">Brüt HB</th></tr></thead><tbody>' +
+      shown.map(function(c) {
+        var who = c._ids.map(function(id) { return esc(name(id)); }).join(' &amp; ');
+        return '<tr><td style="white-space:nowrap">' + esc(String(c.date).slice(8, 10) + '.' + String(c.date).slice(5, 7)) + '</td><td style="font-weight:700">' + who + (c._ids.length > 1 ? ' <span class="tag o" style="margin-left:6px">Ortak</span>' : '') + '</td><td><span class="tag ' + (c.tur === 'Satılık' ? 's' : 'k') + '">' + esc(c.tur || '') + '</span></td><td style="color:var(--mute)">' + esc(String(c.adres || '').split(',')[0].slice(0, 34)) + '</td><td class="num">' + (c.toplamHB ? fmtTL(c.toplamHB) : '—') + '</td></tr>';
+      }).join('') + '</tbody></table>' + (mon.length > max ? '<div style="font-size:14px;color:var(--mute);padding:10px 14px">+ ' + (mon.length - max) + ' işlem daha</div>' : '');
+  }
+
+  /* --- Ay içi aktiviteler --- */
+  var acts = (D.activities || []).filter(function(a) { return localDay(a.timestamp).slice(0, 7) === MONTH; });
+  var people = (D.consultants || []).filter(function(c) { return !c.isAdmin && !c.hiddenFromRanking; });
+
+  /* --- Yetki şampiyonları --- */
+  var yc = {};
+  acts.filter(function(a) { return a.type === 'yetki'; }).forEach(function(a) { yc[a.consultantId] = (yc[a.consultantId] || 0) + 1; });
+  var top = Object.keys(yc).map(function(id) { return { c: C[id] || { name: id }, n: yc[id] }; })
+    .sort(function(a, b) { return b.n - a.n || String(a.c.name).localeCompare(String(b.c.name), 'tr'); }).slice(0, 3);
+  var pod = document.getElementById('podium');
+  if (!top.length) pod.innerHTML = '<div class="empty">' + (DATA ? monthName + ' ayında yetki kaydı bulunamadı.' : 'Veri bekleniyor…') + '</div>';
+  else {
+    var order = top.length === 3 ? [1, 0, 2] : top.length === 2 ? [1, 0] : [0];
+    var hts = [330, 250, 190];
+    pod.innerHTML = order.map(function(i) {
+      var t = top[i], d = [1.1, 0.7, 0.4][i];
+      return '<div class="pod p' + (i + 1) + ' a" style="--d:' + d + '">' + av(t.c, i === 0 ? 150 : 128) + '<div class="nm">' + esc(t.c.name) + '</div><div class="ct"><b style="color:#fff;font-size:22px">' + t.n + '</b> yetki</div><div class="blk col-fill" style="--h:' + hts[i] + 'px;--d:' + (d + .2) + '">' + (i + 1) + '</div></div>';
+    }).join('');
+  }
+
+  /* --- Ayın puan tablosu --- */
+  var mEnd = new Date(+MONTH.slice(0, 4), +MONTH.slice(5, 7), 1); // bir sonraki ayın 1'i
+  var pts = people.map(function(c) {
+    var mine = acts.filter(function(a) { return a.consultantId === c.id; });
+    var p = mine.reduce(function(s, a) { return s + (PTS[a.type] || 0); }, 0);
+    var days = {}; mine.forEach(function(a) { days[localDay(a.timestamp)] = 1; });
+    var bonus = Object.keys(days).filter(function(d) { return d >= BONUS_START; }).length * 2;
+    var kc = (D.closings || []).filter(function(x) { return x.consultantId === c.id && String(x.date || '').slice(0, 7) === MONTH; }).length;
+    return { c: c, total: p + bonus + kc * 40, kc: kc, yetki: yc[c.id] || 0 };
+  }).sort(function(a, b) { return b.total - a.total; });
+  var maxP = Math.max(1, pts.length ? pts[0].total : 1);
+  document.getElementById('pointsBars').innerHTML = pts.length ? pts.slice(0, 10).map(function(r, i) {
+    var col = i === 0 ? 'linear-gradient(90deg,#e8c26e,#f5dc9c)' : i < 3 ? 'linear-gradient(90deg,#e11b22,#ff6a6f)' : 'linear-gradient(90deg,#1a5bd6,#5b8cff)';
+    return '<div class="a l" style="--d:' + (0.25 + i * 0.07).toFixed(2) + ';display:flex;align-items:center;gap:18px">' +
+      '<div style="width:34px;font-size:22px;font-weight:900;color:' + (i < 3 ? 'var(--gold)' : 'var(--mute)') + '">' + (i + 1) + '</div>' + av(r.c, 50) +
+      '<div style="width:230px;font-size:20px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + esc(r.c.name) + '</div>' +
+      '<div style="flex:1;height:30px;background:rgba(255,255,255,.06);border-radius:8px;overflow:hidden"><div class="bar-fill" style="--w:' + Math.max(1.5, r.total / maxP * 100).toFixed(1) + '%;--d:' + (0.45 + i * 0.07).toFixed(2) + ';height:100%;background:' + col + ';border-radius:8px"></div></div>' +
+      '<div style="width:110px;text-align:right;font-size:24px;font-weight:900;font-variant-numeric:tabular-nums">' + r.total + '<span style="font-size:13px;color:var(--mute);font-weight:600"> p</span></div>' +
+      '<div style="width:150px;font-size:13px;color:var(--mute)">' + (r.kc ? r.kc + ' kapanış · ' : '') + (r.yetki ? r.yetki + ' yetki' : '') + '</div></div>';
+  }).join('') : '<div class="empty">Veri bekleniyor…</div>';
+
+  /* --- 2026 aylık satılık / kiralık --- */
+  var year = MONTH.slice(0, 4), lastM = +MONTH.slice(5, 7), series = [];
+  for (var m = 1; m <= lastM; m++) {
+    var key = year + '-' + String(m).padStart(2, '0');
+    var mm = list.filter(function(c) { return String(c.date || '').slice(0, 7) === key; });
+    series.push({ m: MSHORT[m - 1], s: mm.filter(function(c) { return c.tur === 'Satılık'; }).length, k: mm.filter(function(c) { return c.tur === 'Kiralık'; }).length });
+  }
+  var mx = Math.max(1, Math.max.apply(null, series.map(function(x) { return x.s + x.k; })));
+  var H = 300;
+  document.getElementById('monthChart').innerHTML = series.map(function(x, i) {
+    var d = (0.4 + i * 0.08).toFixed(2);
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end">' +
+      '<div style="font-size:14px;font-weight:800">' + (x.s + x.k || '') + '</div>' +
+      '<div style="width:100%;max-width:46px;display:flex;flex-direction:column;justify-content:flex-end;height:' + H + 'px">' +
+        '<div class="col-fill" style="--h:' + (x.k / mx * H).toFixed(0) + 'px;--d:' + d + ';background:#5b8cff;border-radius:' + (x.s ? '0' : '6px 6px 0 0') + '"></div>' +
+      '</div>' +
+      '<div style="font-size:13px;color:var(--mute);font-weight:600">' + x.m + '</div></div>';
+  }).join('');
+  // satılık kısmı kiralığın üstüne yığılır
+  var cols = document.getElementById('monthChart').children;
+  series.forEach(function(x, i) {
+    var holder = cols[i].children[1];
+    var s = document.createElement('div');
+    s.className = 'col-fill';
+    s.style.cssText = '--h:' + (x.s / mx * H).toFixed(0) + 'px;--d:' + (0.6 + i * 0.08).toFixed(2) + ';background:#e11b22;border-radius:6px 6px 0 0';
+    holder.insertBefore(s, holder.firstChild);
+  });
+  var ts = series.reduce(function(a, x) { return a + x.s; }, 0), tk = series.reduce(function(a, x) { return a + x.k; }, 0);
+  document.getElementById('ratioLine').innerHTML = (ts + tk) ? '2026 toplamı: <b style="color:#ff6a6f">' + ts + ' satılık</b> · <b style="color:#8fb0ff">' + tk + ' kiralık</b> · satış payı <b style="color:#fff">%' + Math.round(ts / (ts + tk) * 100) + '</b>' : '';
+
+  /* --- Ekip --- */
+  var team = (D.consultants || []).filter(function(c) { return !c.hiddenFromLogin || c.isAdmin; }).sort(function(a, b) { return (b.isAdmin ? 1 : 0) - (a.isAdmin ? 1 : 0) || String(a.name).localeCompare(String(b.name), 'tr'); });
+  document.getElementById('team').innerHTML = team.length ? team.map(function(c, i) {
+    return '<div class="a z" style="--d:' + (0.35 + i * 0.08).toFixed(2) + ';display:flex;flex-direction:column;align-items:center;width:150px">' + av(c, 112, 'border:4px solid ' + (c.isAdmin ? 'var(--red)' : 'rgba(255,255,255,.2)') + ';') + '<div style="font-size:17px;font-weight:700;margin-top:12px">' + esc(first(c.name)) + '</div><div style="font-size:13px;color:var(--mute)">' + esc(String(c.name || '').split(' ').slice(1).join(' ')) + '</div></div>';
+  }).join('') : '';
+  document.getElementById('teamCount').setAttribute('data-count', TEAM_SIZE);
+
+  // aktif slayt yeniden oynatılsın
+  replay(cur);
+}
+
+/* =====================================================================
+   SAYAÇLAR
+   ===================================================================== */
+function fmtVal(v, f) {
+  if (f === 'tl') return fmtTL(v);
+  if (f === 'm1') return v.toLocaleString('tr-TR', { minimumFractionDigits: v % 1 ? 1 : 0, maximumFractionDigits: 1 });
+  if (f === 'raw') return String(Math.round(v));
+  return Math.round(v).toLocaleString('tr-TR');
+}
+function setCount(id, v, f) { var el = document.getElementById(id); el.setAttribute('data-count', v); if (f) el.setAttribute('data-fmt', f); }
+function runCounters(slide) {
+  slide.querySelectorAll('[data-count]').forEach(function(el) {
+    var to = parseFloat(el.getAttribute('data-count')) || 0, f = el.getAttribute('data-fmt'), dur = 1600, t0 = null;
+    var from = f === 'raw' ? to - 30 : 0;
+    function step(t) {
+      if (!t0) t0 = t;
+      var p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmtVal(from + (to - from) * e, f);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    setTimeout(function() { requestAnimationFrame(step); }, 350);
+  });
+}
+function confetti() {
+  var box = document.getElementById('confetti'), cols = ['#e11b22', '#1a5bd6', '#e8c26e', '#ffffff', '#22c55e'], h = '';
+  for (var i = 0; i < 90; i++) h += '<div class="confetti" style="left:' + (Math.random() * 100) + '%;background:' + cols[i % 5] + ';animation-duration:' + (2.6 + Math.random() * 2.4).toFixed(2) + 's;animation-delay:' + (1.2 + Math.random() * 1.4).toFixed(2) + 's;border-radius:' + (i % 3 ? '2px' : '50%') + '"></div>';
+  box.innerHTML = h;
+}
+
+/* =====================================================================
+   NAVİGASYON
+   ===================================================================== */
+var slides = Array.prototype.slice.call(document.querySelectorAll('.slide')), cur = 0;
+slides.forEach(function(s, i) { var pg = s.querySelector('.pg'); if (pg) pg.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0'); });
+document.getElementById('agenda').innerHTML = slides.filter(function(s) { return s.dataset.title; }).map(function(s, i) {
+  return '<div class="a l" style="--d:' + (0.3 + i * 0.07).toFixed(2) + ';display:flex;gap:22px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line)"><span style="font-size:26px;font-weight:900;color:var(--red);width:44px">' + String(i + 1).padStart(2, '0') + '</span><span style="font-size:25px;font-weight:600">' + esc(s.dataset.title) + '</span></div>';
+}).join('');
+
+function replay(i) {
+  var s = slides[i]; if (!s) return;
+  s.classList.remove('active'); void s.offsetWidth; s.classList.add('active');
+  runCounters(s);
+  if (s.querySelector('#confetti')) confetti();
+}
+function show(i) {
+  i = Math.max(0, Math.min(slides.length - 1, i));
+  slides[cur].classList.remove('active');
+  cur = i;
+  replay(cur);
+  document.getElementById('pn').textContent = (cur + 1) + ' / ' + slides.length;
+  document.getElementById('progress').style.width = ((cur + 1) / slides.length * 100) + '%';
+  document.getElementById('notes').innerHTML = slides[cur].dataset.notes || '<i>Bu slayt için not yok.</i>';
+  try { history.replaceState(null, '', '#' + (cur + 1)); } catch (e) {}
+}
+function go(d) { show(cur + d); }
+function fit() { var s = Math.min(window.innerWidth / 1600, window.innerHeight / 900); document.getElementById('deck').style.transform = 'scale(' + s + ')'; }
+window.addEventListener('resize', fit);
+function hint(t) { var h = document.getElementById('hint'); h.textContent = t; h.classList.add('show'); clearTimeout(hint.t); hint.t = setTimeout(function() { h.classList.remove('show'); }, 1800); }
+function toggleNotes() { document.getElementById('notes').classList.toggle('show'); }
+function toggleFs() { if (!document.fullscreenElement) document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(function() {}); else document.exitFullscreen(); }
+function toggleEdit() {
+  var on = !document.body.classList.contains('editing');
+  document.body.classList.toggle('editing', on);
+  document.querySelectorAll('[data-k]').forEach(function(el) { el.contentEditable = on ? 'true' : 'false'; });
+  hint(on ? 'Düzenleme açık: yazılara tıklayın (kapatmak için Esc)' : 'Düzenleme kapandı, kaydedildi');
+}
+document.addEventListener('keydown', function(e) {
+  var editing = document.body.classList.contains('editing');
+  if (editing) { if (e.key === 'Escape') toggleEdit(); return; }
+  if (['ArrowRight', 'PageDown', ' ', 'Enter'].indexOf(e.key) >= 0) { e.preventDefault(); go(1); }
+  else if (['ArrowLeft', 'PageUp', 'Backspace'].indexOf(e.key) >= 0) { e.preventDefault(); go(-1); }
+  else if (e.key === 'Home') show(0);
+  else if (e.key === 'End') show(slides.length - 1);
+  else if (e.key === 'f' || e.key === 'F') toggleFs();
+  else if (e.key === 'n' || e.key === 'N') toggleNotes();
+  else if (e.key === 'e' || e.key === 'E') toggleEdit();
+  else if (e.key === 'p' || e.key === 'P') window.print();
+});
+document.getElementById('viewport').addEventListener('click', function(e) {
+  if (document.body.classList.contains('editing')) return;
+  go(e.clientX > window.innerWidth * 0.3 ? 1 : -1);
+});
+var tx = null;
+document.addEventListener('touchstart', function(e) { tx = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', function(e) { if (tx === null) return; var dx = e.changedTouches[0].clientX - tx; tx = null; if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1); }, { passive: true });
+
+fit();
+show(Math.max(0, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+loadData();
+</script>
+</body>
+</html>
