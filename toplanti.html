@@ -94,7 +94,7 @@ button { font-family: inherit; cursor: pointer; }
 .slide.active .col-fill { height: var(--h); transition-delay: calc(var(--d, 0) * .3s); }
 
 /* ---------- Kapak ---------- */
-.cover-ring { position: absolute; right: -220px; top: 50%; width: 900px; height: 900px; margin-top: -450px; border-radius: 50%; border: 2px solid rgba(255,255,255,.08); animation: spin 60s linear infinite; will-change: transform; }
+.cover-ring { position: absolute; right: -220px; top: 50%; width: 900px; height: 900px; margin-top: -450px; border-radius: 50%; border: 2px solid rgba(255,255,255,.08); }
 .cover-ring::after { content: ""; position: absolute; inset: 90px; border-radius: 50%; border: 2px dashed rgba(232,194,110,.18); }
 @keyframes spin { from { transform: rotate(0deg) translateZ(0); } to { transform: rotate(360deg) translateZ(0); } }
 .balloon-big { position: absolute; right: 150px; top: 200px; width: 380px; will-change: transform; backface-visibility: hidden; transform: translate3d(0,0,0); }
@@ -107,7 +107,7 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ---------- Uçan balon filosu ---------- */
 .fleet { position: absolute; top: 0; bottom: 0; pointer-events: none; overflow: hidden; }
-.fb { position: absolute; bottom: -280px; will-change: transform; animation: fly var(--t) linear var(--dl) infinite; }
+.fb { position: absolute; bottom: -280px; will-change: transform, opacity; transform: translateZ(0); backface-visibility: hidden; animation: fly var(--t) linear var(--dl) infinite; }
 .fb > div { will-change: transform; animation: sway var(--s) ease-in-out var(--dl) infinite alternate; }
 .fb img { display: block; width: 100%; height: auto; }
 @keyframes fly { from { transform: translate3d(0,0,0); } to { transform: translate3d(0,-1280px,0); } }
@@ -194,7 +194,7 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
 <section class="slide" data-notes="<b>Açılış:</b> Herkese hoş geldiniz. Eylül'ü değerlendirip Ekim ve sonrası için yol haritamızı konuşacağız. Bugün hem güzel haberlerimiz hem de büyük hedeflerimiz var.">
   <div class="grid-bg"></div>
   <div class="orb" style="width:520px;height:520px;background:radial-gradient(circle, #1a5bd6 0%, transparent 68%);left:-140px;top:-160px"></div>
-  <div class="orb" style="width:420px;height:420px;background:radial-gradient(circle, #e11b22 0%, transparent 68%);right:300px;bottom:-200px;animation-delay:-5s"></div>
+  <div class="orb" style="animation:none;width:420px;height:420px;background:radial-gradient(circle, #e11b22 0%, transparent 68%);right:300px;bottom:-200px;animation-delay:-5s"></div>
   <div class="cover-ring"></div>
   <div class="fleet" data-fleet="cover" style="left:820px;right:0"></div>
   <div class="logo" data-logo></div>
@@ -591,7 +591,7 @@ document.querySelectorAll('[data-logo]').forEach(function(el) { el.innerHTML = l
 document.querySelectorAll('[data-balloon]').forEach(function(el) { el.innerHTML = balloon(); });
 // İrili ufaklı balonlar: [sol %, genişlik px, uçuş süresi s, başlangıç gecikmesi s, saydamlık]
 var FLEETS = {
-  cover: [[45, 190, 15, -2, 1], [13, 120, 19, -9, .95], [33, 78, 24, -15, .8], [72, 96, 21, -5, .85], [3, 58, 28, -21, .65], [86, 52, 30, -26, .6], [62, 140, 17, -12, .95]],
+  cover: [[45, 190, 16, -2, .97], [13, 120, 19, -9, .93], [33, 78, 24, -15, .8], [72, 96, 21, -5, .85], [3, 58, 28, -21, .65], [86, 52, 30, -26, .6], [62, 140, 18, -12, .93]],
   end:   [[6, 120, 18, -3, .55], [22, 64, 26, -14, .4], [78, 150, 16, -9, .55], [92, 70, 24, -1, .4], [64, 54, 29, -20, .35], [36, 90, 21, -17, .45]]
 };
 document.querySelectorAll('[data-fleet]').forEach(function(el) {
