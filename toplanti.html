@@ -114,6 +114,11 @@ button { font-family: inherit; cursor: pointer; }
 @keyframes sway { from { transform: translate3d(-16px,0,0) rotate(-3deg); } to { transform: translate3d(16px,0,0) rotate(3deg); } }
 .slide:not(.active) .fb, .slide:not(.active) .fb > div { animation-play-state: paused; }
 
+/* ---------- Anıtkabir ---------- */
+.ak-flag { transform-origin: 1496px 347px; transform-box: view-box; animation: akflag 3.2s ease-in-out infinite alternate; }
+@keyframes akflag { from { transform: skewY(-2deg) scaleX(.97); } to { transform: skewY(2deg) scaleX(1.02); } }
+.slide:not(.active) .ak-flag { animation-play-state: paused; }
+
 /* ---------- Tablolar & listeler ---------- */
 .tbl { width: 100%; border-collapse: collapse; font-size: 18px; }
 .tbl th { text-align: left; font-size: 12.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); padding: 10px 14px; border-bottom: 2px solid rgba(255,255,255,.2); }
@@ -558,6 +563,79 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
   <div class="foot"><span>RE/MAX Doğuş · 2027 vizyonu</span><span class="pg"></span></div>
 </section>
 
+<!-- 14b · 10 KASIM ANITKABİR ====================================== -->
+<section class="slide" data-title="10 Kasım · Anıtkabir Ziyareti" style="background:#0a1124" data-notes="<b>10 Kasım Anıtkabir ziyareti:</b> 10 Kasım haftasında trenle günübirlik Ankara'ya gidiyor, Atamızı tüm ekibimiz ve çocuklarımızla birlikte ziyaret ediyoruz. Kesin tarih ve program WhatsApp hattımızdan duyurulacak. Katılım için çocuk sayınızı bildirmeyi unutmayın.">
+  <svg class="anit-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;width:100%;height:100%">
+    <defs>
+      <linearGradient id="ak_sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1530"/><stop offset=".45" stop-color="#2a3560"/><stop offset=".75" stop-color="#b8665a"/><stop offset="1" stop-color="#f0b27a"/></linearGradient>
+      <radialGradient id="ak_sun" cx="1110" cy="520" r="380" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ffd9a0" stop-opacity=".85"/><stop offset=".4" stop-color="#ffb072" stop-opacity=".35"/><stop offset="1" stop-color="#ffb072" stop-opacity="0"/></radialGradient>
+      <linearGradient id="ak_stone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4e6cf"/><stop offset="1" stop-color="#c9b28e"/></linearGradient>
+      <linearGradient id="ak_col" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f6ead5"/><stop offset=".6" stop-color="#e2cfae"/><stop offset="1" stop-color="#b79c75"/></linearGradient>
+      <linearGradient id="ak_ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2340"/><stop offset="1" stop-color="#070b18"/></linearGradient>
+      <linearGradient id="ak_fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a1124" stop-opacity=".97"/><stop offset=".38" stop-color="#0a1124" stop-opacity=".85"/><stop offset=".6" stop-color="#0a1124" stop-opacity="0"/></linearGradient>
+    </defs>
+    <rect width="1600" height="900" fill="url(#ak_sky)"/>
+    <rect width="1600" height="900" fill="url(#ak_sun)"/>
+    <g fill="#fff" opacity=".7"><circle cx="760" cy="90" r="1.6"/><circle cx="1210" cy="60" r="1.2"/><circle cx="1420" cy="140" r="1.4"/><circle cx="980" cy="170" r="1"/><circle cx="1530" cy="70" r="1.1"/><circle cx="880" cy="40" r="1"/></g>
+    <!-- tepe -->
+    <path d="M0 820 C 400 760, 760 640, 1100 616 C 1330 622, 1480 650, 1600 690 L1600 900 L0 900 Z" fill="#141b36"/>
+    <g transform="translate(150,26) scale(.88)">
+    <!-- basamaklar -->
+    <rect x="740" y="640" width="680" height="16" fill="#cdb894"/>
+    <rect x="760" y="624" width="640" height="16" fill="#d9c5a1"/>
+    <rect x="780" y="608" width="600" height="16" fill="#e3d0ad"/>
+    <!-- kaide -->
+    <rect x="800" y="560" width="560" height="48" fill="url(#ak_stone)"/>
+    <rect x="800" y="560" width="560" height="5" fill="#fff3dd" opacity=".6"/>
+    <!-- sütunlar -->
+    <g><rect x="826" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="822" y="412" width="28" height="8" fill="#d8c39f"/><rect x="822" y="556" width="28" height="6" fill="#d8c39f"/><rect x="863" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="859" y="412" width="28" height="8" fill="#d8c39f"/><rect x="859" y="556" width="28" height="6" fill="#d8c39f"/><rect x="900" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="896" y="412" width="28" height="8" fill="#d8c39f"/><rect x="896" y="556" width="28" height="6" fill="#d8c39f"/><rect x="937" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="933" y="412" width="28" height="8" fill="#d8c39f"/><rect x="933" y="556" width="28" height="6" fill="#d8c39f"/><rect x="974" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="970" y="412" width="28" height="8" fill="#d8c39f"/><rect x="970" y="556" width="28" height="6" fill="#d8c39f"/><rect x="1011" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="1007" y="412" width="28" height="8" fill="#d8c39f"/><rect x="1007" y="556" width="28" height="6" fill="#d8c39f"/><rect x="1048" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="1044" y="412" width="28" height="8" fill="#d8c39f"/><rect x="1044" y="556" width="28" height="6" fill="#d8c39f"/><rect x="1085" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="1081" y="412" width="28" height="8" fill="#d8c39f"/><rect x="1081" y="556" width="28" height="6" fill="#d8c39f"/><rect x="1122" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="1118" y="412" width="28" height="8" fill="#d8c39f"/><rect x="1118" y="556" width="28" height="6" fill="#d8c39f"/><rect x="1159" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="1155" y="412" width="28" height="8" fill="#d8c39f"/><rect x="1155" y="556" width="28" height="6" fill="#d8c39f"/><rect x="1196" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="1192" y="412" width="28" height="8" fill="#d8c39f"/><rect x="1192" y="556" width="28" height="6" fill="#d8c39f"/><rect x="1233" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="1229" y="412" width="28" height="8" fill="#d8c39f"/><rect x="1229" y="556" width="28" height="6" fill="#d8c39f"/><rect x="1270" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="1266" y="412" width="28" height="8" fill="#d8c39f"/><rect x="1266" y="556" width="28" height="6" fill="#d8c39f"/><rect x="1307" y="418" width="20" height="142" fill="url(#ak_col)"/><rect x="1303" y="412" width="28" height="8" fill="#d8c39f"/><rect x="1303" y="556" width="28" height="6" fill="#d8c39f"/></g>
+    <!-- saçaklık -->
+    <rect x="790" y="372" width="580" height="46" fill="url(#ak_stone)"/>
+    <rect x="790" y="372" width="580" height="4" fill="#fff6e6" opacity=".7"/>
+    <rect x="790" y="410" width="580" height="8" fill="#a98f68" opacity=".55"/>
+    <rect x="812" y="340" width="536" height="34" fill="#e8d7b8"/>
+    <g fill="#bba27b" opacity=".7"><rect x="826" y="350" width="22" height="16" rx="2"/><rect x="864" y="350" width="22" height="16" rx="2"/><rect x="902" y="350" width="22" height="16" rx="2"/><rect x="940" y="350" width="22" height="16" rx="2"/><rect x="978" y="350" width="22" height="16" rx="2"/><rect x="1016" y="350" width="22" height="16" rx="2"/><rect x="1054" y="350" width="22" height="16" rx="2"/><rect x="1092" y="350" width="22" height="16" rx="2"/><rect x="1130" y="350" width="22" height="16" rx="2"/><rect x="1168" y="350" width="22" height="16" rx="2"/><rect x="1206" y="350" width="22" height="16" rx="2"/><rect x="1244" y="350" width="22" height="16" rx="2"/><rect x="1282" y="350" width="22" height="16" rx="2"/><rect x="1320" y="350" width="22" height="16" rx="2"/></g>
+    <rect x="838" y="318" width="484" height="24" fill="#dcc8a5"/>
+    <!-- iç gölge -->
+    <rect x="820" y="418" width="520" height="142" fill="#2b2238" opacity=".55"/>
+    <!-- bayrak direği ve bayrak -->
+    <rect x="1490" y="300" width="6" height="360" fill="#d9d9de"/>
+    <circle cx="1493" cy="298" r="6" fill="#e8c26e"/>
+    <g class="ak-flag">
+      <path d="M1496 306 C 1540 296, 1580 322, 1624 310 L 1624 392 C 1580 404, 1540 378, 1496 388 Z" fill="#e30a17"/>
+      <circle cx="1546" cy="348" r="22" fill="#fff"/>
+      <circle cx="1552" cy="348" r="17.6" fill="#e30a17"/>
+      <polygon points="1573,348 1592.3,341.7 1580.4,358.1 1580.4,337.9 1592.3,354.3" fill="#fff"/>
+    </g>
+    </g>
+    <!-- ön plan çimen/ağaç silüeti -->
+    <path d="M0 860 C 300 820, 600 830, 900 850 C 1200 870, 1400 850, 1600 860 L1600 900 L0 900 Z" fill="#05080f"/>
+    <rect width="1600" height="900" fill="url(#ak_fade)"/>
+  </svg>
+  <div class="logo" data-logo></div>
+  <div class="pad" style="max-width:900px">
+    <div class="kicker a" style="color:var(--gold)">10 Kasım Haftası · Ekip Etkinliği</div>
+    <h2 class="title a" style="--d:.15;font-size:72px" data-k="ak_h">Atamızın huzurunda, <em>hep birlikte.</em></h2>
+    <p class="sub a" style="--d:.3;color:#d5dcec;max-width:760px" data-k="ak_s">10 Kasım haftasında trenle günübirlik Ankara'ya gidiyor; Ulu Önder Mustafa Kemal Atatürk'ü tüm ekibimiz ve çocuklarımızla birlikte Anıtkabir'de ziyaret ediyoruz.</p>
+    <div style="display:grid;grid-template-columns:repeat(3,auto);gap:14px;margin-top:30px;justify-content:start">
+      <div class="card a" style="--d:.45;padding:18px 22px;background:rgba(8,14,32,.6)"><div class="lbl" style="margin:0 0 6px">Ne zaman</div><div style="font-size:22px;font-weight:800;white-space:nowrap" data-k="ak_t1">10 Kasım haftası</div></div>
+      <div class="card a" style="--d:.55;padding:18px 22px;background:rgba(8,14,32,.6)"><div class="lbl" style="margin:0 0 6px">Ulaşım</div><div style="font-size:22px;font-weight:800;white-space:nowrap" data-k="ak_t2">Trenle · günübirlik</div></div>
+      <div class="card a" style="--d:.65;padding:18px 22px;background:rgba(8,14,32,.6)"><div class="lbl" style="margin:0 0 6px">Kimler</div><div style="font-size:22px;font-weight:800;white-space:nowrap" data-k="ak_t3">Tüm ekip + çocuklarımız</div></div>
+    </div>
+    <div class="a" style="--d:.8;margin-top:34px;display:flex;gap:26px;align-items:center">
+      <div id="ataSlot" title="Fotoğrafı değiştirmek için çift tıklayın" style="width:150px;height:190px;border-radius:12px;border:3px solid var(--gold);overflow:hidden;flex-shrink:0;background:linear-gradient(160deg,#1c2748,#0c1430);display:grid;place-items:center;box-shadow:0 20px 40px -18px rgba(0,0,0,.8);cursor:pointer">
+        <div id="ataPlaque" style="text-align:center;padding:10px"><div style="font-family:'Playfair Display',serif;font-size:19px;line-height:1.25;color:#fff">Mustafa Kemal<br><b style="font-size:26px">ATATÜRK</b></div><div style="height:2px;background:var(--gold);margin:10px auto;width:60px"></div><div style="font-size:14px;color:var(--gold);letter-spacing:.15em">1881 – 1938</div></div>
+      </div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-style:italic;font-size:24px;line-height:1.45;color:#f3eadb" data-k="ak_q">“Benim naçiz vücudum elbet bir gün toprak olacaktır, ancak Türkiye Cumhuriyeti ilelebet payidar kalacaktır.”</div>
+        <div style="font-size:14px;color:var(--gold);letter-spacing:.18em;text-transform:uppercase;margin-top:10px">Mustafa Kemal Atatürk</div>
+      </div>
+    </div>
+  </div>
+  <input type="file" id="ataFile" accept="image/*" style="display:none">
+  <div class="foot"><span>Saygı ve minnetle · 88. yıl</span><span class="pg"></span></div>
+</section>
+
 <!-- 15 · EKİP ===================================================== -->
 <section class="slide" data-title="Ekibimiz" data-notes="<b>Ekip:</b> Şu an 10 kişilik bir ekibiz. Küçük ama güçlü. Amacımız: birlikte kazanmak, birlikte büyümek, birlikte keyif almak.">
   <div class="grid-bg"></div>
@@ -838,6 +916,27 @@ function renderData() {
 }
 
 (function() { var el = document.getElementById('sfDays'); if (!el) return; var d = Math.ceil((new Date(2027, 0, 1) - new Date()) / 86400000); el.setAttribute('data-count', Math.max(0, d)); })();
+
+(function() {
+  var slot = document.getElementById('ataSlot'), plaque = document.getElementById('ataPlaque'), inp = document.getElementById('ataFile');
+  if (!slot) return;
+  function put(src) { var img = new Image(); img.onload = function() { slot.innerHTML = ''; img.style.cssText = 'width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block;filter:grayscale(.15) contrast(1.05)'; slot.appendChild(img); }; img.src = src; return img; }
+  var saved = null; try { saved = localStorage.getItem('ata_foto'); } catch (e) {}
+  if (saved) { put(saved); }
+  else {
+    var C = ['Ataturk1930s.jpg', 'Mustafa_Kemal_Atatürk_(cropped).jpg', 'Atatürk_1930s.jpg', 'Mustafa_Kemal_Atatürk.jpg'], i = 0;
+    (function next() { if (i >= C.length) return; var img = new Image(); img.onload = function() { put(img.src); }; img.onerror = next; img.src = 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(C[i++]) + '?width=500'; })();
+  }
+  slot.addEventListener('dblclick', function(e) { e.stopPropagation(); inp.click(); });
+  slot.addEventListener('click', function(e) { e.stopPropagation(); });
+  inp.addEventListener('change', function() {
+    var f = inp.files && inp.files[0]; if (!f) return;
+    var r = new FileReader(); r.onload = function() { var im = new Image(); im.onload = function() {
+      var s = Math.min(1, 600 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = im.width * s; c.height = im.height * s; c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+      var u = c.toDataURL('image/jpeg', .88); try { localStorage.setItem('ata_foto', u); } catch (e) {} put(u); hint('Fotoğraf kaydedildi');
+    }; im.src = r.result; }; r.readAsDataURL(f);
+  });
+})();
 
 /* =====================================================================
    SAYAÇLAR
