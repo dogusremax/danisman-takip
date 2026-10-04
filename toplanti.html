@@ -593,7 +593,7 @@ document.getElementById('expect').innerHTML = EXPECT.map(function(x, i) {
 /* =====================================================================
    CANLI VERİ
    ===================================================================== */
-var DATA = null;
+var DATA = null, CACHE_KEY = 'toplanti_data_' + MONTH;
 function setStatus(msg, err) { var s = document.getElementById('status'); s.innerHTML = msg; s.className = err ? 'err' : ''; if (!err) setTimeout(function() { s.style.opacity = 0; }, 3500); else s.style.opacity = 1; }
 function loadData() {
   setStatus('Veriler uygulamadan yükleniyor…');
@@ -604,10 +604,19 @@ function loadData() {
     DATA.yetkiler = (res[1] && res[1].yetkiler) || [];
     if (!DATA.consultants) throw new Error(DATA.error || 'Beklenmeyen cevap');
     renderData();
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ at: new Date().toISOString(), data: DATA })); } catch (err) {}
     setStatus('✓ Veriler güncel · ' + new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
   }).catch(function(e) {
-    setStatus('⚠ Uygulama verisi alınamadı (' + esc(e.message) + ')<button onclick="loadData()">Tekrar dene</button>', true);
-    renderData();
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (err) {}
+    if (cached && cached.data) {
+      DATA = cached.data; renderData();
+      var t = new Date(cached.at);
+      setStatus('✓ Kayıtlı veri kullanılıyor · ' + t.toLocaleDateString('tr-TR') + ' ' + t.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
+    } else {
+      setStatus('⚠ Uygulama verisi alınamadı (' + esc(e.message) + ')<button onclick="loadData()">Tekrar dene</button>', true);
+      renderData();
+    }
   });
 }
 
