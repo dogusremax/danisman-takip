@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1f3a">
+<title>1. Sunum Dosyası</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --navy: #0b1f3a; --navy-2: #13294b; --navy-3: #1d3a66;
+    --red: #dc1c2e; --red-d: #b3121f;
+    --gold: #c8a96a; --gold-l: #e9dcc0;
+    --ivory: #faf7f2; --sand: #f2ece2; --ink: #16161a; --muted: #6b6b73; --line: #e4ddd1;
+    --ui-bg: #eceae6; --ui-card: #ffffff; --ui-text: #1c1917; --ui-muted: #78716c; --ui-line: #e7e5e4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --ui-bg: #121214; --ui-card: #1c1c1f; --ui-text: #f4f4f5; --ui-muted: #a1a1aa; --ui-line: #2e2e33; }
+  }
+  :root[data-theme="dark"] { --ui-bg: #121214; --ui-card: #1c1c1f; --ui-text: #f4f4f5; --ui-muted: #a1a1aa; --ui-line: #2e2e33; }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--ui-bg); color: var(--ui-text); font-family: Inter, -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-font-smoothing: antialiased; }
+  button { font-family: inherit; cursor: pointer; }
+
+  /* ---------- Toolbar ---------- */
+  .toolbar { position: sticky; top: 0; z-index: 50; background: var(--ui-card); border-bottom: 1px solid var(--ui-line); }
+  .toolbar-inner { max-width: 1200px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; margin-right: auto; min-width: 0; }
+  .brand-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--red); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }
+  .brand-t { font-weight: 700; font-size: 14px; line-height: 1.2; }
+  .brand-s { font-size: 11px; color: var(--ui-muted); }
+  .tb-btn { border: 1px solid var(--ui-line); background: var(--ui-card); color: var(--ui-text); padding: 9px 13px; border-radius: 10px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .tb-btn:hover { border-color: var(--red); }
+  .tb-btn.primary { background: var(--red); color: #fff; border-color: var(--red); }
+  .tb-btn.primary:hover { background: var(--red-d); }
+  .tb-btn.on { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+  .tb-btn svg { width: 15px; height: 15px; }
+  .edit-hint { display: none; max-width: 1200px; margin: 0 auto; padding: 0 16px 10px; font-size: 12px; color: #92400e; }
+  body.editing .edit-hint { display: block; }
+
+  /* ---------- Stage ---------- */
+  .stage { max-width: 1200px; margin: 0 auto; padding: 20px 16px 80px; display: flex; flex-direction: column; gap: 22px; }
+  .slide-wrap { position: relative; width: 100%; overflow: hidden; border-radius: 6px; box-shadow: 0 10px 40px -12px rgba(0,0,0,.35); background: #fff; }
+  .slide-wrap.off { display: none; }
+  .slide { position: absolute; top: 0; left: 0; width: 1123px; height: 794px; transform-origin: 0 0; overflow: hidden; font-family: Inter, sans-serif; color: var(--ink); background: var(--ivory); }
+  .slide-num-tag { position: absolute; top: 8px; left: 8px; z-index: 5; background: rgba(0,0,0,.55); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; pointer-events: none; }
+
+  /* ---------- Slide typography & helpers ---------- */
+  .slide .serif { font-family: "Playfair Display", Georgia, serif; }
+  .slide.dark { background: var(--navy); color: #f4f1ea; }
+  .s-pad { position: absolute; inset: 0; padding: 58px 64px 76px; display: flex; flex-direction: column; }
+  .fill { flex: 1; min-height: 0; grid-auto-rows: 1fr; }
+  .fill > .card { display: flex; flex-direction: column; }
+  .eyebrow { font-size: 12px; letter-spacing: .28em; text-transform: uppercase; font-weight: 700; color: var(--red); display: flex; align-items: center; gap: 12px; }
+  .eyebrow::before { content: ""; width: 34px; height: 2px; background: currentColor; }
+  .dark .eyebrow { color: var(--gold); }
+  .h1 { font-family: "Playfair Display", Georgia, serif; font-size: 46px; line-height: 1.08; font-weight: 600; margin: 14px 0 0; letter-spacing: -.01em; }
+  .h2 { font-family: "Playfair Display", Georgia, serif; font-size: 22px; font-weight: 600; margin: 0 0 6px; }
+  .lead { font-size: 17px; line-height: 1.6; color: var(--muted); margin: 14px 0 0; max-width: 760px; }
+  .dark .lead { color: #c9cfdb; }
+  .small { font-size: 12.5px; line-height: 1.55; color: var(--muted); }
+  .dark .small { color: #aeb6c6; }
+  .gold { color: var(--gold); }
+  .red { color: var(--red); }
+  .foot { position: absolute; left: 64px; right: 64px; bottom: 26px; display: flex; justify-content: space-between; align-items: center; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #9a948a; }
+  .dark .foot { color: #7f8aa3; }
+  .foot b { color: var(--red); font-weight: 800; letter-spacing: .08em; }
+  .dark .foot b { color: #fff; }
+  .rule { height: 1px; background: var(--line); margin: 22px 0; }
+  .dark .rule { background: rgba(255,255,255,.12); }
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 18px 18px 16px; }
+  .dark .card { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); }
+  .card h4 { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
+  .card p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--muted); }
+  .dark .card p { color: #b9c0cf; }
+  .ico { width: 38px; height: 38px; border-radius: 10px; background: #fdecee; color: var(--red); display: grid; place-items: center; margin-bottom: 10px; }
+  .dark .ico { background: rgba(200,169,106,.14); color: var(--gold); }
+  .ico svg { width: 19px; height: 19px; }
+  .kpi { font-family: "Playfair Display", serif; font-size: 44px; font-weight: 600; line-height: 1; }
+  .kpi-l { font-size: 11.5px; letter-spacing: .12em; text-transform: uppercase; margin-top: 8px; color: var(--muted); font-weight: 600; }
+  .dark .kpi-l { color: #9ea8bd; }
+  .pill { display: inline-block; padding: 5px 11px; border-radius: 99px; font-size: 11.5px; font-weight: 600; background: var(--sand); color: var(--ink); margin: 0 6px 6px 0; }
+  .dark .pill { background: rgba(255,255,255,.08); color: #e8e4da; }
+  .check { list-style: none; padding: 0; margin: 0; }
+  .check li { position: relative; padding: 0 0 11px 26px; font-size: 14.5px; line-height: 1.5; }
+  .check li::before { content: ""; position: absolute; left: 0; top: 3px; width: 15px; height: 15px; border-radius: 50%; background: var(--red) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/9px no-repeat; }
+  .dark .check li::before { background-color: var(--gold); }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .tbl th { text-align: left; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; padding: 9px 10px; border-bottom: 2px solid var(--ink); }
+  .tbl td { padding: 12px 10px; border-bottom: 1px solid var(--line); }
+  .tbl td.num, .tbl th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .dark .tbl th { color: #9ea8bd; border-bottom-color: var(--gold); }
+  .dark .tbl td { border-bottom-color: rgba(255,255,255,.1); }
+  .photo-ph { background: linear-gradient(135deg, var(--navy-3), var(--navy)); color: rgba(255,255,255,.85); display: grid; place-items: center; font-family: "Playfair Display", serif; }
+  .bg-img { background-size: cover; background-position: center; }
+  .wm { position: absolute; font-family: "Playfair Display", serif; font-size: 300px; line-height: 1; color: rgba(0,0,0,.035); font-weight: 700; pointer-events: none; }
+  .dark .wm { color: rgba(255,255,255,.035); }
+  .num-badge { width: 30px; height: 30px; border-radius: 50%; background: var(--red); color: #fff; font-weight: 700; font-size: 13px; display: grid; place-items: center; flex-shrink: 0; }
+  .dark .num-badge { background: var(--gold); color: var(--navy); }
+  .note { font-size: 10px; color: #9a948a; line-height: 1.45; }
+  .dark .note { color: #7f8aa3; }
+
+  /* Edit mode */
+  body.editing [data-k] { outline: 1px dashed rgba(220,28,46,.45); outline-offset: 2px; border-radius: 3px; cursor: text; }
+  body.editing [data-k]:focus { outline: 2px solid var(--red); background: rgba(255,240,200,.25); }
+
+  /* ---------- Panel ---------- */
+  .panel { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100%; background: var(--ui-card); color: var(--ui-text); border-left: 1px solid var(--ui-line); z-index: 100; transform: translateX(100%); transition: transform .25s ease; display: flex; flex-direction: column; box-shadow: -10px 0 40px -10px rgba(0,0,0,.3); }
+  .panel.open { transform: none; }
+  .panel-h { padding: 14px 16px; border-bottom: 1px solid var(--ui-line); display: flex; align-items: center; justify-content: space-between; }
+  .panel-h b { font-size: 15px; }
+  .panel-b { overflow-y: auto; padding: 6px 16px 40px; flex: 1; }
+  .panel details { border-bottom: 1px solid var(--ui-line); padding: 6px 0; }
+  .panel summary { font-weight: 700; font-size: 13.5px; padding: 10px 0; cursor: pointer; list-style: none; display: flex; justify-content: space-between; }
+  .panel summary::after { content: "+"; color: var(--ui-muted); font-weight: 400; font-size: 18px; line-height: 1; }
+  .panel details[open] summary::after { content: "–"; }
+  .fld { margin-bottom: 10px; }
+  .fld label { display: block; font-size: 11.5px; font-weight: 600; color: var(--ui-muted); margin-bottom: 4px; }
+  .fld input, .fld textarea, .fld select { width: 100%; padding: 9px 10px; font-size: 14px; font-family: inherit; border: 1px solid var(--ui-line); border-radius: 9px; background: var(--ui-bg); color: var(--ui-text); }
+  .fld textarea { min-height: 74px; resize: vertical; }
+  .fld input:focus, .fld textarea:focus { outline: none; border-color: var(--red); }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .sec-toggle { display: flex; align-items: center; gap: 10px; padding: 6px 0; font-size: 13px; }
+  .sec-toggle input { width: 17px; height: 17px; accent-color: var(--red); }
+  .comp-row { border: 1px solid var(--ui-line); border-radius: 10px; padding: 10px; margin-bottom: 8px; }
+  .mini-btn { border: 1px solid var(--ui-line); background: var(--ui-bg); color: var(--ui-text); padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+  .mini-btn.danger { color: #dc2626; }
+  .photo-row { display: flex; gap: 10px; align-items: center; }
+  .photo-thumb { width: 54px; height: 54px; border-radius: 10px; background: var(--ui-bg) center/cover; border: 1px solid var(--ui-line); flex-shrink: 0; }
+  .scrim { position: fixed; inset: 0; background: rgba(0,0,0,.35); z-index: 90; display: none; }
+  .scrim.open { display: block; }
+  .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #16161a; color: #fff; padding: 10px 16px; border-radius: 10px; font-size: 13px; z-index: 300; opacity: 0; transition: opacity .2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+
+  /* ---------- Presentation mode ---------- */
+  body.present { background: #000; overflow: hidden; }
+  body.present .toolbar, body.present .edit-hint, body.present .slide-num-tag { display: none; }
+  body.present .stage { padding: 0; max-width: none; height: 100vh; justify-content: center; align-items: center; }
+  body.present .slide-wrap { display: none; border-radius: 0; box-shadow: none; }
+  body.present .slide-wrap.current { display: block; }
+  .present-ui { display: none; position: fixed; bottom: 14px; right: 14px; z-index: 60; gap: 6px; }
+  body.present .present-ui { display: flex; }
+  .present-ui button { background: rgba(255,255,255,.12); color: #fff; border: 1px solid rgba(255,255,255,.2); border-radius: 10px; padding: 8px 12px; font-size: 13px; }
+  .present-ui span { color: rgba(255,255,255,.6); font-size: 12px; align-self: center; padding: 0 6px; }
+
+  @media (max-width: 640px) {
+    .tb-btn .lbl { display: none; }
+    .brand-s { display: none; }
+  }
+
+  /* ---------- Print: one slide per A4 landscape page ---------- */
+  @page { size: A4 landscape; margin: 0; }
+  @media print {
+    html, body { background: #fff !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .toolbar, .edit-hint, .panel, .scrim, .toast, .present-ui, .slide-num-tag { display: none !important; }
+    .stage { padding: 0 !important; margin: 0 !important; max-width: none !important; gap: 0 !important; display: block !important; }
+    .slide-wrap { width: 297mm !important; height: 210mm !important; border-radius: 0 !important; box-shadow: none !important; break-after: page; page-break-after: always; display: block !important; }
+    .slide-wrap.off { display: none !important; }
+    .slide { transform: none !important; }
+    body.editing [data-k] { outline: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <div class="brand">
+      <div class="brand-mark">1.S</div>
+      <div style="min-width:0">
+        <div class="brand-t">1. Sunum Dosyası</div>
+        <div class="brand-s" id="brandSub">Danışman bilgilerinizi girin, PDF olarak kaydedin</div>
+      </div>
+    </div>
+    <button class="tb-btn" onclick="openPanel()" title="Bilgilerimi düzenle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span class="lbl">Bilgilerim</span>
+    </button>
+    <button class="tb-btn" id="editBtn" onclick="toggleEdit()" title="Metinleri düzenle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><span class="lbl">Metin Düzenle</span>
+    </button>
+    <button class="tb-btn" onclick="startPresent()" title="Sunum modu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg><span class="lbl">Sunum Modu</span>
+    </button>
+    <button class="tb-btn primary" onclick="window.print()" title="PDF olarak kaydet">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg><span class="lbl">PDF İndir</span>
+    </button>
+  </div>
+  <div class="edit-hint">✏️ Metin düzenleme açık: kesikli çizgili her yazıya tıklayıp değiştirebilirsiniz. Değişiklikler bu cihazda otomatik kaydedilir.</div>
+</div>
+
+<div class="stage" id="stage"></div>
+
+<div class="present-ui">
+  <button onclick="go(-1)">‹</button><span id="pCount"></span><button onclick="go(1)">›</button><button onclick="stopPresent()">Kapat ✕</button>
+</div>
+
+<div class="scrim" id="scrim" onclick="closePanel()"></div>
+<aside class="panel" id="panel">
+  <div class="panel-h"><b>Sunum Bilgileri</b><button class="mini-btn" onclick="closePanel()">Kapat ✕</button></div>
+  <div class="panel-b" id="panelBody"></div>
+</aside>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   OFİS VARSAYILANLARI
+   Broker/ofis yöneticisi bu bölümü bir kez doldurur; tüm danışmanların
+   sunumları bu bilgilerle açılır. Danışmanlar kendi bilgilerini
+   "Bilgilerim" panelinden girer (bilgiler kendi cihazlarında saklanır).
+   ===================================================================== */
+var OFFICE_DEFAULTS = {
+  name: "RE/MAX Doğuş",
+  slogan: "Gayrimenkulde güven, sonuçta fark.",
+  address: "Ofis adresinizi girin",
+  phone: "0 (216) 000 00 00",
+  web: "remax.com.tr",
+  instagram: "@remaxdogus",
+  broker: "Broker / Ofis Sahibi",
+  team: "30+",
+  founded: "20XX",
+  regions: "Kadıköy, Fikirtepe, Ataşehir, Üsküdar",
+  about: "Bölgenin en dinamik gayrimenkul ekiplerinden biri olarak konut, ticari ve proje satışlarında uzman danışman kadromuzla hizmet veriyoruz. Ofisimiz; haftalık performans takibi, sürekli eğitim ve ortak satış kültürüyle çalışır. Her portföy, ofis içindeki tüm danışmanların ve müşteri havuzunun gücüyle pazarlanır."
+};
+
+var MARKET_DEFAULTS = {
+  period: "Ağustos 2026",
+  trSales: "127.410",
+  trChange: "%14,7 yıllık düşüş",
+  istSales: "20.426",
+  istShare: "%16,0",
+  firstHand: "35",
+  mortgage: "22.131",
+  mortgageChange: "%7 yıllık artış",
+  source: "TÜİK Konut Satış İstatistikleri"
+};
+
+var SECTIONS = [
+  ["cover", "Kapak"], ["agenda", "Gündem"], ["consultant", "Danışmanınız"], ["office", "Ofisimiz"],
+  ["remax", "RE/MAX Global Güç"], ["market", "Piyasa Analizi"], ["cma", "Mülk Değer Analizi (Emsal)"],
+  ["pricing", "Fiyatlandırma Stratejisi"], ["process", "Satış Yol Haritası"], ["marketing", "Pazarlama Faaliyetleri"],
+  ["plan30", "İlk 30 Gün Planı"], ["owner", "Mülk Sahibi Neler Yapmalı"], ["docs", "Gerekli Belgeler"],
+  ["exclusive", "Neden Yetkili Çalışmalı"], ["why", "Neden Danışmanınız"], ["testimonials", "Referanslar"],
+  ["fikirtepe", "Yeni Fikirtepe"], ["lux", "Lüks Konut"], ["cyprus", "KKTC (Kıbrıs)"], ["dubai", "Dubai"],
+  ["greece", "Yunanistan Golden Visa"], ["compare", "Yatırım Karşılaştırma"], ["next", "Sonraki Adımlar"], ["thanks", "Teşekkürler"]
+];
+
+var STORE_KEY = "sunum1_v1";
+var S = load();
+
+function blank() {
+  var sec = {}; SECTIONS.forEach(function(s) { sec[s[0]] = true; });
+  return {
+    c: { name: "", title: "Gayrimenkul Danışmanı", phone: "", email: "", instagram: "", photo: "", years: "", deals: "", volume: "", regions: "", languages: "Türkçe", certs: "", bio: "", motto: "" },
+    o: JSON.parse(JSON.stringify(OFFICE_DEFAULTS)),
+    m: JSON.parse(JSON.stringify(MARKET_DEFAULTS)),
+    p: { client: "", address: "", type: "Daire", m2: "", rooms: "", floor: "", age: "", date: new Date().toISOString().slice(0, 10), photo: "", askPrice: "" },
+    comps: [],
+    sec: sec,
+    edits: {}
+  };
+}
+function load() {
+  var d = blank();
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      var s = JSON.parse(raw);
+      ["c", "o", "m", "p", "sec", "edits"].forEach(function(k) { if (s[k]) Object.assign(d[k], s[k]); });
+      if (Array.isArray(s.comps)) d.comps = s.comps;
+    }
+  } catch (e) {}
+  return d;
+}
+var saveTimer = null;
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(function() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(S)); }
+    catch (e) { toast("Kaydedilemedi: fotoğraflar çok büyük olabilir."); }
+  }, 250);
+}
+
+/* ---------- helpers ---------- */
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function(ch) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]; }); }
+function v(val, ph) { return val ? esc(val) : '<span style="opacity:.45">' + esc(ph) + '</span>'; }
+function E(key, html, tag, cls, style) {
+  tag = tag || "div";
+  var content = Object.prototype.hasOwnProperty.call(S.edits, key) ? S.edits[key] : html;
+  return "<" + tag + ' data-k="' + key + '"' + (cls ? ' class="' + cls + '"' : "") + (style ? ' style="' + style + '"' : "") + ">" + content + "</" + tag + ">";
+}
+function initials(n) { return (n || "RE MAX").trim().split(/\s+/).map(function(x) { return x[0]; }).join("").slice(0, 2).toUpperCase(); }
+function num(x) { var n = parseFloat(String(x || "").replace(/\./g, "").replace(",", ".").replace(/[^\d.]/g, "")); return isNaN(n) ? 0 : n; }
+function tl(n) { return "₺" + Math.round(n).toLocaleString("tr-TR"); }
+function fmtDate(iso) { if (!iso) return ""; var d = new Date(iso + "T00:00:00"); return d.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" }); }
+function cname() { return S.c.name || "Danışmanınız"; }
+function firstName() { return (S.c.name || "Danışmanınız").split(" ")[0]; }
+
+var IC = {
+  camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+  drone: '<circle cx="5" cy="5" r="3"/><circle cx="19" cy="5" r="3"/><circle cx="5" cy="19" r="3"/><circle cx="19" cy="19" r="3"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M7 7l2 2M17 7l-2 2M7 17l2-2M17 17l-2-2"/>',
+  video: '<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>',
+  tour: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/>',
+  social: '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/>',
+  target: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  users: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  db: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>',
+  sign: '<path d="M4 22V4"/><path d="M4 4h14l-3 4 3 4H4"/>',
+  doc: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+  chart: '<path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/>',
+  home: '<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+  key: '<circle cx="7.5" cy="15.5" r="5.5"/><path d="M21 2l-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/>',
+  star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+  phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+  mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/>',
+  pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+  report: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 17v-5M12 17V8M16 17v-3"/>',
+  handshake: '<path d="M11 17l2 2a1 1 0 0 0 3-3"/><path d="M14 14l2.5 2.5a1 1 0 0 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4"/><path d="M21 3l1 11h-2"/><path d="M3 3L2 14l6.5 6.5a1 1 0 1 0 3-3"/><path d="M3 4h8"/>',
+  sparkle: '<path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>'
+};
+function ico(name) { return '<div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + IC[name] + "</svg></div>"; }
+function sico(name, size, color) { return '<svg viewBox="0 0 24 24" width="' + (size || 16) + '" height="' + (size || 16) + '" fill="none" stroke="' + (color || "currentColor") + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">' + IC[name] + "</svg>"; }
+
+function foot(dark) {
+  return '<div class="foot"><span><b>' + esc(S.o.name) + "</b> &nbsp;·&nbsp; " + esc(cname()) + '</span><span class="pg"></span></div>';
+}
+function cardsHTML(prefix, items, cols) {
+  return '<div class="grid fill ' + (cols || "g3") + '">' + items.map(function(it, i) {
+    return '<div class="card">' + ico(it[0]) + E(prefix + "_t" + i, it[1], "h4") + E(prefix + "_d" + i, it[2], "p") + "</div>";
+  }).join("") + "</div>";
+}
+
+/* =====================================================================
+   SLAYTLAR
+   ===================================================================== */
+var SLIDES = {};
+
+SLIDES.cover = function() {
+  var c = S.c, p = S.p;
+  var photo = c.photo ? '<div class="bg-img" style="position:absolute;inset:0;background-image:url(\'' + c.photo + '\');background-position:center 20%"></div>'
+    : '<div class="photo-ph" style="position:absolute;inset:0;font-size:120px">' + initials(c.name) + "</div>";
+  var right = p.photo ? 'background:linear-gradient(180deg,rgba(11,31,58,.82),rgba(11,31,58,.94)),url(\'' + p.photo + '\') center/cover' : "background:var(--navy)";
+  return '<div class="slide dark">' +
+    '<div style="position:absolute;left:0;top:0;bottom:0;width:420px;overflow:hidden">' + photo +
+      '<div style="position:absolute;inset:auto 0 0 0;height:260px;background:linear-gradient(0deg,rgba(11,31,58,.95),rgba(11,31,58,0))"></div>' +
+      '<div style="position:absolute;left:40px;right:30px;bottom:40px">' +
+        '<div class="serif" style="font-size:30px;font-weight:600;line-height:1.1">' + v(c.name, "Danışman Adı Soyadı") + "</div>" +
+        '<div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-top:8px;font-weight:600">' + esc(c.title) + "</div>" +
+        '<div style="font-size:13px;color:#d6dbe5;margin-top:14px;display:flex;flex-direction:column;gap:5px">' +
+          (c.phone ? '<span style="display:flex;gap:8px;align-items:center">' + sico("phone", 14) + esc(c.phone) + "</span>" : "") +
+          (c.email ? '<span style="display:flex;gap:8px;align-items:center">' + sico("mail", 14) + esc(c.email) + "</span>" : "") +
+        "</div></div>" +
+    "</div>" +
+    '<div style="position:absolute;left:420px;right:0;top:0;bottom:0;' + right + '">' +
+      '<div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--red) 0 50%,#1f4fa3 50% 100%)"></div>' +
+      '<div style="position:absolute;top:54px;left:64px;right:56px;display:flex;justify-content:space-between;align-items:center">' +
+        '<div style="font-weight:800;font-size:20px;letter-spacing:.04em">' + esc(S.o.name) + "</div>" +
+        '<div style="font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#9ea8bd">' + esc(fmtDate(p.date)) + "</div>" +
+      "</div>" +
+      '<div style="position:absolute;left:64px;right:56px;top:210px">' +
+        '<div class="eyebrow">' + E("cover_eb", "1. Sunum · Satış &amp; Pazarlama Dosyası", "span") + "</div>" +
+        E("cover_h", 'Mülkünüzü <i class="gold">hak ettiği</i> değerle, doğru alıcıya ulaştırıyoruz.', "h1", "h1", "font-size:50px") +
+        '<div style="margin-top:34px;padding-top:24px;border-top:1px solid rgba(255,255,255,.14);display:grid;grid-template-columns:1fr 1fr;gap:24px">' +
+          '<div><div style="font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#9ea8bd;font-weight:600">Özel olarak hazırlanmıştır</div><div class="serif" style="font-size:22px;margin-top:6px">' + v(p.client ? "Sayın " + p.client : "", "Sayın Mülk Sahibi") + "</div></div>" +
+          '<div><div style="font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#9ea8bd;font-weight:600">Mülk</div><div style="font-size:15px;margin-top:8px;line-height:1.45;color:#e8ecf3">' + v(p.address, "Mülk adresi / proje adı") + "</div></div>" +
+        "</div>" +
+      "</div>" +
+      '<div style="position:absolute;left:64px;right:56px;bottom:40px;display:flex;justify-content:space-between;font-size:11px;color:#7f8aa3;letter-spacing:.12em;text-transform:uppercase"><span>' + esc(S.o.slogan) + "</span><span>" + esc(S.o.web) + "</span></div>" +
+    "</div></div>";
+};
+
+SLIDES.agenda = function() {
+  var items = SECTIONS.filter(function(s) { return S.sec[s[0]] && ["cover", "agenda", "thanks"].indexOf(s[0]) < 0; });
+  var half = Math.ceil(items.length / 2);
+  function col(arr, off) {
+    return arr.map(function(s, i) {
+      return '<div style="display:flex;gap:16px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line)"><span class="serif red" style="font-size:20px;width:34px">' + String(off + i + 1).padStart(2, "0") + '</span><span style="font-size:15px;font-weight:500">' + esc(s[1]) + "</span></div>";
+    }).join("");
+  }
+  return '<div class="slide"><div class="wm" style="right:-20px;bottom:-60px">01</div><div class="s-pad">' +
+    '<div class="eyebrow">Gündem</div>' + E("agenda_h", "Bugün birlikte<br>neleri konuşacağız?", "h1", "h1") +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:0 56px;margin-top:30px">' +
+      "<div>" + col(items.slice(0, half), 0) + "</div><div>" + col(items.slice(half), half) + "</div>" +
+    "</div></div>" + foot() + "</div>";
+};
+
+SLIDES.consultant = function() {
+  var c = S.c;
+  var photo = c.photo ? '<div class="bg-img" style="width:100%;height:100%;background-image:url(\'' + c.photo + '\');background-position:center 20%"></div>' : '<div class="photo-ph" style="width:100%;height:100%;font-size:90px">' + initials(c.name) + "</div>";
+  var stats = [[c.years || "—", "Yıllık Deneyim"], [c.deals || "—", "Tamamlanan İşlem"], [c.volume || "—", "İşlem Hacmi"]];
+  var regions = (c.regions || S.o.regions || "").split(",").filter(Boolean).map(function(r) { return '<span class="pill">' + esc(r.trim()) + "</span>"; }).join("");
+  return '<div class="slide"><div style="position:absolute;left:0;top:0;bottom:0;width:380px">' + photo + "</div>" +
+    '<div style="position:absolute;left:380px;top:0;width:6px;bottom:0;background:var(--red)"></div>' +
+    '<div class="s-pad" style="left:386px;padding-left:56px">' +
+      '<div class="eyebrow">Danışmanınız</div>' +
+      '<h1 class="h1" style="font-size:42px">' + v(c.name, "Danışman Adı Soyadı") + "</h1>" +
+      '<div style="font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-top:8px;font-weight:600">' + esc(c.title) + " · " + esc(S.o.name) + "</div>" +
+      '<p class="lead" style="font-size:15px">' + (c.bio ? esc(c.bio) : '<span style="opacity:.5">Kısa biyografinizi "Bilgilerim" panelinden yazın: kim olduğunuz, neden bu meslekte olduğunuz, hangi bölge ve mülk tipinde uzmanlaştığınız, müşterilerinize nasıl bir deneyim yaşattığınız.</span>') + "</p>" +
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px">' + stats.map(function(s) { return '<div style="border-top:2px solid var(--ink);padding-top:12px"><div class="kpi" style="font-size:38px">' + esc(s[0]) + '</div><div class="kpi-l">' + s[1] + "</div></div>"; }).join("") + "</div>" +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:28px">' +
+        '<div><div class="kpi-l" style="margin:0 0 8px">Uzmanlık Bölgeleri</div>' + (regions || '<span class="small">—</span>') + "</div>" +
+        '<div><div class="kpi-l" style="margin:0 0 8px">Diller · Sertifikalar</div><div style="font-size:13.5px;line-height:1.55">' + esc(c.languages || "") + (c.certs ? "<br><span class='small'>" + esc(c.certs) + "</span>" : "") + "</div></div>" +
+      "</div>" +
+      (c.motto ? '<div class="serif" style="margin-top:26px;font-size:19px;font-style:italic;color:var(--navy-3)">“' + esc(c.motto) + '”</div>' : "") +
+      '<div style="margin-top:auto;display:flex;gap:28px;font-size:14px;padding-top:16px;border-top:1px solid var(--line)">' +
+        [["phone", c.phone], ["mail", c.email], ["social", c.instagram]].filter(function(x) { return x[1]; }).map(function(x) { return '<span style="display:flex;gap:8px;align-items:center">' + sico(x[0], 15, "#dc1c2e") + esc(x[1]) + "</span>"; }).join("") +
+      "</div>" +
+    "</div>" + foot() + "</div>";
+};
+
+SLIDES.office = function() {
+  var o = S.o;
+  return '<div class="slide dark"><div class="wm" style="right:-30px;top:-40px">' + esc(initials(o.name)) + '</div><div class="s-pad">' +
+    '<div class="eyebrow">Ofisimiz</div>' +
+    '<h1 class="h1">' + esc(o.name) + "</h1>" +
+    '<p class="lead">' + esc(o.about) + "</p>" +
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:34px">' +
+      [[o.team, "Uzman Danışman"], [o.founded, "Kuruluş"], ["7/24", "Ulaşılabilirlik"], ["%100", "Ortak Satış Kültürü"]].map(function(s, i) {
+        return '<div style="border-top:1px solid var(--gold);padding-top:14px"><div class="kpi gold">' + E("office_k" + i, esc(s[0]), "span") + '</div><div class="kpi-l">' + E("office_kl" + i, s[1], "span") + "</div></div>";
+      }).join("") +
+    "</div>" +
+    '<div class="grid g3" style="margin-top:34px">' +
+      '<div class="card"><h4 style="display:flex;gap:8px;align-items:center">' + sico("pin", 16, "#c8a96a") + "Adres</h4><p>" + esc(o.address) + "</p></div>" +
+      '<div class="card"><h4 style="display:flex;gap:8px;align-items:center">' + sico("phone", 16, "#c8a96a") + "İletişim</h4><p>" + esc(o.phone) + "<br>" + esc(o.web) + " · " + esc(o.instagram) + "</p></div>" +
+      '<div class="card"><h4 style="display:flex;gap:8px;align-items:center">' + sico("target", 16, "#c8a96a") + "Hizmet Bölgelerimiz</h4><p>" + esc(o.regions) + "</p></div>" +
+    "</div></div>" + foot() + "</div>";
+};
+
+SLIDES.remax = function() {
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">Arkanızdaki Güç</div>' +
+    E("remax_h", "Yerel uzmanlık,<br><i class='red'>küresel</i> ağ.", "h1", "h1") +
+    E("remax_l", "RE/MAX; 1973'ten bu yana dünyanın en büyük gayrimenkul ağlarından biri. Mülkünüz yalnızca bizim ofisimize değil, Türkiye'deki tüm RE/MAX ofislerine ve dünyadaki ağımıza açılır.", "p", "lead") +
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:40px;border-top:2px solid var(--ink)">' +
+      [["145.000+", "Danışman"], ["8.500+", "Ofis"], ["120+", "Ülke ve Bölge"], ["50+", "Yıllık Tecrübe"]].map(function(s, i) {
+        return '<div style="padding:22px 18px 0;' + (i ? "border-left:1px solid var(--line)" : "") + '"><div class="kpi red" style="font-size:52px">' + E("remax_k" + i, s[0], "span") + '</div><div class="kpi-l">' + E("remax_kl" + i, s[1], "span") + "</div></div>";
+      }).join("") +
+    "</div>" +
+    '<div class="grid g3" style="margin-top:44px">' +
+      '<div class="card">' + ico("globe") + E("remax_c0t", "Uluslararası alıcı erişimi", "h4") + E("remax_c0d", "Global portföy paylaşımıyla yurt dışında yaşayan Türkler ve yabancı yatırımcılar mülkünüzü görür.", "p") + "</div>" +
+      '<div class="card">' + ico("handshake") + E("remax_c1t", "Ofisler arası ortak satış", "h4") + E("remax_c1d", "Türkiye genelindeki RE/MAX danışmanları alıcılarını getirir; mülkünüz tek kişiye değil bir ağa emanettir.", "p") + "</div>" +
+      '<div class="card">' + ico("shield") + E("remax_c2t", "Kurumsal güvence", "h4") + E("remax_c2d", "Standart sözleşmeler, eğitimli danışmanlar ve etik kurallarla şeffaf, güvenli bir süreç.", "p") + "</div>" +
+    '</div><div class="note" style="margin-top:14px">Kaynak: RE/MAX Holdings, 2026 ağ verileri.</div></div>' + foot() + "</div>";
+};
+
+SLIDES.market = function() {
+  var m = S.m, fh = Math.max(0, Math.min(100, num(m.firstHand))), sh = 100 - fh;
+  var C = 2 * Math.PI * 70, a = C * fh / 100;
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">Piyasa Analizi · ' + esc(m.period) + "</div>" +
+    E("market_h", "Piyasa nerede,<br>alıcı ne arıyor?", "h1", "h1") +
+    '<div class="fill" style="display:grid;grid-template-columns:1.25fr 1fr;gap:40px;margin-top:30px">' +
+      '<div style="display:flex;flex-direction:column">' +
+        '<div class="grid fill" style="grid-template-columns:1fr 1fr;gap:16px">' +
+          '<div class="card"><div class="kpi">' + esc(m.trSales) + '</div><div class="kpi-l">Türkiye konut satışı</div><div class="small" style="margin-top:6px">' + esc(m.trChange) + "</div></div>" +
+          '<div class="card"><div class="kpi red">' + esc(m.istSales) + '</div><div class="kpi-l">İstanbul konut satışı</div><div class="small" style="margin-top:6px">Toplam içindeki payı ' + esc(m.istShare) + "</div></div>" +
+          '<div class="card"><div class="kpi">' + esc(m.mortgage) + '</div><div class="kpi-l">İpotekli satış</div><div class="small" style="margin-top:6px">' + esc(m.mortgageChange) + "</div></div>" +
+          '<div class="card"><div class="kpi">%' + sh + '</div><div class="kpi-l">İkinci el payı</div><div class="small" style="margin-top:6px">Satışların çoğu ikinci el konutta</div></div>' +
+        "</div>" +
+        '<div class="note" style="margin-top:10px">Kaynak: ' + esc(m.source) + ", " + esc(m.period) + ". Veriler panelden güncellenebilir.</div>" +
+      "</div>" +
+      '<div style="display:flex;flex-direction:column;align-items:center">' +
+        '<svg width="250" height="250" viewBox="0 0 180 180"><circle cx="90" cy="90" r="70" fill="none" stroke="#e4ddd1" stroke-width="22"/>' +
+          '<circle cx="90" cy="90" r="70" fill="none" stroke="#dc1c2e" stroke-width="22" stroke-dasharray="' + (C - a) + " " + C + '" transform="rotate(-90 90 90)" stroke-linecap="butt"/>' +
+          '<text x="90" y="86" text-anchor="middle" font-family="Playfair Display" font-size="30" font-weight="600" fill="#16161a">%' + sh + '</text><text x="90" y="106" text-anchor="middle" font-size="10" letter-spacing="1.5" fill="#6b6b73">İKİNCİ EL</text></svg>' +
+        '<div style="display:flex;gap:18px;margin-top:6px;font-size:12px"><span><b style="color:var(--red)">■</b> İkinci el %' + sh + '</span><span><b style="color:#d8cfbf">■</b> İlk el %' + fh + "</span></div>" +
+        E("market_note", "<b>Bu ne anlama geliyor?</b> Alıcı daha seçici ve daha çok karşılaştırıyor. Doğru fiyatlanmış, iyi sunulmuş mülkler hızla satılırken; yüksek fiyatlı ilanlar haftalarca bekliyor.", "p", "small", "margin-top:18px;background:var(--sand);padding:14px 16px;border-radius:12px;color:var(--ink)") +
+      "</div>" +
+    "</div></div>" + foot() + "</div>";
+};
+
+SLIDES.cma = function() {
+  var p = S.p, rows = S.comps.filter(function(r) { return r.loc || r.price; });
+  var ppm = rows.filter(function(r) { return num(r.m2) && num(r.price); }).map(function(r) { return num(r.price) / num(r.m2); });
+  var avg = ppm.length ? ppm.reduce(function(a, b) { return a + b; }, 0) / ppm.length : 0;
+  var sub = num(p.m2), est = avg && sub ? avg * sub : 0;
+  var body = rows.length ? rows.map(function(r) {
+    var u = num(r.m2) && num(r.price) ? tl(num(r.price) / num(r.m2)) : "—";
+    var st = r.status === "Satıldı" ? '<span style="color:#047857;font-weight:600">Satıldı</span>' : '<span style="color:var(--muted)">' + esc(r.status || "Satışta") + "</span>";
+    return "<tr><td>" + esc(r.loc) + '</td><td class="num">' + esc(r.m2) + '</td><td class="num">' + (num(r.price) ? tl(num(r.price)) : "—") + '</td><td class="num">' + u + "</td><td>" + st + '</td><td class="num">' + esc(r.days || "—") + "</td></tr>";
+  }).join("") : '<tr><td colspan="6" style="color:var(--muted);padding:26px 10px;text-align:center">“Bilgilerim → Emsal Mülkler” bölümünden bölgedeki satılık ve satılmış emsalleri ekleyin; ortalama m² fiyatı ve önerilen fiyat aralığı otomatik hesaplanır.</td></tr>';
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">Mülk Değer Analizi</div>' +
+    E("cma_h", "Mülkünüzün piyasa değeri", "h1", "h1", "font-size:40px") +
+    '<div style="display:grid;grid-template-columns:1.55fr 1fr;gap:32px;margin-top:24px">' +
+      '<div><table class="tbl"><thead><tr><th>Emsal</th><th class="num">m²</th><th class="num">Fiyat</th><th class="num">m² Fiyatı</th><th>Durum</th><th class="num">Gün</th></tr></thead><tbody>' + body + "</tbody></table>" +
+      '<div class="note" style="margin-top:10px">Emsaller; ilan portalları, tapu satış verileri ve ofis kayıtlarından derlenmiştir. Değerleme bilgilendirme amaçlıdır, SPK lisanslı ekspertiz raporu yerine geçmez.</div>' +
+      E("cma_tip", "<b>Stratejimiz:</b> İlan fiyatını önerilen aralığın içinde konumlandırarak ilk haftalarda en yüksek ilgiyi topluyor, pazarlık payını kontrollü tutuyoruz.", "div", "", "margin-top:22px;background:var(--sand);border-left:3px solid var(--red);padding:14px 16px;border-radius:0 10px 10px 0;font-size:13.5px;line-height:1.55") + "</div>" +
+      '<div style="background:var(--navy);color:#fff;border-radius:16px;padding:24px 24px 22px">' +
+        '<div class="kpi-l" style="color:#9ea8bd;margin:0">Değerlenen Mülk</div>' +
+        '<div style="font-size:14px;margin-top:6px;line-height:1.45">' + v(p.address, "Mülk adresi") + '</div><div class="small" style="margin-top:4px">' + [p.type, p.m2 && p.m2 + " m²", p.rooms, p.floor && p.floor + ". kat", p.age && p.age + " yaşında"].filter(Boolean).map(esc).join(" · ") + "</div>" +
+        '<div style="height:1px;background:rgba(255,255,255,.12);margin:16px 0"></div>' +
+        '<div class="kpi-l" style="color:#9ea8bd;margin:0">Bölge ort. m² fiyatı</div><div class="serif" style="font-size:28px;margin-top:4px">' + (avg ? tl(avg) : "—") + "</div>" +
+        '<div class="kpi-l" style="color:#9ea8bd;margin:16px 0 0">Önerilen satış aralığı</div>' +
+        '<div class="serif gold" style="font-size:26px;margin-top:4px;line-height:1.2">' + (est ? tl(est * 0.97) + " –<br>" + tl(est * 1.03) : "—") + "</div>" +
+        (p.askPrice ? '<div class="small" style="margin-top:12px">Önerilen ilan fiyatı: <b style="color:#fff">' + tl(num(p.askPrice)) + "</b></div>" : "") +
+      "</div>" +
+    "</div></div>" + foot() + "</div>";
+};
+
+SLIDES.pricing = function() {
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">Fiyatlandırma Stratejisi</div>' +
+    E("pricing_h", "İlk 3 hafta,<br>satışın kaderini belirler.", "h1", "h1") +
+    '<div class="fill" style="display:grid;grid-template-columns:1.2fr 1fr;gap:40px;margin-top:30px;align-items:center">' +
+      '<div class="card" style="padding:24px 22px 16px">' +
+        '<svg viewBox="0 0 520 260" width="100%">' +
+          '<line x1="40" y1="220" x2="510" y2="220" stroke="#16161a" stroke-width="1.5"/><line x1="40" y1="20" x2="40" y2="220" stroke="#16161a" stroke-width="1.5"/>' +
+          '<text x="12" y="120" font-size="11" fill="#6b6b73" transform="rotate(-90 12 120)" text-anchor="middle">Alıcı ilgisi</text>' +
+          '<text x="275" y="250" font-size="11" fill="#6b6b73" text-anchor="middle">İlanda geçen süre (hafta)</text>' +
+          [1, 2, 3, 4, 6, 8, 12].map(function(w, i) { var x = 40 + [40, 80, 120, 160, 240, 320, 460][i]; return '<text x="' + x + '" y="235" font-size="10" fill="#9a948a" text-anchor="middle">' + w + "</text>"; }).join("") +
+          '<rect x="40" y="20" width="120" height="200" fill="#dc1c2e" opacity=".07"/>' +
+          '<text x="100" y="38" font-size="10.5" fill="#dc1c2e" text-anchor="middle" font-weight="700">ALTIN DÖNEM</text>' +
+          '<path d="M40 60 C 90 40, 130 45, 170 70 S 300 170, 500 205" fill="none" stroke="#dc1c2e" stroke-width="3.5"/>' +
+          '<path d="M40 130 C 90 120, 130 140, 200 170 S 340 205, 500 212" fill="none" stroke="#9a948a" stroke-width="3" stroke-dasharray="7 6"/>' +
+          '<circle cx="170" cy="70" r="5" fill="#dc1c2e"/><text x="180" y="66" font-size="11" fill="#dc1c2e" font-weight="600">Doğru fiyat → çoklu teklif</text>' +
+          '<text x="215" y="150" font-size="11" fill="#6b6b73">Yüksek fiyat → bekleyen ilan, indirim baskısı</text>' +
+        "</svg>" +
+      "</div>" +
+      "<div>" +
+        E("pricing_list", "<ul class='check'><li><b>Yeni ilan en güçlü dönemindedir.</b> Portallar yeni ilanı öne çıkarır, bekleyen alıcılar ilk haftalarda harekete geçer.</li><li><b>Yüksek fiyat, rakip mülkleri satar.</b> Alıcı karşılaştırır; pahalı ilan diğerlerini cazip gösterir.</li><li><b>Bekleyen ilan “sorunlu” algılanır.</b> Uzun süre yayında kalan mülk için daha düşük teklif gelir.</li><li><b>Verilerle fiyatlıyoruz.</b> Emsal, satış süresi ve talep yoğunluğunu birlikte değerlendiriyoruz.</li><li><b>14 günde bir birlikte gözden geçiriyoruz.</b> Gösterim ve geri bildirimlere göre stratejiyi güncelliyoruz.</li></ul>") +
+      "</div>" +
+    "</div></div>" + foot() + "</div>";
+};
+
+SLIDES.process = function() {
+  var steps = [
+    ["Tanışma &amp; Mülk İnceleme", "Mülkü yerinde görüyor, beklentilerinizi ve zaman planınızı dinliyoruz."],
+    ["Değer Analizi &amp; Strateji", "Emsal analiziyle doğru fiyatı ve pazarlama planını birlikte belirliyoruz."],
+    ["Yetki Sözleşmesi", "Ticaret Bakanlığı kurallarına uygun yetki belgesiyle süreci resmileştiriyoruz."],
+    ["Hazırlık &amp; Çekim", "Ev hazırlığı, profesyonel fotoğraf, video, drone ve sanal tur."],
+    ["Lansman", "Portallar, sosyal medya, RE/MAX ağı ve alıcı veritabanında eş zamanlı yayın."],
+    ["Gösterim &amp; Rapor", "Nitelikli alıcıyla randevulu gösterim; haftalık performans raporu."],
+    ["Pazarlık &amp; Teklif", "Teklifleri sizin adınıza yönetir, en iyi şartları müzakere ederiz."],
+    ["Tapu &amp; Teslim", "Kapora, kredi, ekspertiz, tapu randevusu ve anahtar teslimine kadar yanınızdayız."]
+  ];
+  return '<div class="slide dark"><div class="s-pad">' +
+    '<div class="eyebrow">Satış Yol Haritası</div>' +
+    E("process_h", "İlk görüşmeden tapuya,<br>8 adımda net bir süreç.", "h1", "h1") +
+    '<div style="position:relative;margin-top:auto;margin-bottom:auto">' +
+      '<div style="position:absolute;left:0;right:0;top:15px;height:2px;background:linear-gradient(90deg,var(--gold),rgba(200,169,106,.25))"></div>' +
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:46px 26px;position:relative">' +
+        steps.map(function(s, i) {
+          return '<div style="' + (i >= 4 ? "margin-top:16px" : "") + '"><div class="num-badge">' + (i + 1) + '</div><div style="font-weight:700;font-size:17px;margin-top:16px">' + E("process_t" + i, s[0], "span") + '</div><div class="small" style="margin-top:8px;font-size:13.5px">' + E("process_d" + i, s[1], "span") + "</div></div>";
+        }).join("") +
+      "</div>" +
+    "</div></div>" + foot() + "</div>";
+};
+
+SLIDES.marketing = function() {
+  var items = [
+    ["camera", "Profesyonel Fotoğraf", "Geniş açı, doğal ışık, HDR düzenleme. İlk izlenim fotoğrafla başlar."],
+    ["drone", "Drone Çekimi", "Konum, manzara ve çevre avantajlarını havadan gösteriyoruz."],
+    ["video", "Video &amp; Reels", "Hikâye anlatan tanıtım filmi ve sosyal medya için dikey videolar."],
+    ["tour", "360° Sanal Tur", "Alıcı evi online gezer; yalnızca gerçekten ilgilenen gelir."],
+    ["chart", "Premium Portal İlanları", "sahibinden, hepsiemlak, emlakjet ve remax.com.tr’de öne çıkan ilan."],
+    ["social", "Hedefli Sosyal Medya", "Instagram ve Facebook’ta bölge, bütçe ve ilgi alanına göre reklam."],
+    ["db", "Alıcı Veritabanı", "Ofisimizin aktif alıcı havuzuna ilk gün doğrudan sunum."],
+    ["handshake", "Ortak Satış Ağı", "Ofis içi ve RE/MAX ofisleri arası portföy paylaşımı."],
+    ["sign", "Tabela &amp; Broşür", "Bölgede görünürlük; çevreye hedefli broşür dağıtımı."],
+    ["home", "Açık Ev Günleri", "Planlı açık ev etkinlikleriyle talebi tek günde yoğunlaştırma."],
+    ["globe", "Global Yayın", "Yabancı ve yurt dışındaki Türk alıcılar için uluslararası listeleme."],
+    ["report", "Haftalık Rapor", "Görüntülenme, arama, gösterim ve geri bildirimler şeffafça sizinle."]
+  ];
+  return '<div class="slide"><div class="s-pad" style="padding-top:48px">' +
+    '<div class="eyebrow">Pazarlama Faaliyetlerimiz</div>' +
+    E("marketing_h", "Mülkünüz için 12 kanallı pazarlama planı", "h1", "h1", "font-size:36px") +
+    '<div class="grid fill" style="grid-template-columns:repeat(4,1fr);gap:14px;margin-top:26px">' +
+      items.map(function(it, i) {
+        return '<div class="card" style="padding:18px 18px 14px">' + ico(it[0]) + E("mk_t" + i, it[1], "h4", "", "font-size:15px;margin-bottom:5px") + E("mk_d" + i, it[2], "p", "", "font-size:12.5px") + "</div>";
+      }).join("") +
+    "</div></div>" + foot() + "</div>";
+};
+
+SLIDES.plan30 = function() {
+  var weeks = [
+    ["1. Hafta", "Hazırlık", "Yayına hazır, kusursuz sunulmuş mülk", ["Yetki ve belge kontrolü", "Ev hazırlığı önerileri", "Profesyonel çekim günü", "İlan metni ve görsel seti"]],
+    ["2. Hafta", "Lansman", "Tüm kanallarda maksimum görünürlük", ["Tüm portallarda yayın", "Sosyal medya lansmanı", "Alıcı havuzuna özel sunum", "Ofis içi portföy tanıtımı"]],
+    ["3. Hafta", "Gösterim", "Nitelikli alıcılarla yüz yüze temas", ["Randevulu gösterimler", "Açık ev etkinliği", "Hedefli reklam optimizasyonu", "İlk performans raporu"]],
+    ["4. Hafta", "Değerlendirme", "Teklif, karar ve net yol haritası", ["Geri bildirim analizi", "Teklif yönetimi", "Strateji ve fiyat güncellemesi", "Sonraki 30 günün planı"]]
+  ];
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">İlk 30 Gün</div>' +
+    E("plan30_h", "Söz değil, takvim veriyoruz.", "h1", "h1") +
+    E("plan30_l", "Yetkiyi aldığımız günden itibaren her haftanın görevi bellidir. İlerlemeyi haftalık raporla sizinle paylaşırız.", "p", "lead") +
+    '<div class="grid fill" style="grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px">' +
+      weeks.map(function(w, i) {
+        return '<div style="background:' + (i === 1 ? "var(--navy)" : "#fff") + ";color:" + (i === 1 ? "#fff" : "inherit") + ';border:1px solid var(--line);border-radius:16px;padding:22px 20px;display:flex;flex-direction:column">' +
+          '<div style="font-size:11px;letter-spacing:.2em;text-transform:uppercase;font-weight:700;color:' + (i === 1 ? "var(--gold)" : "var(--red)") + '">' + w[0] + "</div>" +
+          '<div class="serif" style="font-size:26px;margin:6px 0 16px">' + E("p30_t" + i, w[1], "span") + "</div>" +
+          E("p30_l" + i, "<ul class='check'>" + w[3].map(function(x) { return "<li>" + x + "</li>"; }).join("") + "</ul>", "div", i === 1 ? "dark" : "", "background:transparent") +
+          '<div style="margin-top:auto;padding-top:14px;border-top:1px solid ' + (i === 1 ? "rgba(255,255,255,.15)" : "var(--line)") + '"><div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;opacity:.6">Hedef</div>' + E("p30_g" + i, w[2], "div", "serif", "font-size:17px;line-height:1.3;margin-top:4px") + "</div>" +
+        "</div>";
+      }).join("") +
+    "</div></div>" + foot() + "</div>";
+};
+
+SLIDES.owner = function() {
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">Mülk Sahibi Neler Yapmalı?</div>' +
+    E("owner_h", "Küçük dokunuşlar,<br>büyük fiyat farkı.", "h1", "h1") +
+    '<div class="grid fill" style="grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px">' +
+      '<div class="card">' + ico("sparkle") + E("ow_t0", "Sadeleştirin", "h4") + E("ow_l0", "<ul class='check'><li>Kişisel eşyaları ve fotoğrafları kaldırın</li><li>Tezgâh ve yüzeyleri boşaltın</li><li>Fazla mobilyayı depolayın</li><li>Dolapları düzenleyin; alıcı açıp bakar</li></ul>") + "</div>" +
+      '<div class="card">' + ico("home") + E("ow_t1", "Bakım &amp; Temizlik", "h4") + E("ow_l1", "<ul class='check'><li>Akan musluk, kırık kulp, ampulleri onarın</li><li>Gerekiyorsa açık renk boya</li><li>Derinlemesine temizlik, cam ve derz</li><li>Balkon ve girişi ferahlatın</li></ul>") + "</div>" +
+      '<div class="card">' + ico("sun") + E("ow_t2", "Gösterim Günü", "h4") + E("ow_l2", "<ul class='check'><li>Tüm perde ve ışıkları açın</li><li>Evi havalandırın, nötr bir koku</li><li>Evcil hayvanları dışarıda tutun</li><li>Gösterimi danışmanınıza bırakın</li></ul>") + "</div>" +
+    "</div>" +
+    E("owner_note", "<b>Altın kural:</b> Alıcı evi kendi evi gibi hayal edebilmeli. Hazırlanmış (home staging) evler daha kısa sürede ve daha az pazarlıkla satılır.", "div", "", "margin-top:20px;background:var(--navy);color:#fff;padding:16px 20px;border-radius:12px;font-size:14px") +
+    "</div>" + foot() + "</div>";
+};
+
+SLIDES.docs = function() {
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">Gerekli Belgeler</div>' +
+    E("docs_h", "Hazır belgeler,<br>hızlı ve güvenli tapu.", "h1", "h1") +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:30px">' +
+      "<div>" + E("docs_l1", "<ul class='check'><li><b>Tapu fotokopisi</b> (e-Devlet’ten de alınabilir)</li><li><b>Nüfus cüzdanı</b> (tüm malikler için)</li><li><b>Zorunlu deprem sigortası (DASK)</b> poliçesi</li><li><b>Enerji Kimlik Belgesi</b> (satışta zorunlu)</li><li><b>İskân / yapı kullanma izni</b> bilgisi</li><li><b>Güncel aidat ve borç durumu</b> (yönetimden)</li><li><b>Vekâletname</b> (malik bizzat katılamıyorsa)</li><li><b>İpotek varsa</b> banka kapatma yazısı</li></ul>") + "</div>" +
+      '<div style="display:flex;flex-direction:column;gap:16px">' +
+        '<div class="card">' + ico("shield") + E("docs_c0t", "Elektronik İlan Doğrulama", "h4") + E("docs_c0d", "Ticaret Bakanlığı düzenlemesiyle internette ilan verebilmek için mülk sahibiyle imzalı <b>yetki belgesi</b> ve e-Devlet onayı gereklidir. Belgesiz ilanlar yayından kaldırılır.", "p") + "</div>" +
+        '<div class="card">' + ico("doc") + E("docs_c1t", "Belge takibini biz yapıyoruz", "h4") + E("docs_c1d", "Eksik belgeleri birlikte listeliyor, e-Devlet ve tapu randevusu süreçlerinde size rehberlik ediyoruz.", "p") + "</div>" +
+      "</div>" +
+    '</div><div class="note" style="margin-top:12px">Belge listesi bilgilendirme amaçlıdır; güncel mevzuat ve tapu müdürlüğü talepleri esas alınır.</div></div>' + foot() + "</div>";
+};
+
+SLIDES.exclusive = function() {
+  var rows = [
+    ["Fiyat algısı", "Farklı fiyatlarla birden çok ilan, güven kaybı", "Tek fiyat, tek kaynak, güçlü konum"],
+    ["Pazarlama yatırımı", "Kimse profesyonel çekime yatırım yapmaz", "Foto, video, drone, reklam bütçesi"],
+    ["Alıcı deneyimi", "Aynı ev farklı kişilerden, kafa karışıklığı", "Tek muhatap, düzenli gösterim"],
+    ["Pazarlık gücü", "Komisyon yarışı, fiyat aşağı çekilir", "Değeriniz korunur, profesyonel müzakere"],
+    ["Raporlama", "Kim, ne zaman, kime gösterdi? Belirsiz", "Haftalık şeffaf performans raporu"],
+    ["Yasal uyum", "Yetkisiz ilan riski ve kaldırılan ilanlar", "Yetki belgeli, doğrulanmış ilan"]
+  ];
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">Neden Yetkili Çalışmalıyız?</div>' +
+    E("excl_h", "Bir mülk, bir strateji,<br>bir sorumlu.", "h1", "h1") +
+    '<table class="tbl" style="margin-top:28px;font-size:13.5px"><thead><tr><th style="width:22%"></th><th style="width:39%">Çok sayıda emlakçı / yetkisiz</th><th style="width:39%;color:var(--red)">Tek yetkili RE/MAX danışmanı</th></tr></thead><tbody>' +
+      rows.map(function(r, i) {
+        return '<tr><td style="font-weight:700">' + E("ex_a" + i, r[0], "span") + '</td><td style="color:var(--muted)">✕ &nbsp;' + E("ex_b" + i, r[1], "span") + '</td><td style="font-weight:500">✓ &nbsp;' + E("ex_c" + i, r[2], "span") + "</td></tr>";
+      }).join("") +
+    "</tbody></table></div>" + foot() + "</div>";
+};
+
+SLIDES.why = function() {
+  var items = [
+    ["target", "Bölge Uzmanlığı", "Sokağınızdaki satışları, alıcı profilini ve fiyat hareketlerini yakından takip ediyorum."],
+    ["chart", "Veriye Dayalı Fiyat", "Tahmin değil analiz: emsal, satış süresi ve talep verisiyle fiyatlıyorum."],
+    ["camera", "Premium Sunum", "Mülkünüzü yeni bir proje kadar özenle pazarlıyorum."],
+    ["users", "Güçlü Ağ", "Ofisimizin ve RE/MAX ağının alıcılarına ilk gün ulaşıyorum."],
+    ["report", "Şeffaf İletişim", "Her hafta rapor, her gösterimden sonra geri bildirim."],
+    ["handshake", "Güçlü Müzakere", "Teklifleri sizin çıkarınıza yönetir, değerinizi korurum."]
+  ];
+  return '<div class="slide dark"><div class="s-pad">' +
+    '<div class="eyebrow">Neden ' + esc(firstName()) + "?</div>" +
+    E("why_h", "Sizi temsil eden kişi,<br>sonucu belirler.", "h1", "h1") +
+    '<div style="margin-top:28px;flex:1;display:flex;flex-direction:column">' + cardsHTML("why", items, "g3") + "</div>" +
+    E("why_promise", "<b class='gold'>Taahhüdüm:</b> Telefonlarınıza aynı gün dönüş, haftalık rapor, her teklifi yazılı iletme ve satış sonrasında da yanınızda olma.", "div", "", "margin-top:18px;font-size:14px;border-left:3px solid var(--gold);padding:6px 0 6px 16px;color:#dfe4ec") +
+    "</div>" + foot() + "</div>";
+};
+
+SLIDES.testimonials = function() {
+  var q = [
+    ["“Evimizi beklediğimizden kısa sürede ve istediğimiz fiyata sattık. Her adımda bilgilendirildik.”", "Ayşe &amp; Mehmet K.", "Kadıköy · 3+1 Daire"],
+    ["“Fotoğraf ve video çekimleri o kadar iyiydi ki ilk hafta 6 gösterim yaptık.”", "Selin T.", "Ataşehir · 2+1 Daire"],
+    ["“Yurt dışında yaşıyorum; tüm süreci vekâletle, hiç endişe etmeden tamamladık.”", "Burak D.", "Fikirtepe · Proje Daire"]
+  ];
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">Referanslar</div>' +
+    E("testi_h", "Müşterilerimiz anlatıyor.", "h1", "h1") +
+    '<div class="grid g3 fill" style="margin-top:34px">' +
+      q.map(function(x, i) {
+        return '<div class="card" style="padding:28px 26px;position:relative;display:flex;flex-direction:column"><div class="serif red" style="font-size:70px;line-height:.6;height:30px">“</div>' +
+          E("tq" + i, x[0], "p", "serif", "font-size:19px;line-height:1.5;color:var(--ink);font-style:italic;flex:1") +
+          '<div class="rule" style="margin:16px 0 12px"></div>' + E("tn" + i, x[1], "div", "", "font-weight:700;font-size:14px") + E("ts" + i, x[2], "div", "small") +
+          '<div style="color:#f5b301;margin-top:8px;letter-spacing:2px">★★★★★</div></div>';
+      }).join("") +
+    "</div>" +
+    '<div class="note" style="margin-top:16px">Örnek metinlerdir; “Metin Düzenle” ile kendi müşteri yorumlarınızla değiştirin (Google yorumları, teşekkür mesajları).</div>' +
+    "</div>" + foot() + "</div>";
+};
+
+function destSlide(key, o) {
+  return '<div class="slide ' + (o.dark ? "dark" : "") + '">' +
+    '<div style="position:absolute;right:0;top:0;bottom:0;width:400px;background:' + o.bg + '">' +
+      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:40px 40px 70px;color:#fff">' +
+        '<div style="font-size:11px;letter-spacing:.25em;text-transform:uppercase;font-weight:700;opacity:.85">' + o.tag + "</div>" +
+        '<div class="serif" style="font-size:58px;line-height:1;margin-top:8px">' + o.big + "</div>" +
+        '<div style="margin-top:22px;display:flex;flex-direction:column;gap:14px">' + o.kpis.map(function(k, i) {
+          return '<div style="border-top:1px solid rgba(255,255,255,.3);padding-top:10px"><div class="serif" style="font-size:26px">' + E(key + "_k" + i, k[0], "span") + '</div><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.8;margin-top:2px">' + E(key + "_kl" + i, k[1], "span") + "</div></div>";
+        }).join("") + "</div>" +
+      "</div>" +
+    "</div>" +
+    '<div class="s-pad" style="right:400px">' +
+      '<div class="eyebrow">' + o.eyebrow + "</div>" +
+      E(key + "_h", o.h, "h1", "h1", "font-size:40px") +
+      E(key + "_l", o.lead, "p", "lead", "font-size:14.5px") +
+      E(key + "_list", "<ul class='check' style='margin-top:20px'>" + o.list.map(function(x) { return "<li>" + x + "</li>"; }).join("") + "</ul>", "div", "", "margin-top:18px") +
+      (o.note ? '<div class="note" style="margin-top:10px">' + o.note + "</div>" : "") +
+    "</div>" + foot() + "</div>";
+}
+
+SLIDES.fikirtepe = function() {
+  return destSlide("fik", {
+    bg: "linear-gradient(160deg,#1d3a66 0%,#0b1f3a 70%)", tag: "Kadıköy · İstanbul", big: "Yeni<br>Fikirtepe", eyebrow: "Ayrıcalıklı Portföy",
+    h: "İstanbul’un yeniden doğan merkezi: <i class='red'>Yeni Fikirtepe</i>",
+    lead: "Türkiye’nin en büyük kentsel dönüşüm alanlarından biri olan Fikirtepe, Çevre ve Şehircilik Bakanlığı ve Emlak Konut öncülüğünde yeniden hayat buluyor. 1. etapta teslimatlar 2026’da başladı.",
+    list: ["<b>Kadıköy</b> adresi, Anadolu Yakası’nın merkezinde konum", "Marmaray, M4 metro hattı ve D-100’e yakınlık", "Proje alanının önemli bölümü yeşil alan ve sosyal donatı", "Hak sahibi daireleri, proje stoğu ve ikinci el portföy takibi", "Erken dönem alımında değer artışı potansiyeli"],
+    kpis: [["11.729", "1. etapta tamamlanan bağımsız bölüm"], ["~60.000", "Hedeflenen konut ve iş yeri"], ["1,3 mn m²", "Proje alanı"]],
+    note: "Kaynak: Çevre, Şehircilik ve İklim Değişikliği Bakanlığı açıklamaları (2026). Rakamlar bilgilendirme amaçlıdır."
+  });
+};
+
+SLIDES.lux = function() {
+  return destSlide("lux", {
+    dark: true, bg: "linear-gradient(160deg,#c8a96a 0%,#8a6d36 100%)", tag: "Premium Segment", big: "Lüks<br>Konut", eyebrow: "Ayrıcalıklı Hizmet",
+    h: "Lüks mülk, <i class='gold'>farklı bir dil</i> ister.",
+    lead: "Prestijli konutlarda alıcı sayısı az, beklenti yüksektir. Mülkünüzü doğru kitleye, gizlilik ve itibar içinde sunuyoruz.",
+    list: ["Sinematik tanıtım filmi, mimari fotoğraf ve drone", "Basılı premium katalog ve kişiye özel sunumlar", "Gizli portföy (off-market) seçeneği: ilansız, davetli satış", "Yerli ve yabancı yüksek bütçeli alıcı ağına doğrudan erişim", "Yalnızca ön onaylı, nitelikli alıcılarla randevulu gösterim"],
+    kpis: [["Gizlilik", "Off-market satış seçeneği"], ["Global", "Uluslararası alıcı erişimi"], ["Butik", "Kişiye özel pazarlama"]]
+  });
+};
+
+SLIDES.cyprus = function() {
+  return destSlide("cy", {
+    bg: "linear-gradient(160deg,#0891b2 0%,#0b4f6c 100%)", tag: "Kuzey Kıbrıs", big: "KKTC", eyebrow: "Yurt Dışı Yatırım",
+    h: "Akdeniz’de ikinci ev ve <i class='red'>döviz bazlı</i> yatırım",
+    lead: "Kuzey Kıbrıs; deniz, iklim, üniversite şehirleri ve turizmle yıl boyu kiralama talebi sunan, Türkiye’den kolay ulaşılan bir yatırım bölgesidir.",
+    list: ["Proje aşamasında uygun fiyat ve vade imkânı", "Döviz (GBP / EUR / USD) bazlı fiyatlama", "Öğrenci ve turizm kaynaklı güçlü kira talebi", "Mayıs 2025 düzenlemesi: Türk vatandaşlarına 6 daire + 3 müstakil hakkı", "Satın alma izni, tapu ve vekâlet süreçlerinde uçtan uca destek"],
+    kpis: [["6 + 3", "TC vatandaşı edinim hakkı (daire + villa)"], ["3 + 2", "Diğer yabancılar için hak"], ["Tüm yıl", "Kiralama sezonu"]],
+    note: "Yabancıların taşınmaz edinimi Bakanlar Kurulu iznine tabidir. Güncel mevzuat işlem öncesi teyit edilmelidir."
+  });
+};
+
+SLIDES.dubai = function() {
+  return destSlide("dxb", {
+    bg: "linear-gradient(160deg,#b45309 0%,#451a03 100%)", tag: "Birleşik Arap Emirlikleri", big: "Dubai", eyebrow: "Yurt Dışı Yatırım",
+    h: "Gelir vergisiz kira, <i class='red'>10 yıllık</i> Golden Visa",
+    lead: "Dubai; dünyanın en likit lüks konut pazarlarından biri. Kira gelirinde kişisel gelir vergisi yok, ödeme planlı projeler ve güçlü yabancı talebi var.",
+    list: ["AED 2 milyon ve üzeri mülkle 10 yıllık Golden Visa", "Proje (off-plan), hazır, ipotekli veya birden fazla mülkle eşik tamamlanabilir", "2026’dan itibaren ipotekli mülkte %50 peşinat şartı kaldırıldı", "Freehold bölgelerde yabancıya tam mülkiyet", "Ödeme planlı yeni projeler ve güvenilir geliştirici seçimi"],
+    kpis: [["AED 2 mn", "Golden Visa için mülk değeri"], ["10 yıl", "Yenilenebilir oturum"], ["%0", "Kişisel gelir vergisi"]],
+    note: "Kaynak: Dubai Land Department (DLD) kuralları, 2026. Tapu devir harcı ve aidatlar ayrıca hesaplanmalıdır."
+  });
+};
+
+SLIDES.greece = function() {
+  return destSlide("gr", {
+    bg: "linear-gradient(160deg,#1f4fa3 0%,#0b1f3a 100%)", tag: "Avrupa Birliği", big: "Yunanistan", eyebrow: "Golden Visa",
+    h: "Gayrimenkulle <i class='red'>Avrupa’da oturum</i> ve Schengen’de serbest seyahat",
+    lead: "Yunanistan Golden Visa; mülk yatırımı karşılığında tüm aileye 5 yıllık, yenilenebilir oturum izni sağlar. Avrupa’ya en yakın ve en erişilebilir programlardan biridir.",
+    list: ["Atina, Selanik, Mikonos, Santorini ve büyük adalarda <b>€800.000</b>", "Diğer bölgelerde <b>€400.000</b>", "Ticari mülkten konuta dönüşüm ve tescilli yapılarda <b>€250.000</b>", "Eş, 21 yaş altı çocuklar ve ebeveynler başvuruya dahil", "Tek mülk en az 120 m²; kısa dönem (Airbnb) kiralama yasak"],
+    kpis: [["5 yıl", "Yenilenebilir oturum izni"], ["Schengen", "Vizesiz seyahat"], ["Aile", "Ebeveynler dahil"]],
+    note: "Kaynak: Yunanistan Golden Visa mevzuatı (2024–2026 düzenlemeleri). Hukuki süreç lisanslı avukatla yürütülür."
+  });
+};
+
+SLIDES.compare = function() {
+  var rows = [
+    ["Türkiye", "$400.000", "Vatandaşlık", "3 yıl satmama şerhi; aile dahil"],
+    ["Yunanistan", "€250.000 – €800.000", "5 yıllık oturum", "Schengen, ebeveynler dahil"],
+    ["Dubai (BAE)", "AED 2.000.000", "10 yıllık oturum", "Gelir vergisi yok, ipotek mümkün"],
+    ["KKTC", "Proje bazlı", "Mülk edinimi", "Döviz bazlı, yüksek kira talebi"]
+  ];
+  return '<div class="slide dark"><div class="s-pad">' +
+    '<div class="eyebrow">Yatırım Rehberi</div>' +
+    E("cmp_h", "Hangi yatırım<br>size uygun?", "h1", "h1") +
+    '<table class="tbl" style="margin-top:30px;font-size:14px"><thead><tr><th>Ülke</th><th>Asgari Yatırım</th><th>Sağladığı Hak</th><th>Öne Çıkan</th></tr></thead><tbody>' +
+      rows.map(function(r, i) { return '<tr><td style="font-weight:700" class="serif">' + E("cmp_a" + i, r[0], "span") + '</td><td class="gold" style="font-weight:600">' + E("cmp_b" + i, r[1], "span") + "</td><td>" + E("cmp_c" + i, r[2], "span") + '</td><td style="color:#b9c0cf">' + E("cmp_d" + i, r[3], "span") + "</td></tr>"; }).join("") +
+    "</tbody></table>" +
+    E("cmp_note", "Mülkünüzün satışından elde edeceğiniz sermayeyi doğru yatırıma yönlendirmek için yerli ve yurt dışı seçenekleri birlikte planlayalım.", "p", "lead", "margin-top:26px") +
+    '<div class="note" style="margin-top:10px">Program şartları değişebilir; işlem öncesi güncel mevzuat ve uzman hukuki görüş esas alınır.</div>' +
+    "</div>" + foot() + "</div>";
+};
+
+SLIDES.next = function() {
+  var st = [["Bugün", "Değer analizi ve stratejiyi onaylıyoruz."], ["1–2 gün", "Yetki belgesi ve e-Devlet onayı."], ["3–5 gün", "Hazırlık ve profesyonel çekim."], ["7. gün", "Lansman: mülkünüz yayında."]];
+  return '<div class="slide"><div class="s-pad">' +
+    '<div class="eyebrow">Sonraki Adımlar</div>' +
+    E("next_h", "Birlikte başlayalım.", "h1", "h1") +
+    '<div style="display:grid;grid-template-columns:1.2fr 1fr;gap:40px;margin-top:30px">' +
+      '<div style="display:flex;flex-direction:column;gap:16px">' + st.map(function(s, i) {
+        return '<div style="display:flex;gap:18px;align-items:flex-start"><div class="num-badge">' + (i + 1) + '</div><div><div style="font-weight:700;font-size:15px">' + E("nx_t" + i, s[0], "span") + '</div><div class="small" style="font-size:14px">' + E("nx_d" + i, s[1], "span") + "</div></div></div>";
+      }).join("") + "</div>" +
+      '<div class="card" style="padding:24px">' + ico("key") + E("fee_t", "Hizmet Bedeli", "h4", "", "font-size:17px") +
+        E("fee_d", "Hizmet bedelimiz yalnızca satış gerçekleştiğinde ödenir. Profesyonel çekim, reklam ve pazarlama giderleri tarafımızca karşılanır. Detaylar yetki sözleşmesinde şeffafça yer alır.", "p", "", "font-size:13.5px") +
+        '<div class="rule" style="margin:16px 0"></div>' + E("fee_g", "<b>Yetki süresi:</b> 3 ay · <b>Rapor:</b> haftalık · <b>Strateji gözden geçirme:</b> 14 günde bir", "p", "", "font-size:13px;color:var(--ink)") +
+      "</div>" +
+    "</div></div>" + foot() + "</div>";
+};
+
+SLIDES.thanks = function() {
+  var c = S.c;
+  var photo = c.photo ? '<div class="bg-img" style="width:150px;height:150px;border-radius:50%;border:4px solid var(--gold);background-image:url(\'' + c.photo + '\');background-position:center 20%"></div>' : '<div class="photo-ph" style="width:150px;height:150px;border-radius:50%;border:4px solid var(--gold);font-size:50px">' + initials(c.name) + "</div>";
+  return '<div class="slide dark">' +
+    '<div style="position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,var(--red) 0 50%,#1f4fa3 50% 100%)"></div>' +
+    '<div class="s-pad" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center">' +
+      photo +
+      E("thanks_h", "Teşekkür ederim.", "h1", "h1", "font-size:56px;margin-top:26px") +
+      E("thanks_l", "Mülkünüz için en doğru kararı birlikte vermek için buradayım.", "p", "lead", "margin:12px auto 0") +
+      '<div class="serif" style="font-size:26px;margin-top:28px">' + v(c.name, "Danışman Adı Soyadı") + "</div>" +
+      '<div style="font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-top:6px">' + esc(c.title) + " · " + esc(S.o.name) + "</div>" +
+      '<div style="display:flex;gap:26px;margin-top:22px;font-size:14px;color:#dfe4ec;align-items:center">' +
+        (c.phone ? '<span style="display:flex;gap:8px;align-items:center">' + sico("phone", 15, "#c8a96a") + esc(c.phone) + "</span>" : "") +
+        (c.email ? '<span style="display:flex;gap:8px;align-items:center">' + sico("mail", 15, "#c8a96a") + esc(c.email) + "</span>" : "") +
+        (c.instagram ? '<span style="display:flex;gap:8px;align-items:center">' + sico("social", 15, "#c8a96a") + esc(c.instagram) + "</span>" : "") +
+      "</div>" +
+      '<div style="display:flex;gap:14px;align-items:center;margin-top:24px"><div class="qr" style="background:#fff;padding:8px;border-radius:10px;width:96px;height:96px"></div><div style="text-align:left;font-size:12px;color:#9ea8bd;line-height:1.5">Kameranızla okutun,<br>WhatsApp’tan<br>hemen yazın.</div></div>' +
+    "</div></div>";
+};
+
+/* =====================================================================
+   RENDER
+   ===================================================================== */
+var stage = document.getElementById("stage");
+function render() {
+  var html = "", n = 0;
+  SECTIONS.forEach(function(s) {
+    var on = S.sec[s[0]] !== false;
+    if (on) n++;
+    html += '<div class="slide-wrap' + (on ? "" : " off") + '" data-id="' + s[0] + '"><span class="slide-num-tag">' + (on ? n : "–") + " · " + esc(s[1]) + "</span>" + SLIDES[s[0]]() + "</div>";
+  });
+  stage.innerHTML = html;
+  var visible = stage.querySelectorAll(".slide-wrap:not(.off)");
+  visible.forEach(function(w, i) { var pg = w.querySelector(".pg"); if (pg) pg.textContent = String(i + 1).padStart(2, "0") + " / " + String(visible.length).padStart(2, "0"); });
+  if (document.body.classList.contains("editing")) setEditable(true);
+  drawQR();
+  fit();
+  document.getElementById("brandSub").textContent = S.c.name ? S.c.name + " · " + S.o.name : "Danışman bilgilerinizi girin, PDF olarak kaydedin";
+}
+function drawQR() {
+  var digits = (S.c.phone || "").replace(/\D/g, "");
+  if (digits.indexOf("0") === 0) digits = "9" + digits;
+  else if (digits.length === 10) digits = "90" + digits;
+  stage.querySelectorAll(".qr").forEach(function(el) {
+    el.innerHTML = "";
+    if (!digits || typeof QRCode === "undefined") { el.parentNode.style.display = "none"; return; }
+    new QRCode(el, { text: "https://wa.me/" + digits, width: 80, height: 80, colorDark: "#0b1f3a", colorLight: "#ffffff" });
+  });
+}
+function fit() {
+  var present = document.body.classList.contains("present");
+  stage.querySelectorAll(".slide-wrap").forEach(function(w) {
+    var slide = w.querySelector(".slide");
+    var W, H;
+    if (present) {
+      var s0 = Math.min(window.innerWidth / 1123, window.innerHeight / 794);
+      W = 1123 * s0; H = 794 * s0;
+    } else { W = w.parentNode.clientWidth - 32; H = W * 794 / 1123; }
+    w.style.width = present ? W + "px" : ""; w.style.height = H + "px";
+    slide.style.transform = "scale(" + (W / 1123) + ")";
+  });
+}
+window.addEventListener("resize", fit);
+window.addEventListener("beforeprint", function() { stage.querySelectorAll(".slide-wrap").forEach(function(w) { w.style.height = ""; w.style.width = ""; }); });
+window.addEventListener("afterprint", fit);
+
+/* ---------- inline editing ---------- */
+function setEditable(on) { stage.querySelectorAll("[data-k]").forEach(function(el) { el.contentEditable = on ? "true" : "false"; }); }
+function toggleEdit() {
+  var on = !document.body.classList.contains("editing");
+  document.body.classList.toggle("editing", on);
+  document.getElementById("editBtn").classList.toggle("on", on);
+  setEditable(on);
+  toast(on ? "Metin düzenleme açık" : "Metin düzenleme kapandı, değişiklikler kaydedildi");
+}
+stage.addEventListener("input", function(e) {
+  var el = e.target.closest("[data-k]");
+  if (!el) return;
+  S.edits[el.getAttribute("data-k")] = el.innerHTML;
+  save();
+});
+stage.addEventListener("paste", function(e) {
+  if (!e.target.closest("[data-k]")) return;
+  e.preventDefault();
+  document.execCommand("insertText", false, (e.clipboardData || window.clipboardData).getData("text"));
+});
+
+/* ---------- presentation mode ---------- */
+var cur = 0;
+function visibleWraps() { return Array.prototype.slice.call(stage.querySelectorAll(".slide-wrap:not(.off)")); }
+function startPresent() {
+  if (document.body.classList.contains("editing")) toggleEdit();
+  document.body.classList.add("present"); cur = 0; showCur();
+  if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(function() {});
+}
+function stopPresent() {
+  document.body.classList.remove("present");
+  stage.querySelectorAll(".slide-wrap").forEach(function(w) { w.classList.remove("current"); w.style.width = ""; });
+  if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(function() {});
+  fit();
+}
+function showCur() {
+  var ws = visibleWraps(); cur = Math.max(0, Math.min(ws.length - 1, cur));
+  ws.forEach(function(w, i) { w.classList.toggle("current", i === cur); });
+  document.getElementById("pCount").textContent = (cur + 1) + " / " + ws.length;
+  fit();
+}
+function go(d) { cur += d; showCur(); }
+document.addEventListener("keydown", function(e) {
+  if (!document.body.classList.contains("present")) return;
+  if (["ArrowRight", "PageDown", " "].indexOf(e.key) >= 0) { e.preventDefault(); go(1); }
+  if (["ArrowLeft", "PageUp"].indexOf(e.key) >= 0) { e.preventDefault(); go(-1); }
+  if (e.key === "Escape") stopPresent();
+});
+document.addEventListener("fullscreenchange", function() { if (!document.fullscreenElement && document.body.classList.contains("present")) stopPresent(); });
+var tx = null;
+stage.addEventListener("touchstart", function(e) { tx = e.touches[0].clientX; }, { passive: true });
+stage.addEventListener("touchend", function(e) {
+  if (tx === null || !document.body.classList.contains("present")) return;
+  var dx = e.changedTouches[0].clientX - tx; tx = null;
+  if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+}, { passive: true });
+stage.addEventListener("click", function(e) {
+  if (!document.body.classList.contains("present")) return;
+  go(e.clientX > window.innerWidth / 2 ? 1 : -1);
+});
+
+/* =====================================================================
+   PANEL
+   ===================================================================== */
+function f(group, key, label, type, ph) {
+  var val = S[group][key] || "";
+  var id = group + "_" + key;
+  if (type === "textarea") return '<div class="fld"><label for="' + id + '">' + label + '</label><textarea id="' + id + '" data-g="' + group + '" data-f="' + key + '" placeholder="' + esc(ph || "") + '">' + esc(val) + "</textarea></div>";
+  return '<div class="fld"><label for="' + id + '">' + label + '</label><input id="' + id + '" type="' + (type || "text") + '" data-g="' + group + '" data-f="' + key + '" value="' + esc(val) + '" placeholder="' + esc(ph || "") + '"></div>';
+}
+function photoField(group, key, label) {
+  return '<div class="fld"><label>' + label + '</label><div class="photo-row"><div class="photo-thumb" style="background-image:' + (S[group][key] ? "url('" + S[group][key] + "')" : "none") + '"></div>' +
+    '<label class="mini-btn" style="display:inline-block">Fotoğraf seç<input type="file" accept="image/*" hidden data-photo="' + group + "." + key + '"></label>' +
+    (S[group][key] ? ' <button class="mini-btn danger" data-photo-del="' + group + "." + key + '">Kaldır</button>' : "") + "</div></div>";
+}
+function renderPanel() {
+  var h = "";
+  h += '<details open><summary>👤 Danışman Bilgileri</summary>' + photoField("c", "photo", "Profil fotoğrafı (dikey, profesyonel)") +
+    f("c", "name", "Ad Soyad", "text", "Örn. Ayşe Yılmaz") + f("c", "title", "Unvan") +
+    '<div class="row2">' + f("c", "phone", "Telefon", "tel", "0 5xx xxx xx xx") + f("c", "email", "E-posta", "email") + "</div>" +
+    f("c", "instagram", "Instagram", "text", "@kullaniciadi") +
+    '<div class="row2">' + f("c", "years", "Deneyim (yıl)", "text", "8") + f("c", "deals", "Tamamlanan işlem", "text", "120+") + "</div>" +
+    f("c", "volume", "İşlem hacmi", "text", "₺500M+") + f("c", "regions", "Uzmanlık bölgeleri (virgülle)", "text", "Kadıköy, Fikirtepe, Moda") +
+    f("c", "languages", "Diller") + f("c", "certs", "Sertifika / ödüller", "text", "RE/MAX Hall of Fame, MYK Seviye 5") +
+    f("c", "bio", "Kısa biyografi", "textarea", "3–4 cümle: kimsiniz, neden bu işi yapıyorsunuz, müşterilerinize ne vaat ediyorsunuz?") +
+    f("c", "motto", "Mottonuz (opsiyonel)") + "</details>";
+  h += '<details open><summary>🏠 Mülk &amp; Mülk Sahibi</summary>' + f("p", "client", "Mülk sahibi", "text", "Örn. Ahmet Bey") +
+    f("p", "address", "Mülk adresi / proje", "text", "Caferağa Mah., Moda Cd. No:… Kadıköy") +
+    '<div class="row2">' + f("p", "type", "Mülk tipi") + f("p", "m2", "Net m²", "number") + "</div>" +
+    '<div class="row2">' + f("p", "rooms", "Oda", "text", "3+1") + f("p", "floor", "Kat") + "</div>" +
+    '<div class="row2">' + f("p", "age", "Bina yaşı") + f("p", "date", "Sunum tarihi", "date") + "</div>" +
+    f("p", "askPrice", "Önerilen ilan fiyatı (₺)", "text", "Opsiyonel") + photoField("p", "photo", "Mülk / kapak fotoğrafı (opsiyonel)") + "</details>";
+  h += '<details><summary>📊 Emsal Mülkler (Değer Analizi)</summary><div id="comps">' +
+    S.comps.map(function(r, i) {
+      return '<div class="comp-row"><div class="fld"><label>Konum / ilan</label><input data-comp="' + i + '" data-cf="loc" value="' + esc(r.loc) + '"></div>' +
+        '<div class="row2"><div class="fld"><label>m²</label><input type="number" data-comp="' + i + '" data-cf="m2" value="' + esc(r.m2) + '"></div><div class="fld"><label>Fiyat (₺)</label><input data-comp="' + i + '" data-cf="price" value="' + esc(r.price) + '"></div></div>' +
+        '<div class="row2"><div class="fld"><label>Durum</label><select data-comp="' + i + '" data-cf="status"><option' + (r.status !== "Satıldı" ? " selected" : "") + ">Satışta</option><option" + (r.status === "Satıldı" ? " selected" : "") + '>Satıldı</option></select></div><div class="fld"><label>İlanda gün</label><input type="number" data-comp="' + i + '" data-cf="days" value="' + esc(r.days) + '"></div></div>' +
+        '<button class="mini-btn danger" data-comp-del="' + i + '">Sil</button></div>';
+    }).join("") + "</div>" +
+    (S.comps.length < 8 ? '<button class="mini-btn" id="addComp">+ Emsal ekle</button>' : "") + "<div style='height:8px'></div></details>";
+  h += '<details><summary>📈 Piyasa Verileri</summary>' + f("m", "period", "Dönem") + '<div class="row2">' + f("m", "trSales", "Türkiye satış") + f("m", "istSales", "İstanbul satış") + "</div>" +
+    f("m", "trChange", "Türkiye değişim notu") + '<div class="row2">' + f("m", "istShare", "İstanbul payı") + f("m", "firstHand", "İlk el payı (%)", "number") + "</div>" +
+    '<div class="row2">' + f("m", "mortgage", "İpotekli satış") + f("m", "mortgageChange", "İpotekli değişim notu") + "</div>" + f("m", "source", "Kaynak") +
+    '<div class="small" style="color:var(--ui-muted);font-size:12px;margin-bottom:10px">Güncel veri: data.tuik.gov.tr → Konut Satış İstatistikleri (her ay ortasında yayımlanır).</div></details>';
+  h += '<details><summary>🏢 Ofis Bilgileri</summary>' + f("o", "name", "Ofis adı") + f("o", "slogan", "Slogan") + f("o", "address", "Adres") +
+    '<div class="row2">' + f("o", "phone", "Telefon") + f("o", "web", "Web") + "</div>" +
+    '<div class="row2">' + f("o", "instagram", "Instagram") + f("o", "team", "Danışman sayısı") + "</div>" +
+    '<div class="row2">' + f("o", "founded", "Kuruluş yılı") + f("o", "broker", "Broker") + "</div>" +
+    f("o", "regions", "Hizmet bölgeleri") + f("o", "about", "Ofis tanıtım metni", "textarea") + "</details>";
+  h += '<details><summary>🧩 Bölümler (sunuma dahil et)</summary>' +
+    SECTIONS.map(function(s) { return '<label class="sec-toggle"><input type="checkbox" data-sec="' + s[0] + '"' + (S.sec[s[0]] !== false ? " checked" : "") + "> " + esc(s[1]) + "</label>"; }).join("") +
+    '<div style="height:8px"></div></details>';
+  h += '<details><summary>💾 Yedekle / Paylaş</summary><p class="small" style="color:var(--ui-muted);font-size:12.5px;line-height:1.5">Bilgileriniz bu tarayıcıda saklanır. Başka cihazda kullanmak için dosya olarak indirip orada içe aktarın.</p>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="mini-btn" id="exportBtn">⬇ Profili indir (.json)</button><label class="mini-btn">⬆ İçe aktar<input type="file" accept=".json,application/json" hidden id="importInp"></label></div>' +
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="mini-btn danger" id="resetText">Metinleri varsayılana döndür</button><button class="mini-btn danger" id="resetAll">Her şeyi sıfırla</button></div></details>';
+  h += '<p style="font-size:12px;color:var(--ui-muted);line-height:1.5;margin-top:14px">💡 PDF için: “PDF İndir” → Hedef: <b>PDF olarak kaydet</b>, Kağıt: A4 Yatay, Kenar boşluğu: Yok, <b>Arka plan grafikleri: Açık</b>.</p>';
+  document.getElementById("panelBody").innerHTML = h;
+}
+function openPanel() { renderPanel(); document.getElementById("panel").classList.add("open"); document.getElementById("scrim").classList.add("open"); }
+function closePanel() { document.getElementById("panel").classList.remove("open"); document.getElementById("scrim").classList.remove("open"); }
+
+var renderTimer = null;
+function softRender() { clearTimeout(renderTimer); renderTimer = setTimeout(render, 200); }
+var pb = document.getElementById("panelBody");
+pb.addEventListener("input", function(e) {
+  var t = e.target;
+  if (t.dataset.g) { S[t.dataset.g][t.dataset.f] = t.value; save(); softRender(); }
+  else if (t.dataset.comp !== undefined) { S.comps[+t.dataset.comp][t.dataset.cf] = t.value; save(); softRender(); }
+});
+pb.addEventListener("change", function(e) {
+  var t = e.target;
+  if (t.dataset.sec) { S.sec[t.dataset.sec] = t.checked; save(); render(); }
+  else if (t.dataset.comp !== undefined && t.tagName === "SELECT") { S.comps[+t.dataset.comp][t.dataset.cf] = t.value; save(); render(); }
+  else if (t.dataset.photo && t.files[0]) {
+    var parts = t.dataset.photo.split(".");
+    resizeImage(t.files[0], parts[0] === "c" ? 900 : 1600, function(url) { S[parts[0]][parts[1]] = url; save(); render(); renderPanel(); });
+  } else if (t.id === "importInp" && t.files[0]) {
+    var r = new FileReader();
+    r.onload = function() {
+      try {
+        var d = JSON.parse(r.result), b = blank();
+        ["c", "o", "m", "p", "sec", "edits"].forEach(function(k) { if (d[k]) Object.assign(b[k], d[k]); });
+        if (Array.isArray(d.comps)) b.comps = d.comps;
+        S = b; save(); render(); renderPanel(); toast("Profil içe aktarıldı");
+      } catch (err) { toast("Dosya okunamadı"); }
+    };
+    r.readAsText(t.files[0]);
+  }
+});
+pb.addEventListener("click", function(e) {
+  var t = e.target;
+  if (t.id === "addComp") { S.comps.push({ loc: "", m2: "", price: "", status: "Satışta", days: "" }); save(); renderPanel(); pb.querySelector("details:nth-of-type(3)").open = true; }
+  else if (t.dataset.compDel !== undefined) { S.comps.splice(+t.dataset.compDel, 1); save(); render(); renderPanel(); pb.querySelector("details:nth-of-type(3)").open = true; }
+  else if (t.dataset.photoDel) { var p = t.dataset.photoDel.split("."); S[p[0]][p[1]] = ""; save(); render(); renderPanel(); }
+  else if (t.id === "exportBtn") {
+    var blob = new Blob([JSON.stringify(S)], { type: "application/json" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+    a.download = "1-sunum-" + (S.c.name || "danisman").toLowerCase().replace(/\s+/g, "-") + ".json"; a.click();
+  }
+  else if (t.id === "resetText") { if (confirm("Elle düzenlediğiniz tüm slayt metinleri varsayılana dönsün mü?")) { S.edits = {}; save(); render(); toast("Metinler sıfırlandı"); } }
+  else if (t.id === "resetAll") { if (confirm("Tüm bilgiler silinsin mi? Bu işlem geri alınamaz.")) { S = blank(); save(); render(); renderPanel(); toast("Sıfırlandı"); } }
+});
+
+function resizeImage(file, max, cb) {
+  var reader = new FileReader();
+  reader.onload = function() {
+    var img = new Image();
+    img.onload = function() {
+      var s = Math.min(1, max / Math.max(img.width, img.height));
+      var cv = document.createElement("canvas"); cv.width = Math.round(img.width * s); cv.height = Math.round(img.height * s);
+      cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+      cb(cv.toDataURL("image/jpeg", 0.85));
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+var toastTimer = null;
+function toast(msg) { var t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(function() { t.classList.remove("show"); }, 2200); }
+
+render();
+if (!S.c.name) setTimeout(openPanel, 400);
+</script>
+</body>
+</html>
