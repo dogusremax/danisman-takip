@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0a09">
+<title>Danışman Takip · Tanıtım</title>
+<meta name="description" content="RE/MAX Doğuş Danışman Takip uygulaması: nasıl kullanılır, ne işe yarar, neden kullanmalısın.">
+<style>
+  :root {
+    --red: #dc2626;
+    --red-2: #ef4444;
+    --ink: #0c0a09;
+    --paper: #fafaf9;
+    --muted: #a8a29e;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --rose: #f43f5e;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    background: #0c0a09;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  body::before {
+    content: ""; position: fixed; inset: -20%;
+    background: radial-gradient(circle at 30% 30%, rgba(220,38,38,.25), transparent 45%),
+                radial-gradient(circle at 70% 75%, rgba(220,38,38,.15), transparent 45%);
+    filter: blur(40px);
+  }
+
+  /* ---------- Sahne (9:16) ---------- */
+  .stage {
+    position: relative;
+    width: 100vw; height: 100vh; height: 100svh;
+    overflow: hidden;
+    background: radial-gradient(120% 80% at 50% 0%, #1c1917 0%, #0c0a09 60%);
+    container-type: size;
+    user-select: none; -webkit-user-select: none;
+  }
+  @media (min-aspect-ratio: 10/16) {
+    .stage { border-radius: 22px; box-shadow: 0 40px 120px -20px rgba(0,0,0,.8), 0 0 0 1px rgba(255,255,255,.06); height: min(96svh, calc(100vw * 16 / 9)); width: calc(min(96svh, calc(100vw * 16 / 9)) * 9 / 16); }
+  }
+  .glow {
+    position: absolute; width: 140cqw; height: 140cqw; left: -20cqw; top: -40cqw; border-radius: 50%;
+    background: radial-gradient(circle, rgba(220,38,38,.35), transparent 60%);
+    transition: transform 1.2s cubic-bezier(.2,.8,.2,1), opacity 1.2s;
+    pointer-events: none;
+  }
+  .grain {
+    position: absolute; inset: 0; pointer-events: none; opacity: .06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Hikaye çubukları */
+  .bars { position: absolute; top: 2.6cqh; left: 4cqw; right: 4cqw; display: flex; gap: 1.2cqw; z-index: 20; }
+  .bar { flex: 1; height: .45cqh; min-height: 3px; background: rgba(255,255,255,.22); border-radius: 9px; overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: #fff; border-radius: 9px; }
+  .brand {
+    position: absolute; top: 4.6cqh; left: 4cqw; z-index: 20;
+    display: flex; align-items: center; gap: 2cqw; font-size: 3.3cqw; font-weight: 700; letter-spacing: .01em;
+  }
+  .brand-mark { width: 7cqw; height: 7cqw; border-radius: 2cqw; background: var(--red); display: grid; place-items: center; box-shadow: 0 1cqw 4cqw -1cqw rgba(220,38,38,.6); }
+  .brand-mark svg { width: 4cqw; height: 4cqw; color: #fff; }
+  .brand small { display: block; font-size: 2.6cqw; font-weight: 500; color: var(--muted); }
+
+  .ctrl {
+    position: absolute; top: 4.6cqh; right: 4cqw; z-index: 30;
+    width: 8cqw; height: 8cqw; border-radius: 50%; border: 0; cursor: pointer;
+    background: rgba(255,255,255,.12); color: #fff; display: grid; place-items: center;
+    backdrop-filter: blur(6px);
+  }
+  .ctrl svg { width: 3.6cqw; height: 3.6cqw; }
+  .ctrl:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+  .tapzone { position: absolute; top: 12cqh; bottom: 0; z-index: 10; }
+  .tapzone.l { left: 0; width: 30%; }
+  .tapzone.r { right: 0; width: 70%; }
+
+  /* ---------- Sahneler ---------- */
+  .scene {
+    position: absolute; inset: 0; padding: 15cqh 7cqw 8cqh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    opacity: 0; visibility: hidden; transition: opacity .5s, visibility .5s;
+  }
+  .scene.on { opacity: 1; visibility: visible; }
+  .stage.paused *, .stage.paused *::before, .stage.paused *::after { animation-play-state: paused !important; }
+
+  /* Ortak tipografi */
+  .kicker { font-size: 3.4cqw; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--red-2); margin-bottom: 2.2cqh; }
+  .h1 { font-size: 10cqw; line-height: 1.02; font-weight: 900; letter-spacing: -.035em; }
+  .h2 { font-size: 7.6cqw; line-height: 1.08; font-weight: 850; font-weight: 800; letter-spacing: -.03em; }
+  .lead { font-size: 4.1cqw; line-height: 1.4; color: #d6d3d1; margin-top: 2cqh; max-width: 80cqw; }
+  .lead b { color: #fff; }
+  .red { color: var(--red-2); }
+  .step-no {
+    display: inline-flex; align-items: center; justify-content: center; gap: 1.5cqw;
+    font-size: 3.2cqw; font-weight: 700; padding: 1cqw 3cqw; border-radius: 99px;
+    background: rgba(220,38,38,.16); color: #fca5a5; border: 1px solid rgba(220,38,38,.35); margin-bottom: 2cqh;
+  }
+
+  /* Giriş animasyonları (sahne açılınca) */
+  .a { opacity: 0; }
+  .scene.on .a { animation: up .7s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--d, 0s); }
+  .scene.on .a.pop { animation-name: pop; }
+  .scene.on .a.fade { animation-name: fade; }
+  .scene.on .a.left { animation-name: fromLeft; }
+  @keyframes up { from { opacity: 0; transform: translateY(5cqh); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+  @keyframes pop { 0% { opacity: 0; transform: scale(.5); } 60% { opacity: 1; transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+  @keyframes fade { to { opacity: 1; } }
+  @keyframes fromLeft { from { opacity: 0; transform: translateX(-12cqw); } to { opacity: 1; transform: none; } }
+  @keyframes out { to { opacity: 0; transform: translateY(-3cqh); filter: blur(6px); } }
+
+  /* S1 – kanca */
+  .q-stack { display: flex; flex-direction: column; gap: 1.4cqh; }
+  .q { font-size: 8.4cqw; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; }
+  .q.dim { color: #78716c; }
+  .scene.on .q-stack { animation: out .5s ease forwards 3.1s; }
+  .punch { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1cqh; }
+  .punch .p1 { font-size: 9cqw; font-weight: 800; color: #a8a29e; letter-spacing: -.03em; position: relative; }
+  .punch .p1::after { content: ""; position: absolute; left: -2%; right: -2%; top: 52%; height: .9cqw; background: var(--red); transform: scaleX(0); transform-origin: left; border-radius: 9px; }
+  .scene.on .punch .p1::after { animation: strike .45s ease forwards 4.25s; }
+  @keyframes strike { to { transform: scaleX(1); } }
+  .punch .p2 { font-size: 26cqw; font-weight: 900; letter-spacing: -.06em; line-height: 1; color: #fff; text-shadow: 0 0 10cqw rgba(220,38,38,.7); }
+
+  /* S2 – logo */
+  .logo-big { width: 30cqw; height: 30cqw; border-radius: 8cqw; background: var(--red); display: grid; place-items: center; margin-bottom: 4cqh; box-shadow: 0 4cqw 14cqw -3cqw rgba(220,38,38,.75); position: relative; }
+  .logo-big svg { width: 15cqw; height: 15cqw; color: #fff; }
+  .logo-big::after { content: ""; position: absolute; inset: -3cqw; border-radius: 10cqw; border: 2px solid rgba(220,38,38,.5); opacity: 0; }
+  .scene.on .logo-big::after { animation: ring 2s ease-out infinite 1s; }
+  @keyframes ring { 0% { opacity: .9; transform: scale(.9); } 100% { opacity: 0; transform: scale(1.35); } }
+  .tagline { display: flex; gap: 2cqw; flex-wrap: wrap; justify-content: center; margin-top: 3cqh; }
+  .tag { font-size: 3.3cqw; font-weight: 600; padding: 1.4cqw 3.4cqw; border-radius: 99px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); color: #e7e5e4; }
+
+  /* ---------- Telefon maketi ---------- */
+  .phone {
+    width: 62cqw; aspect-ratio: 9 / 18.5; border-radius: 9cqw; padding: 2cqw;
+    background: linear-gradient(145deg, #3f3f46, #18181b); box-shadow: 0 6cqw 16cqw -4cqw rgba(0,0,0,.9), inset 0 0 0 1px rgba(255,255,255,.1);
+    position: relative; margin-top: 3cqh; max-height: 54cqh;
+  }
+  .phone-screen { width: 100%; height: 100%; border-radius: 7.2cqw; overflow: hidden; background: var(--paper); color: #1c1917; position: relative; text-align: left; }
+  .notch { position: absolute; top: 1.6cqw; left: 50%; transform: translateX(-50%); width: 16cqw; height: 4cqw; background: #0c0a09; border-radius: 9cqw; z-index: 5; }
+  .app-head { padding: 8cqw 3.6cqw 2.4cqw; background: #fff; border-bottom: 1px solid #e7e5e4; display: flex; align-items: center; gap: 2.2cqw; }
+  .av { width: 7cqw; height: 7cqw; border-radius: 50%; background: var(--red); color: #fff; display: grid; place-items: center; font-size: 2.6cqw; font-weight: 800; flex-shrink: 0; }
+  .app-head .nm { font-size: 3cqw; font-weight: 700; }
+  .app-head .wk { font-size: 2.2cqw; color: #78716c; }
+  .app-tabs { display: flex; gap: 1.4cqw; padding: 2cqw 3.6cqw; background: #fff; }
+  .app-tab { flex: 1; text-align: center; font-size: 2.3cqw; font-weight: 700; padding: 1.4cqw 0; border-radius: 2cqw; background: #f5f5f4; color: #78716c; }
+  .app-tab.on { background: #1c1917; color: #fff; }
+
+  /* S3 – giriş ekranı */
+  .login-in { padding: 11cqw 4cqw 0; text-align: center; }
+  .login-in .lg { width: 11cqw; height: 11cqw; border-radius: 3.2cqw; background: var(--red); margin: 0 auto 2.4cqw; display: grid; place-items: center; }
+  .login-in .lg svg { width: 5.6cqw; height: 5.6cqw; color: #fff; }
+  .login-in h4 { font-size: 4.4cqw; font-weight: 800; letter-spacing: -.02em; }
+  .login-in p { font-size: 2.3cqw; color: #78716c; margin-top: .6cqw; }
+  .lcard { margin-top: 4cqw; background: #fff; border: 1px solid #e7e5e4; border-radius: 3.6cqw; padding: 3.2cqw; text-align: left; }
+  .lcard .lbl { font-size: 1.9cqw; font-weight: 700; letter-spacing: .08em; color: #78716c; margin-bottom: 1.8cqw; }
+  .field { border: 1px solid #e7e5e4; border-radius: 2.6cqw; padding: 2.6cqw 3cqw; font-size: 2.8cqw; color: #a8a29e; display: flex; justify-content: space-between; align-items: center; transition: border-color .3s, box-shadow .3s; }
+  .field.fill { color: #1c1917; font-weight: 600; border-color: var(--red); box-shadow: 0 0 0 .8cqw rgba(220,38,38,.1); }
+  .field + .field { margin-top: 2cqw; justify-content: center; letter-spacing: .4em; font-size: 3.4cqw; }
+  .lbtn { margin-top: 2.4cqw; background: var(--red); color: #fff; border-radius: 2.6cqw; text-align: center; font-weight: 700; font-size: 2.8cqw; padding: 2.6cqw; transition: transform .15s; }
+  .lbtn.press { transform: scale(.94); filter: brightness(.9); }
+  .ok-flash { position: absolute; inset: 0; background: rgba(16,185,129,.92); color: #fff; display: grid; place-items: center; font-size: 4.4cqw; font-weight: 800; opacity: 0; transition: opacity .35s; text-align: center; }
+  .ok-flash.show { opacity: 1; }
+  .ok-flash svg { width: 12cqw; height: 12cqw; display: block; margin: 0 auto 2cqw; }
+
+  /* S4 – huni */
+  .funnel { padding: 2.6cqw 3cqw; display: flex; flex-direction: column; gap: 1.8cqw; position: relative; }
+  .mini-score { background: #fff; border: 1px solid #e7e5e4; border-radius: 3cqw; padding: 2.6cqw 3cqw; display: flex; justify-content: space-between; align-items: flex-end; }
+  .mini-score .l { font-size: 1.9cqw; font-weight: 700; color: #78716c; letter-spacing: .06em; }
+  .mini-score .v { font-size: 6.4cqw; font-weight: 900; letter-spacing: -.04em; line-height: 1; }
+  .mini-score .v span { font-size: 2.8cqw; color: #a8a29e; font-weight: 700; }
+  .frow { background: #fff; border: 1px solid #e7e5e4; border-radius: 3cqw; padding: 2cqw; display: flex; align-items: center; gap: 1.8cqw; position: relative; }
+  .fbtn { width: 6.6cqw; height: 6.6cqw; border-radius: 2cqw; display: grid; place-items: center; font-size: 4cqw; font-weight: 600; line-height: 1; flex-shrink: 0; position: relative; }
+  .fbtn.m { background: #f5f5f4; color: #a8a29e; }
+  .fbtn.p { background: #1c1917; color: #fff; }
+  .fbtn.p.hit { animation: hit .35s ease; }
+  @keyframes hit { 40% { transform: scale(.82); background: var(--red); } }
+  .fmid { flex: 1; min-width: 0; }
+  .ftop { display: flex; align-items: center; gap: 1.2cqw; }
+  .ficon { width: 4.4cqw; height: 4.4cqw; border-radius: 1.4cqw; display: grid; place-items: center; flex-shrink: 0; }
+  .ficon svg { width: 2.6cqw; height: 2.6cqw; color: #fff; }
+  .fname { font-size: 2.4cqw; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fpts { font-size: 1.9cqw; font-weight: 800; padding: .3cqw 1.2cqw; border-radius: 1cqw; flex-shrink: 0; }
+  .fcnt { margin-left: auto; font-size: 2.2cqw; font-weight: 700; color: #78716c; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+  .fcnt.done { color: #047857; }
+  .fbar { height: 1cqw; border-radius: 9px; background: #f5f5f4; margin-top: 1.2cqw; overflow: hidden; }
+  .fbar i { display: block; height: 100%; width: 0; border-radius: 9px; transition: width .45s cubic-bezier(.2,.8,.2,1), background .3s; }
+  .floatp { position: absolute; right: 9cqw; top: 0; font-size: 3.4cqw; font-weight: 900; color: var(--red); pointer-events: none; animation: floatUp 1s ease-out forwards; }
+  @keyframes floatUp { from { opacity: 1; transform: translateY(0) scale(.8); } to { opacity: 0; transform: translateY(-7cqw) scale(1.2); } }
+  .finger { position: absolute; width: 9cqw; height: 9cqw; right: -2cqw; top: 30cqw; z-index: 6; transition: top .45s cubic-bezier(.4,0,.2,1); pointer-events: none; filter: drop-shadow(0 1cqw 1.4cqw rgba(0,0,0,.35)); }
+  .finger.tap { animation: ftap .3s ease; }
+  @keyframes ftap { 50% { transform: scale(.85) translate(-.6cqw, .6cqw); } }
+  .undo-hint { font-size: 3.4cqw; color: #d6d3d1; margin-top: 2cqh; }
+  .undo-hint b { display: inline-grid; place-items: center; width: 5.4cqw; height: 5.4cqw; border-radius: 1.6cqw; background: rgba(255,255,255,.12); color: #fff; margin: 0 .6cqw; vertical-align: middle; }
+
+  /* S5 – puan tablosu */
+  .pgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.8cqw; width: 100%; margin-top: 3cqh; }
+  .pchip { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 3cqw; padding: 1.8cqw 2.4cqw; display: flex; align-items: center; gap: 2cqw; text-align: left; }
+  .pchip .ic { width: 7cqw; height: 7cqw; border-radius: 2cqw; display: grid; place-items: center; flex-shrink: 0; }
+  .pchip .ic svg { width: 3.8cqw; height: 3.8cqw; color: #fff; }
+  .pchip .n { flex: 1; font-size: 3cqw; font-weight: 600; color: #e7e5e4; line-height: 1.15; }
+  .pchip .v { font-size: 4.6cqw; font-weight: 900; letter-spacing: -.03em; flex-shrink: 0; }
+  .pchip.star { grid-column: span 2; justify-content: center; gap: 3cqw; background: linear-gradient(135deg, rgba(220,38,38,.35), rgba(220,38,38,.12)); border-color: rgba(239,68,68,.6); padding: 3.4cqw; }
+  .pchip.star .n { flex: 0 1 auto; font-size: 4.4cqw; color: #fff; font-weight: 800; }
+  .pchip.star .v { font-size: 7cqw; color: #fff; }
+  .pchip.star .ic { width: 10cqw; height: 10cqw; }
+  .pchip.star .ic svg { width: 5.4cqw; height: 5.4cqw; }
+  .scene.on .pchip.star { animation: pop .7s cubic-bezier(.2,.8,.2,1) forwards var(--d), shine 1.6s ease-in-out infinite calc(var(--d) + .8s); }
+  @keyframes shine { 50% { box-shadow: 0 0 9cqw -1cqw rgba(239,68,68,.75); } }
+
+  /* S6 – skor halkası */
+  .ring-wrap { position: relative; width: 66cqw; height: 66cqw; margin: 4cqh 0 2cqh; }
+  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: rgba(255,255,255,.08); stroke-width: 9; }
+  .ring-fg { fill: none; stroke-width: 9; stroke-linecap: round; stroke-dasharray: 289; stroke-dashoffset: 289; transition: stroke .4s; }
+  .ring-in { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring-num { font-size: 22cqw; font-weight: 900; letter-spacing: -.06em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .ring-num span { font-size: 6cqw; color: #78716c; letter-spacing: 0; }
+  .band { margin-top: 1.4cqh; font-size: 3.8cqw; font-weight: 800; padding: 1.2cqw 3.6cqw; border-radius: 99px; display: inline-flex; align-items: center; gap: 1.6cqw; transition: background .3s, color .3s; }
+  .band i { width: 2cqw; height: 2cqw; border-radius: 50%; background: currentColor; }
+  .band.rose { background: rgba(244,63,94,.18); color: #fda4af; }
+  .band.amber { background: rgba(245,158,11,.18); color: #fcd34d; }
+  .band.green { background: rgba(16,185,129,.2); color: #6ee7b7; }
+  .legend { display: flex; gap: 2.4cqw; justify-content: center; font-size: 3cqw; color: #a8a29e; margin-top: 1cqh; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 1cqw; }
+  .legend i { width: 2cqw; height: 2cqw; border-radius: 50%; display: inline-block; }
+
+  /* S7 – istikrar */
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1.8cqw; width: 100%; margin-top: 5cqh; }
+  .day { display: flex; flex-direction: column; align-items: center; gap: 1.4cqw; }
+  .day .flame { width: 11cqw; height: 11cqw; border-radius: 50%; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); display: grid; place-items: center; transition: background .35s, transform .35s, box-shadow .35s; }
+  .day .flame svg { width: 6cqw; height: 6cqw; opacity: .25; transition: opacity .3s; }
+  .day.lit .flame { background: rgba(249,115,22,.2); border-color: rgba(249,115,22,.6); transform: scale(1.1); box-shadow: 0 0 6cqw -1cqw rgba(249,115,22,.8); }
+  .day.lit .flame svg { opacity: 1; }
+  .day .dn { font-size: 2.8cqw; color: #a8a29e; font-weight: 700; }
+  .day .dp { font-size: 2.8cqw; font-weight: 800; color: #fdba74; opacity: 0; transition: opacity .3s; }
+  .day.lit .dp { opacity: 1; }
+  .bonus-total { margin-top: 4cqh; font-size: 4.2cqw; color: #d6d3d1; }
+  .bonus-total b { font-size: 12cqw; font-weight: 900; color: #fb923c; display: block; letter-spacing: -.04em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+
+  /* S8 – kapanış */
+  .trophy { width: 34cqw; height: 34cqw; border-radius: 50%; display: grid; place-items: center; background: radial-gradient(circle, rgba(250,204,21,.25), transparent 70%); margin: 3cqh 0 1cqh; position: relative; }
+  .trophy svg { width: 20cqw; height: 20cqw; color: #facc15; filter: drop-shadow(0 0 4cqw rgba(250,204,21,.6)); }
+  .plus40 { position: absolute; top: -1cqw; right: -6cqw; background: var(--red); color: #fff; font-size: 5.4cqw; font-weight: 900; padding: 1.2cqw 3cqw; border-radius: 99px; transform: rotate(10deg); }
+  .money-card { margin-top: 3cqh; width: 100%; background: linear-gradient(135deg, #064e3b, #065f46); border: 1px solid rgba(16,185,129,.5); border-radius: 5cqw; padding: 4.4cqw 5cqw; display: flex; justify-content: space-between; align-items: center; text-align: left; }
+  .money-card .l { font-size: 3cqw; font-weight: 700; letter-spacing: .08em; color: #a7f3d0; }
+  .money-card .s { font-size: 2.8cqw; color: #6ee7b7; margin-top: .8cqw; }
+  .money-card .v { font-size: 10cqw; font-weight: 900; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  .confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .confetti i { position: absolute; top: -4cqh; width: 2cqw; height: 3.4cqw; border-radius: 1px; opacity: 0; }
+  .scene.on .confetti i { animation: fall 2.6s linear forwards; }
+  @keyframes fall { 0% { opacity: 1; transform: translateY(0) rotate(0); } 100% { opacity: .9; transform: translateY(110cqh) rotate(720deg); } }
+
+  /* S9 – kürsü */
+  .podium { display: flex; align-items: flex-end; justify-content: center; gap: 3cqw; width: 100%; margin-top: 5cqh; height: 52cqh; }
+  .pcol { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .pav { width: 15cqw; height: 15cqw; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 5cqw; color: #fff; position: relative; margin-bottom: 1.6cqh; }
+  .pcol.first .pav { width: 21cqw; height: 21cqw; font-size: 6.4cqw; }
+  .pav.gold { background: linear-gradient(135deg, #b45309, #f59e0b); box-shadow: 0 0 0 1cqw rgba(250,204,21,.35), 0 0 10cqw -1cqw rgba(250,204,21,.7); }
+  .pav.silver { background: linear-gradient(135deg, #57534e, #a8a29e); box-shadow: 0 0 0 .8cqw rgba(214,211,209,.25); }
+  .pav.bronze { background: linear-gradient(135deg, #7c2d12, #c2410c); box-shadow: 0 0 0 .8cqw rgba(234,88,12,.25); }
+  .crown { position: absolute; top: -10cqw; font-size: 10cqw; opacity: 0; }
+  .scene.on .crown { animation: crown .8s cubic-bezier(.3,1.6,.5,1) forwards 2.4s; }
+  @keyframes crown { from { opacity: 0; transform: translateY(-10cqw) rotate(-20deg); } to { opacity: 1; transform: none; } }
+  .pname { font-size: 3.4cqw; font-weight: 800; }
+  .pname .me { background: var(--red); font-size: 2.4cqw; padding: .4cqw 1.6cqw; border-radius: 99px; margin-left: 1cqw; vertical-align: middle; }
+  .ppts { font-size: 3cqw; color: #a8a29e; margin-bottom: 1.4cqh; }
+  .block { width: 100%; border-radius: 3cqw 3cqw 0 0; display: flex; justify-content: center; padding-top: 2cqh; font-size: 10cqw; font-weight: 900; color: rgba(255,255,255,.85); transform-origin: bottom; transform: scaleY(0); }
+  .first .block { height: 22cqh; background: linear-gradient(180deg, #dc2626, #7f1d1d); }
+  .second .block { height: 15cqh; background: linear-gradient(180deg, #44403c, #292524); }
+  .third .block { height: 10cqh; background: linear-gradient(180deg, #44403c, #1c1917); }
+  .scene.on .block { animation: grow .8s cubic-bezier(.2,.8,.2,1) forwards; animation-delay: var(--d); }
+  @keyframes grow { to { transform: scaleY(1); } }
+
+  /* S10 – geri sayım */
+  .clock { font-size: 15cqw; font-weight: 900; letter-spacing: -.04em; font-variant-numeric: tabular-nums; margin: 4cqh 0 1cqh; line-height: 1; }
+  .clock small { display: block; font-size: 4cqw; font-weight: 700; color: #a8a29e; letter-spacing: .1em; margin-bottom: 2cqh; }
+  .clock.zero { color: var(--red-2); text-shadow: 0 0 8cqw rgba(239,68,68,.8); }
+  .reset { font-size: 9cqw; font-weight: 900; letter-spacing: -.04em; opacity: 0; transform: scale(.7); transition: opacity .5s, transform .6s cubic-bezier(.3,1.6,.5,1); margin-top: 3cqh; line-height: 1.05; }
+  .reset.show { opacity: 1; transform: none; }
+
+  /* S11 – kapanış / CTA */
+  .final-line { font-size: 9.4cqw; font-weight: 900; letter-spacing: -.04em; line-height: 1.2; }
+  .plusword { display: inline-grid; place-items: center; width: 9cqw; height: 9cqw; border-radius: 2.6cqw; background: var(--red); color: #fff; vertical-align: -.6cqw; font-size: 7.4cqw; line-height: 1; }
+  .scene.on .plusword { animation: pulse 1.2s ease-in-out infinite 1.5s; }
+  @keyframes pulse { 50% { transform: scale(1.06); box-shadow: 0 0 8cqw rgba(220,38,38,.8); } }
+  .cta { margin-top: 5cqh; display: inline-flex; align-items: center; gap: 2.4cqw; padding: 4cqw 8cqw; border-radius: 99px; background: #fff; color: var(--ink); font-size: 4.6cqw; font-weight: 800; text-decoration: none; position: relative; z-index: 25; box-shadow: 0 2cqw 8cqw -2cqw rgba(255,255,255,.4); }
+  .cta svg { width: 4.6cqw; height: 4.6cqw; }
+  .replay { margin-top: 2.4cqh; background: none; border: 0; color: #a8a29e; font-size: 3.4cqw; font-weight: 600; cursor: pointer; position: relative; z-index: 25; font-family: inherit; display: inline-flex; gap: 1.4cqw; align-items: center; }
+  .replay svg { width: 3.6cqw; height: 3.6cqw; }
+  .sig { margin-top: 4cqh; font-size: 3cqw; color: #78716c; }
+
+  .hint { position: absolute; bottom: 2.6cqh; left: 0; right: 0; text-align: center; font-size: 2.8cqw; color: rgba(255,255,255,.4); z-index: 20; pointer-events: none; transition: opacity .6s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scene.on .a { animation-duration: .01s; }
+    .scene.on .logo-big::after, .scene.on .plusword, .scene.on .pchip.star { animation-iteration-count: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <div class="glow" id="glow"></div>
+  <div class="grain"></div>
+
+  <div class="bars" id="bars"></div>
+  <div class="brand">
+    <div class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></div>
+    <div>RE/MAX Doğuş<small>Danışman Takip</small></div>
+  </div>
+  <button class="ctrl" id="ctrl" aria-label="Duraklat"></button>
+  <div class="tapzone l" id="tzl"></div>
+  <div class="tapzone r" id="tzr"></div>
+
+  <!-- 1. Kanca -->
+  <section class="scene" data-dur="6200" data-glow="0">
+    <div class="q-stack">
+      <div class="q a" style="--d:.2s">Bu hafta kaç arama yaptın?</div>
+      <div class="q dim a" style="--d:1s">Kaç sunum?</div>
+      <div class="q dim a" style="--d:1.6s">Kaç gösterim?</div>
+      <div class="q dim a" style="--d:2.2s">Hedefe ne kadar kaldı?</div>
+    </div>
+    <div class="punch">
+      <div class="p1 a" style="--d:3.6s">Tahmin etme.</div>
+      <div class="p2 a pop" style="--d:4.8s">Bil.</div>
+    </div>
+  </section>
+
+  <!-- 2. Tanıtım -->
+  <section class="scene" data-dur="5000" data-glow="1">
+    <div class="logo-big a pop" style="--d:.1s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-7"/><path d="M16 7h4v4"/></svg></div>
+    <div class="kicker a" style="--d:.6s">Tanış</div>
+    <div class="h1 a" style="--d:.8s">Danışman<br>Takip</div>
+    <div class="lead a" style="--d:1.3s">Sahadaki emeğini <b>görünür</b> kılan, performansını <b>anlık</b> gösteren uygulaman.</div>
+    <div class="tagline">
+      <div class="tag a pop" style="--d:2s">📱 Telefonundan</div>
+      <div class="tag a pop" style="--d:2.2s">⚡ Tek dokunuş</div>
+      <div class="tag a pop" style="--d:2.4s">🏆 Haftalık sıralama</div>
+    </div>
+  </section>
+
+  <!-- 3. Giriş -->
+  <section class="scene" data-dur="5600" data-glow="2" data-fx="login">
+    <div class="step-no a">ADIM 1</div>
+    <div class="h2 a" style="--d:.15s">Adını seç,<br>şifreni gir.</div>
+    <div class="phone a pop" style="--d:.4s">
+      <div class="phone-screen">
+        <div class="notch"></div>
+        <div class="login-in">
+          <div class="lg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></div>
+          <h4>RE/MAX Doğuş</h4>
+          <p>90 Günlük Performans Takibi</p>
+          <div class="lcard">
+            <div class="lbl">GİRİŞ</div>
+            <div class="field" data-k="name"><span>Seçiniz…</span><span>⌄</span></div>
+            <div class="field" data-k="pin">····</div>
+            <div class="lbtn">Giriş Yap</div>
+          </div>
+        </div>
+        <div class="ok-flash"><div><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>Hoş geldin!</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Kayıt -->
+  <section class="scene" data-dur="8200" data-glow="0" data-fx="funnel">
+    <div class="step-no a">ADIM 2</div>
+    <div class="h2 a" style="--d:.15s">Yaptığın her işi<br><span class="red">tek dokunuşla</span> kaydet.</div>
+    <div class="phone a pop" style="--d:.4s">
+      <div class="phone-screen">
+        <div class="notch"></div>
+        <div class="app-head"><div class="av">SN</div><div><div class="nm">Merhaba 👋</div><div class="wk">Bu hafta · Pzt–Paz</div></div></div>
+        <div class="app-tabs"><div class="app-tab on">Bu Hafta</div><div class="app-tab">Sıralama</div></div>
+        <div class="funnel" id="funnel">
+          <div class="mini-score"><div><div class="l">HAFTALIK PUAN</div><div class="v" id="fpts">0<span>/135</span></div></div><div class="band rose" id="fband" style="font-size:2.4cqw;margin:0"><i></i>Geride</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="undo-hint a fade" style="--d:5.2s">Yanlış mı bastın? <b>−</b> ile geri al.</div>
+  </section>
+
+  <!-- 5. Puanlar -->
+  <section class="scene" data-dur="6800" data-glow="1" data-fx="points">
+    <div class="kicker a">Puan Sistemi</div>
+    <div class="h2 a" style="--d:.1s">Her adımın<br>bir <span class="red">değeri</span> var.</div>
+    <div class="pgrid" id="pgrid"></div>
+  </section>
+
+  <!-- 6. Skor -->
+  <section class="scene" data-dur="6400" data-glow="2" data-fx="score">
+    <div class="step-no a">ADIM 3</div>
+    <div class="h2 a" style="--d:.1s">Performansını<br><span class="red">anlık</span> gör.</div>
+    <div class="ring-wrap a pop" style="--d:.3s">
+      <svg viewBox="0 0 100 100"><circle class="ring-bg" cx="50" cy="50" r="46"/><circle class="ring-fg" id="ringfg" cx="50" cy="50" r="46"/></svg>
+      <div class="ring-in">
+        <div class="ring-num" id="ringnum">0<span>/100</span></div>
+        <div class="band rose" id="ringband"><i></i>Geride</div>
+      </div>
+    </div>
+    <div class="legend a fade" style="--d:.8s">
+      <span><i style="background:#f43f5e"></i>Geride &lt;50</span>
+      <span><i style="background:#f59e0b"></i>Yolda 50+</span>
+      <span><i style="background:#10b981"></i>Hedefte 80+</span>
+    </div>
+    <div class="lead a" style="--d:1.2s;font-size:3.6cqw">Haftalık hedefe ne kadar kaldığını ve <b>eksik olan</b> aktiviteleri anında gör.</div>
+  </section>
+
+  <!-- 7. İstikrar -->
+  <section class="scene" data-dur="6000" data-glow="0" data-fx="streak">
+    <div class="kicker a">İstikrar Bonusu</div>
+    <div class="h2 a" style="--d:.1s">Her gün sahada ol.<br><span style="color:#fb923c">Her gün +2 puan.</span></div>
+    <div class="days" id="days"></div>
+    <div class="bonus-total a fade" style="--d:.6s">Bu hafta istikrar bonusu<b id="bonus">+0p</b></div>
+  </section>
+
+  <!-- 8. Kapanış -->
+  <section class="scene" data-dur="6400" data-glow="1" data-fx="closing">
+    <div class="confetti" id="confetti"></div>
+    <div class="kicker a">Kapanış</div>
+    <div class="h2 a" style="--d:.1s">Kapanışın <span class="red">otomatik</span><br>eklenir.</div>
+    <div class="trophy a pop" style="--d:.4s">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+      <div class="plus40 a pop" style="--d:1s">+40p</div>
+    </div>
+    <div class="money-card a" style="--d:1.4s">
+      <div><div class="l">TOPLAM NET KAZANCIM</div><div class="s">Ortaklıklarda pay otomatik bölünür</div></div>
+      <div class="v" id="money">₺0</div>
+    </div>
+  </section>
+
+  <!-- 9. Sıralama -->
+  <section class="scene" data-dur="6800" data-glow="2">
+    <div class="kicker a">Haftanın Şampiyonları</div>
+    <div class="h2 a" style="--d:.1s">Her Pazartesi<br><span class="red">kürsü</span> yenilenir.</div>
+    <div class="podium">
+      <div class="pcol second">
+        <div class="pav silver a pop" style="--d:1.4s">2</div>
+        <div class="pname a" style="--d:1.5s">🥈</div>
+        <div class="ppts a" style="--d:1.5s">118 puan</div>
+        <div class="block" style="--d:.5s"></div>
+      </div>
+      <div class="pcol first">
+        <div class="pav gold a pop" style="--d:1.9s"><span class="crown">👑</span>SEN</div>
+        <div class="pname a" style="--d:2s">🥇<span class="me">SEN</span></div>
+        <div class="ppts a" style="--d:2s">146 puan</div>
+        <div class="block" style="--d:.7s"></div>
+      </div>
+      <div class="pcol third">
+        <div class="pav bronze a pop" style="--d:1.1s">3</div>
+        <div class="pname a" style="--d:1.2s">🥉</div>
+        <div class="ppts a" style="--d:1.2s">97 puan</div>
+        <div class="block" style="--d:.3s"></div>
+      </div>
+    </div>
+    <div class="lead a" style="--d:3s;font-size:3.6cqw">İsme dokun, <b>karnesini</b> gör. Kim neyle öne geçti, öğren.</div>
+  </section>
+
+  <!-- 10. Geri sayım -->
+  <section class="scene" data-dur="5600" data-glow="0" data-fx="clock">
+    <div class="kicker a">Her Hafta</div>
+    <div class="h2 a" style="--d:.1s">Pazartesi 00:00'da<br>skorlar <span class="red">dondurulur.</span></div>
+    <div class="clock a fade" style="--d:.4s" id="clock"><small>KALAN SÜRE</small><span id="clockv">2 gün 07:42:15</span></div>
+    <div class="reset" id="reset">Yeni hafta.<br><span class="red">Yeni şans.</span></div>
+  </section>
+
+  <!-- 11. Final -->
+  <section class="scene" data-dur="9000" data-glow="1" data-final="1">
+    <div class="final-line a" style="--d:.1s">Büyük kapanışlar,</div>
+    <div class="final-line a" style="--d:.7s">küçük <span class="plusword">+</span>'larla</div>
+    <div class="final-line a" style="--d:1.2s">başlar.</div>
+    <div class="lead a" style="--d:2s">Bugün ilk <b>+</b>'na bas. Gerisi gelir.</div>
+    <a class="cta a pop" style="--d:2.8s" href="./index.html">Hemen Başla
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    <button class="replay a fade" style="--d:3.4s" id="replay"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>Tekrar izle</button>
+    <div class="sig a fade" style="--d:3.6s">RE/MAX Doğuş · Danışman Takip</div>
+  </section>
+
+  <div class="hint" id="hint">Dokun: ileri · Sol kenar: geri</div>
+</div>
+
+<script>
+(function () {
+  // Uygulamadaki gerçek aktiviteler ve puanlar (index.html → ACTIVITIES)
+  var ICONS = {
+    phone: '<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>',
+    people: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    screen: '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>',
+    doc: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>',
+    eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>',
+    cash: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/>',
+    pin: '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+    build: '<path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>',
+    flyer: '<rect x="4" y="3" width="16" height="18" rx="2"/><line x1="8" y1="8" x2="16" y2="8"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="8" y1="16" x2="13" y2="16"/>',
+    cap: '<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+    trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>'
+  };
+  var ACTS = [
+    { n: "FZBO Araması", p: 1, t: 15, c: "#3b82f6", bg: "#eff6ff", tc: "#1d4ed8", i: "phone" },
+    { n: "Etki Çevresi Araması", p: 2, t: 10, c: "#0ea5e9", bg: "#f0f9ff", tc: "#0369a1", i: "people" },
+    { n: "1. Sunum", p: 5, t: 3, c: "#6366f1", bg: "#eef2ff", tc: "#4338ca", i: "screen" },
+    { n: "2. Sunum", p: 8, t: 2, c: "#8b5cf6", bg: "#f5f3ff", tc: "#6d28d9", i: "screen" },
+    { n: "Alınan Yetki", p: 15, t: 1, c: "#f59e0b", bg: "#fffbeb", tc: "#b45309", i: "doc" },
+    { n: "Gösterim", p: 6, t: 2, c: "#10b981", bg: "#ecfdf5", tc: "#047857", i: "eye" },
+    { n: "Kapora Alındı", p: 15, t: 1, c: "#f97316", bg: "#fff7ed", tc: "#c2410c", i: "cash" },
+    { n: "Kıbrıs Sunum", p: 8, t: 1, c: "#0891b2", bg: "#ecfeff", tc: "#0e7490", i: "pin" },
+    { n: "Emlak Konut Nöbet", p: 5, t: 1, c: "#7c3aed", bg: "#f5f3ff", tc: "#6d28d9", i: "build" },
+    { n: "Broşür", p: 2, t: 5, c: "#db2777", bg: "#fdf2f8", tc: "#be185d", i: "flyer" },
+    { n: "Eğitim", p: 4, t: 1, c: "#ca8a04", bg: "#fefce8", tc: "#a16207", i: "cap" }
+  ];
+  function svg(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">' + ICONS[k] + '</svg>'; }
+  function ease(x) { x = Math.max(0, Math.min(1, x)); return 1 - Math.pow(1 - x, 3); }
+  function bandOf(s) { return s >= 80 ? ["green", "Hedefte"] : s >= 50 ? ["amber", "Yolda"] : ["rose", "Geride"]; }
+  function setBand(el, s) { var b = bandOf(s); if (el.dataset.b !== b[0]) { el.dataset.b = b[0]; el.className = "band " + b[0]; el.innerHTML = "<i></i>" + b[1]; } }
+  function tl(n) { return "₺" + Math.round(n).toLocaleString("tr-TR"); }
+
+  var stage = document.getElementById("stage");
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+  var barsEl = document.getElementById("bars");
+  barsEl.innerHTML = scenes.map(function () { return '<div class="bar"><i></i></div>'; }).join("");
+  var bars = barsEl.querySelectorAll(".bar i");
+  var glow = document.getElementById("glow");
+  var ctrl = document.getElementById("ctrl");
+  var PAUSE = '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>';
+  var PLAY = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>';
+
+  /* ---------- Sahne efektleri (sahne içi zamana bağlı) ---------- */
+  var FX = {};
+
+  FX.login = {
+    enter: function (s) {
+      this.name = s.querySelector('[data-k="name"]');
+      this.pin = s.querySelector('[data-k="pin"]');
+      this.btn = s.querySelector(".lbtn");
+      this.ok = s.querySelector(".ok-flash");
+      this.name.className = "field"; this.name.innerHTML = "<span>Seçiniz…</span><span>⌄</span>";
+      this.pin.className = "field"; this.pin.textContent = "····";
+      this.btn.classList.remove("press"); this.ok.classList.remove("show");
+    },
+    tick: function (t) {
+      if (t > 1300 && !this.name.classList.contains("fill")) { this.name.classList.add("fill"); this.name.innerHTML = "<span>Senin Adın</span><span>⌄</span>"; }
+      var dots = Math.max(0, Math.min(4, Math.floor((t - 2000) / 280)));
+      if (t > 2000) { this.pin.classList.add("fill"); this.pin.textContent = "●●●●".slice(0, dots) + "····".slice(dots); }
+      this.btn.classList.toggle("press", t > 3400 && t < 3600);
+      this.ok.classList.toggle("show", t > 3700);
+    }
+  };
+
+  // Huni: sırayla basılan aktiviteler
+  var FUNNEL_ROWS = [0, 1, 2, 5, 4];
+  var TAPS = [[1200, 0], [1550, 0], [1900, 0], [2400, 1], [2750, 1], [3300, 2], [3900, 3], [4500, 4], [5200, 2], [5800, 3], [6300, 0], [6650, 0]];
+  FX.funnel = {
+    enter: function (s) {
+      var f = s.querySelector("#funnel");
+      f.querySelectorAll(".frow, .finger").forEach(function (n) { n.remove(); });
+      this.rows = FUNNEL_ROWS.map(function (ai) {
+        var a = ACTS[ai];
+        var r = document.createElement("div");
+        r.className = "frow";
+        r.innerHTML = '<div class="fbtn m">−</div><div class="fmid"><div class="ftop"><div class="ficon" style="background:' + a.c + '">' + svg(a.i) + '</div><div class="fname">' + a.n + '</div><div class="fpts" style="background:' + a.bg + ';color:' + a.tc + '">' + a.p + 'p</div><div class="fcnt">0/' + a.t + '</div></div><div class="fbar"><i style="background:' + a.c + '"></i></div></div><div class="fbtn p">+</div>';
+        f.appendChild(r);
+        return { el: r, a: a, n: 0 };
+      });
+      var fg = document.createElement("div");
+      fg.className = "finger";
+      fg.innerHTML = '<svg viewBox="0 0 24 24"><path fill="#fff" stroke="#1c1917" stroke-width="1.2" stroke-linejoin="round" d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10l.2-.9a1.5 1.5 0 0 1 2.9.6l-.1.8.3-.6a1.4 1.4 0 0 1 2.6 1v.6l.3-.3a1.3 1.3 0 0 1 2.3.9V16a6 6 0 0 1-6 6h-1.5a6 6 0 0 1-4.7-2.3L5 15.4a1.5 1.5 0 0 1 2.2-2L9 15z"/></svg>';
+      f.appendChild(fg);
+      this.f = f; this.finger = fg; this.last = -1; this.pts = 0;
+      this.ptsEl = s.querySelector("#fpts"); this.bandEl = s.querySelector("#fband");
+      this.ptsEl.innerHTML = "0<span>/135</span>"; this.bandEl.dataset.b = ""; setBand(this.bandEl, 0);
+      this.moveTo(0);
+    },
+    moveTo: function (i) {
+      var r = this.rows[i].el;
+      this.finger.style.top = (r.offsetTop + r.offsetHeight * 0.35) + "px";
+    },
+    tick: function (t) {
+      var self = this;
+      TAPS.forEach(function (tp, k) {
+        if (tp[0] - 450 <= t && (k === 0 || TAPS[k - 1][0] <= t)) self.moveTo(tp[1]);
+        if (tp[0] > self.last && tp[0] <= t) {
+          var row = self.rows[tp[1]];
+          row.n++;
+          self.pts += row.a.p;
+          var cnt = row.el.querySelector(".fcnt"), bar = row.el.querySelector(".fbar i"), pb = row.el.querySelector(".fbtn.p");
+          cnt.textContent = row.n + "/" + row.a.t;
+          var done = row.n >= row.a.t;
+          cnt.classList.toggle("done", done);
+          bar.style.width = Math.min(100, row.n / row.a.t * 100) + "%";
+          if (done) bar.style.background = "#10b981";
+          pb.classList.remove("hit"); void pb.offsetWidth; pb.classList.add("hit");
+          self.finger.classList.remove("tap"); void self.finger.offsetWidth; self.finger.classList.add("tap");
+          var fl = document.createElement("div");
+          fl.className = "floatp"; fl.textContent = "+" + row.a.p + "p";
+          row.el.appendChild(fl);
+          setTimeout(function () { fl.remove(); }, 1000);
+          self.ptsEl.innerHTML = self.pts + "<span>/135</span>";
+          setBand(self.bandEl, Math.round(self.pts / 135 * 100));
+        }
+      });
+      this.last = t;
+    }
+  };
+
+  FX.points = {
+    enter: function (s) {
+      var g = s.querySelector("#pgrid");
+      g.innerHTML = ACTS.map(function (a, k) {
+        return '<div class="pchip a pop" style="--d:' + (0.5 + k * 0.12).toFixed(2) + 's"><div class="ic" style="background:' + a.c + '">' + svg(a.i) + '</div><div class="n">' + a.n + '</div><div class="v" style="color:' + a.c + '">' + a.p + 'p</div></div>';
+      }).join("") + '<div class="pchip star a" style="--d:2.2s"><div class="ic" style="background:#dc2626">' + svg("trophy") + '</div><div class="n">Kapanış</div><div class="v">40p</div></div>';
+    }
+  };
+
+  FX.score = {
+    enter: function (s) {
+      this.fg = s.querySelector("#ringfg"); this.num = s.querySelector("#ringnum"); this.band = s.querySelector("#ringband");
+      this.band.dataset.b = ""; this.v = -1;
+    },
+    tick: function (t) {
+      var v = Math.round(ease((t - 700) / 3000) * 86);
+      if (v === this.v) return;
+      this.v = v;
+      this.fg.style.strokeDashoffset = 289 - 289 * v / 100;
+      this.fg.style.stroke = v >= 80 ? "#10b981" : v >= 50 ? "#f59e0b" : "#f43f5e";
+      this.num.innerHTML = v + "<span>/100</span>";
+      setBand(this.band, v);
+    }
+  };
+
+  var DAYS = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"];
+  var FLAME = '<svg viewBox="0 0 24 24"><path fill="#f97316" d="M12 2c.7 2.4 2.3 3.3 3.5 4.8C16.7 8.2 17 9.6 17 11a5 5 0 1 1-10 0c0-1.6.6-2.8 1.5-3.8.2 1 .8 1.6 1.5 1.6.9 0 1.2-.9 1-2.2C11.7 5.2 11.5 3.6 12 2z"/></svg>';
+  FX.streak = {
+    enter: function (s) {
+      var d = s.querySelector("#days");
+      d.innerHTML = DAYS.map(function (n) { return '<div class="day"><div class="flame">' + FLAME + '</div><div class="dn">' + n + '</div><div class="dp">+2p</div></div>'; }).join("");
+      this.days = d.querySelectorAll(".day"); this.bonus = s.querySelector("#bonus"); this.k = -1;
+    },
+    tick: function (t) {
+      var k = Math.max(0, Math.min(7, Math.floor((t - 900) / 420) + 1));
+      if (k === this.k) return;
+      this.k = k;
+      this.days.forEach(function (d, i) { d.classList.toggle("lit", i < k); });
+      this.bonus.textContent = "+" + (k * 2) + "p";
+    }
+  };
+
+  FX.closing = {
+    enter: function (s) {
+      this.m = s.querySelector("#money");
+      var c = s.querySelector("#confetti"), cols = ["#dc2626", "#facc15", "#10b981", "#fff", "#3b82f6", "#f97316"], h = "";
+      for (var i = 0; i < 46; i++) {
+        h += '<i style="left:' + (Math.random() * 100).toFixed(1) + '%;background:' + cols[i % cols.length] + ';animation-delay:' + (0.9 + Math.random() * 1.2).toFixed(2) + 's;animation-duration:' + (2 + Math.random() * 1.6).toFixed(2) + 's"></i>';
+      }
+      c.innerHTML = h;
+    },
+    tick: function (t) { this.m.textContent = tl(ease((t - 1700) / 2600) * 185000); }
+  };
+
+  FX.clock = {
+    enter: function (s) {
+      this.v = s.querySelector("#clockv"); this.c = s.querySelector("#clock"); this.r = s.querySelector("#reset");
+      this.c.classList.remove("zero"); this.r.classList.remove("show");
+    },
+    tick: function (t) {
+      var total = 2 * 86400 + 7 * 3600 + 42 * 60 + 15;
+      var p = Math.max(0, Math.min(1, (t - 600) / 2600));
+      var left = Math.round(total * (1 - p * p));
+      var d = Math.floor(left / 86400), h = Math.floor(left % 86400 / 3600), m = Math.floor(left % 3600 / 60), sc = left % 60;
+      var pad = function (n) { return String(n).padStart(2, "0"); };
+      this.v.textContent = (d > 0 ? d + " gün " : "") + pad(h) + ":" + pad(m) + ":" + pad(sc);
+      this.c.classList.toggle("zero", left === 0);
+      this.r.classList.toggle("show", t > 3500);
+    }
+  };
+
+  /* ---------- Oynatıcı ---------- */
+  var idx = -1, sceneT = 0, playing = true, lastNow = 0, fx = null;
+
+  function go(i) {
+    if (i < 0) i = 0;
+    if (i >= scenes.length) i = scenes.length - 1;
+    scenes.forEach(function (s) { s.classList.remove("on"); });
+    var s = scenes[i];
+    void s.offsetWidth; // animasyonları yeniden başlat
+    idx = i; sceneT = 0;
+    var key = s.dataset.fx;
+    fx = key ? FX[key] : null;
+    if (fx && fx.enter) fx.enter(s);
+    s.classList.add("on");
+    var g = +s.dataset.glow;
+    glow.style.transform = ["translate(0,0)", "translate(-10cqw, 70cqh) scale(1.2)", "translate(10cqw, 30cqh) scale(.9)"][g];
+    for (var b = 0; b < bars.length; b++) bars[b].style.width = b < i ? "100%" : "0%";
+    if (fx && fx.tick) fx.tick(0);
+  }
+
+  function frame(now) {
+    var dt = lastNow ? Math.min(100, now - lastNow) : 0;
+    lastNow = now;
+    if (playing && idx >= 0) {
+      var s = scenes[idx], dur = +s.dataset.dur;
+      sceneT += dt;
+      if (fx && fx.tick) fx.tick(sceneT);
+      bars[idx].style.width = Math.min(100, sceneT / dur * 100) + "%";
+      if (sceneT >= dur) {
+        if (s.dataset.final) { setPlaying(false); bars[idx].style.width = "100%"; }
+        else go(idx + 1);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function setPlaying(p) {
+    playing = p;
+    stage.classList.toggle("paused", !p);
+    ctrl.innerHTML = p ? PAUSE : PLAY;
+    ctrl.setAttribute("aria-label", p ? "Duraklat" : "Oynat");
+  }
+
+  function next() { if (idx < scenes.length - 1) { go(idx + 1); setPlaying(true); } }
+  function prev() { go(idx - 1); setPlaying(true); }
+  function restart() { go(0); setPlaying(true); }
+  var hint = document.getElementById("hint");
+  function hideHint() { hint.style.opacity = 0; }
+
+  ctrl.addEventListener("click", function () {
+    if (!playing && scenes[idx].dataset.final && sceneT >= +scenes[idx].dataset.dur) restart();
+    else setPlaying(!playing);
+  });
+  document.getElementById("tzr").addEventListener("click", function () { hideHint(); next(); });
+  document.getElementById("tzl").addEventListener("click", function () { hideHint(); prev(); });
+  document.getElementById("replay").addEventListener("click", restart);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") next();
+    else if (e.key === "ArrowLeft") prev();
+    else if (e.key === " ") { e.preventDefault(); ctrl.click(); }
+  });
+  document.addEventListener("visibilitychange", function () { if (document.hidden) setPlaying(false); });
+  setTimeout(hideHint, 6000);
+
+  setPlaying(true);
+  go(0);
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
