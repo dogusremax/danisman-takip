@@ -33,12 +33,13 @@ button { font-family: inherit; cursor: pointer; }
               radial-gradient(900px 600px at -10% 110%, rgba(225,27,34,.22), transparent 60%),
               linear-gradient(160deg, var(--navy-2), var(--navy) 60%);
   opacity: 0; visibility: hidden; transform: scale(1.03); transition: opacity .7s ease, transform .9s cubic-bezier(.2,.7,.2,1), visibility 0s .7s; }
+.slide:not(.active) .orb, .slide:not(.active) .cover-ring, .slide:not(.active) .balloon-big { animation-play-state: paused; }
 .slide.active { opacity: 1; visibility: visible; transform: none; transition: opacity .7s ease, transform .9s cubic-bezier(.2,.7,.2,1); z-index: 2; }
 .slide.light { background: radial-gradient(1000px 600px at 100% 0, rgba(26,91,214,.10), transparent 60%), linear-gradient(160deg, #ffffff, #f2f5fb); color: #0b1a33; }
 
 /* Arka plan hareketli dekor */
-.orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .35; animation: float 14s ease-in-out infinite; pointer-events: none; }
-@keyframes float { 0%,100% { transform: translate(0,0); } 50% { transform: translate(40px,-30px); } }
+.orb { position: absolute; border-radius: 50%; opacity: .35; animation: float 14s ease-in-out infinite; pointer-events: none; will-change: transform; }
+@keyframes float { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(40px,-30px,0); } }
 .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%); pointer-events: none; }
 
 /* ---------- Logo (her sayfada) ---------- */
@@ -63,7 +64,7 @@ button { font-family: inherit; cursor: pointer; }
 .light .sub { color: #51607d; }
 .foot { position: absolute; left: 90px; right: 90px; bottom: 34px; display: flex; justify-content: space-between; font-size: 13px; letter-spacing: .2em; text-transform: uppercase; color: rgba(159,176,207,.7); font-weight: 600; z-index: 5; }
 .light .foot { color: #8a97b1; }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 28px 30px; backdrop-filter: blur(6px); }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 28px 30px; }
 .light .card { background: #fff; border-color: #e3e8f2; box-shadow: 0 12px 30px -18px rgba(11,26,51,.25); }
 .big { font-size: 84px; font-weight: 900; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
 .lbl { font-size: 14px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); margin-top: 12px; }
@@ -92,11 +93,12 @@ button { font-family: inherit; cursor: pointer; }
 .slide.active .col-fill { height: var(--h); transition-delay: calc(var(--d, 0) * 1s); }
 
 /* ---------- Kapak ---------- */
-.cover-ring { position: absolute; right: -220px; top: 50%; width: 900px; height: 900px; margin-top: -450px; border-radius: 50%; border: 2px solid rgba(255,255,255,.08); animation: spin 60s linear infinite; }
+.cover-ring { position: absolute; right: -220px; top: 50%; width: 900px; height: 900px; margin-top: -450px; border-radius: 50%; border: 2px solid rgba(255,255,255,.08); animation: spin 60s linear infinite; will-change: transform; }
 .cover-ring::after { content: ""; position: absolute; inset: 90px; border-radius: 50%; border: 2px dashed rgba(232,194,110,.18); }
-@keyframes spin { to { transform: rotate(360deg); } }
-.balloon-big { position: absolute; right: 150px; top: 200px; width: 380px; animation: bob 6s ease-in-out infinite; filter: drop-shadow(0 30px 50px rgba(0,0,0,.45)); }
-@keyframes bob { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-26px) rotate(2deg); } }
+@keyframes spin { from { transform: rotate(0deg) translateZ(0); } to { transform: rotate(360deg) translateZ(0); } }
+.balloon-big { position: absolute; right: 150px; top: 200px; width: 380px; animation: bob 7s cubic-bezier(.45,0,.55,1) infinite; will-change: transform; backface-visibility: hidden; transform: translate3d(0,0,0); }
+.balloon-big img, .balloon-big svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 30px 40px rgba(0,0,0,.4)); }
+@keyframes bob { 0%,100% { transform: translate3d(0,0,0) rotate(-1.5deg); } 50% { transform: translate3d(0,-24px,0) rotate(1.5deg); } }
 
 /* ---------- Tablolar & listeler ---------- */
 .tbl { width: 100%; border-collapse: collapse; font-size: 18px; }
@@ -177,8 +179,8 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
 <!-- 1 · KAPAK ===================================================== -->
 <section class="slide" data-notes="<b>Açılış:</b> Herkese hoş geldiniz. Eylül'ü değerlendirip Ekim ve sonrası için yol haritamızı konuşacağız. Bugün hem güzel haberlerimiz hem de büyük hedeflerimiz var.">
   <div class="grid-bg"></div>
-  <div class="orb" style="width:520px;height:520px;background:#1a5bd6;left:-140px;top:-160px"></div>
-  <div class="orb" style="width:420px;height:420px;background:#e11b22;right:300px;bottom:-200px;animation-delay:-5s"></div>
+  <div class="orb" style="width:520px;height:520px;background:radial-gradient(circle, #1a5bd6 0%, transparent 68%);left:-140px;top:-160px"></div>
+  <div class="orb" style="width:420px;height:420px;background:radial-gradient(circle, #e11b22 0%, transparent 68%);right:300px;bottom:-200px;animation-delay:-5s"></div>
   <div class="cover-ring"></div>
   <div class="balloon-big" data-balloon></div>
   <div class="logo" data-logo></div>
@@ -297,7 +299,7 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
 <!-- 7 · OFİS AİDATI ÖDÜLÜ ========================================= -->
 <section class="slide" data-title="Bağlılık Ödülü" data-notes="<b>Büyük haber:</b> Ofis aidatı 12 ay daha alınmayacak. Bu bir ödül: gösterdiğiniz bağlılık, anlayış ve gelişim için. Bir an durup etkisini hissettir.">
   <div class="grid-bg"></div>
-  <div class="orb" style="width:600px;height:600px;background:#e8c26e;left:50%;top:50%;margin:-300px 0 0 -300px;opacity:.16"></div>
+  <div class="orb" style="width:600px;height:600px;background:radial-gradient(circle, #e8c26e 0%, transparent 68%);left:50%;top:50%;margin:-300px 0 0 -300px;opacity:.16"></div>
   <div class="logo" data-logo></div>
   <div class="pad" style="align-items:center;justify-content:center;text-align:center">
     <div class="kicker a" style="justify-content:center">Bağlılık Ödülü</div>
@@ -416,7 +418,7 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
 <!-- 13 · FRANCHISE ================================================ -->
 <section class="slide" data-title="RE/MAX Franchise Yenileme" data-notes="<b>Franchise:</b> RE/MAX Türkiye ile yeni franchise anlaşması dönemi. Beklenen bedel 3,5–4 milyon TL aralığında. Niyetimiz 5 yıl daha devam etmek, ancak anlaşma henüz yapılmadı. Uzatma görüşmeleri önümüzdeki hafta başlıyor ve zorlu bir müzakere süreci bekliyor. Ekibe güven ver: ofisin performansı masadaki en güçlü kozumuz.">
   <div class="grid-bg"></div>
-  <div class="orb" style="width:500px;height:500px;background:#1a5bd6;right:-120px;top:-120px"></div>
+  <div class="orb" style="width:500px;height:500px;background:radial-gradient(circle, #1a5bd6 0%, transparent 68%);right:-120px;top:-120px"></div>
   <div class="logo" data-logo></div>
   <div class="pad">
     <div class="kicker a">RE/MAX Türkiye</div>
@@ -444,7 +446,7 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
 <!-- 14 · HEDEFLER ================================================= -->
 <section class="slide" data-title="Hedeflerimiz" data-notes="<b>Hedefler:</b> İki büyük hedef: Türkiye'de ilk 20 ofis ve 2027 sonunda prestij caddesine taşınmak. Bunun yolu yukarıdaki beklentilerden ve satış kapanışlarından geçiyor.">
   <div class="grid-bg"></div>
-  <div class="orb" style="width:520px;height:520px;background:#e11b22;left:-150px;bottom:-200px;opacity:.25"></div>
+  <div class="orb" style="width:520px;height:520px;background:radial-gradient(circle, #e11b22 0%, transparent 68%);left:-150px;bottom:-200px;opacity:.25"></div>
   <div class="logo" data-logo></div>
   <div class="pad">
     <div class="kicker a">Vizyon</div>
@@ -483,7 +485,7 @@ body.editing [data-k] { outline: 2px dashed rgba(232,194,110,.6); outline-offset
 <!-- 16 · KAPANIŞ ================================================== -->
 <section class="slide" data-notes="<b>Kapanış:</b> Zor zamanlar bitmek üzere. Enerjiyi yüksek tut, soru-cevaba geç. Toplantıyı alkışla bitir.">
   <div class="grid-bg"></div>
-  <div class="orb" style="width:700px;height:700px;background:#1a5bd6;left:50%;top:50%;margin:-350px 0 0 -350px;opacity:.22"></div>
+  <div class="orb" style="width:700px;height:700px;background:radial-gradient(circle, #1a5bd6 0%, transparent 68%);left:50%;top:50%;margin:-350px 0 0 -350px;opacity:.22"></div>
   <div class="logo" data-logo></div>
   <div class="balloon-big" data-balloon style="right:auto;left:50%;margin-left:-110px;top:90px;width:220px"></div>
   <div class="pad" style="align-items:center;justify-content:flex-end;text-align:center;padding-bottom:130px">
